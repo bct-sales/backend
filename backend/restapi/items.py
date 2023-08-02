@@ -1,6 +1,10 @@
-from typing import Any
-from fastapi import APIRouter
+from typing import Annotated
+from fastapi import APIRouter, Depends
 import pydantic
+import logging
+
+from backend.database.base import Database
+from backend.database.memorydb import InMemoryDatabase
 
 
 router = APIRouter(
@@ -8,10 +12,16 @@ router = APIRouter(
 )
 
 
-class _GetItemResponse(pydantic.BaseModel):
-    name: str
+def create_database() -> Database:
+    return InMemoryDatabase()
 
 
-@router.get("/item")
-async def list_users_items():
-    return _GetItemResponse(name="hello")
+class _Item(pydantic.BaseModel):
+    description: str
+    price_in_cents: pydantic.NonNegativeInt
+
+
+@router.get("/items", response_model=list[_Item])
+async def list_users_items(database: Annotated[Database, Depends(create_database)]):
+    items = database.list_items()
+    return items
