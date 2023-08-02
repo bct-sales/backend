@@ -5,15 +5,12 @@ import logging
 
 from backend.database.base import Database
 from backend.database.memorydb import InMemoryDatabase
+from backend.restapi.shared import get_database
 
 
 router = APIRouter(
     tags=['items']
 )
-
-
-def create_database() -> Database:
-    return InMemoryDatabase()
 
 
 class _Item(pydantic.BaseModel):
@@ -22,6 +19,6 @@ class _Item(pydantic.BaseModel):
 
 
 @router.get("/items", response_model=list[_Item])
-async def list_users_items(database: Annotated[Database, Depends(create_database)]):
+async def list_users_items(database: Annotated[Database, Depends(get_database)]):
     items = database.list_items()
     return items
