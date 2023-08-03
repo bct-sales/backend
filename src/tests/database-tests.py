@@ -1,5 +1,6 @@
 import pytest
 from backend.database.base import Database, DatabaseSession
+from backend.database import models
 from sqlalchemy.pool import StaticPool
 
 
@@ -22,6 +23,18 @@ def session(database: Database):
         session.close()
 
 
-def test_list_users(session: DatabaseSession):
-    users = session.list_users()
-    assert len(users) == 0
+def test_create_user(session: DatabaseSession):
+    # Arrange
+    email_address = 'test@gmail.com'
+    password = 'xyz'
+    user = models.UserCreate(email_address=email_address, password=password)
+    session.create_user(user)
+    session.commit()
+
+    # Act
+    actual = session.login(email_address=email_address, password=password)
+
+    # Assert
+    assert actual is not None
+    assert actual.email_address == email_address
+
