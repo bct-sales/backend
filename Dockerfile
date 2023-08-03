@@ -12,10 +12,10 @@ FROM base AS builder
 RUN apk add --no-cache gcc
 RUN pip install "poetry==${POETRY_VERSION}"
 
-COPY pyproject.toml poetry.lock ./
+COPY src/pyproject.toml src/poetry.lock ./
 RUN poetry export -f requirements.txt | pip install -r /dev/stdin
 
-COPY . .
+COPY src/ .
 RUN poetry build
 
 
