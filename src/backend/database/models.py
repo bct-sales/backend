@@ -4,15 +4,16 @@ import datetime
 
 class UserBase(pydantic.BaseModel):
     email_address: str
-    password_hash: str
 
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 
 class User(UserBase):
+    model_config = pydantic.ConfigDict(from_attributes=True)
     user_id: int
+    password_hash: str
 
 
 class SaleBase(pydantic.BaseModel):
@@ -24,6 +25,8 @@ class SaleCreate(SaleBase):
 
 
 class Sale(SaleBase):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     sale_id: int
 
 
@@ -37,4 +40,6 @@ class ItemCreate(ItemBase):
 
 
 class Item(ItemBase):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     item_id: int
