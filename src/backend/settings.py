@@ -6,7 +6,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix='BCT_')
 
-    database: str
+    database_path: str
+
+    @pydantic.computed_field
+    @property
+    def database_url(self) -> str:
+        return f'sqlite:///{self.database_path}'
 
 
 _settings: Optional[Settings] = None
