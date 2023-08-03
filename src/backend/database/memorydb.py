@@ -3,7 +3,7 @@ import backend.database.models as models
 
 
 class InMemoryDatabase(Database):
-    __items: list[models.ItemCreate]
+    __items: list[models.Item]
 
     def __init__(self):
         self.__items = [
@@ -13,9 +13,3 @@ class InMemoryDatabase(Database):
 
     def list_items(self) -> list[models.Item]:
         return self.__items
-
-    def create_item(self, item: models.ItemCreate) -> int:
-        id = self.__generate_unique_item_id()
-        new_item = models.Item(**item, id=id)
-        self.__items.append(new_item)
-        return id

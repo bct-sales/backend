@@ -1,21 +1,16 @@
 from backend.database.base import Database
-from backend.database.memorydb import InMemoryDatabase
 
 
-def get_database() -> Database:
-    global _database
-    if _database is None:
-        _database = _create_database()
-    return _database
+def get_database():
+    session = _database.create_session()
+    try:
+        yield session
+    finally:
+        session.close()
 
 
 def _create_database():
-    return InMemoryDatabase()
+    return Database('sqlite:///')
 
 
-def set_database(database: Database):
-    global _database
-    _database = database
-
-
-_database = None
+_database = _create_database()

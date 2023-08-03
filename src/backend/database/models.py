@@ -2,6 +2,19 @@ import pydantic
 import datetime
 
 
+class UserBase(pydantic.BaseModel):
+    email_address: str
+    password_hash: str
+
+
+class UserCreate(UserBase):
+    pass
+
+
+class User(UserBase):
+    user_id: int
+
+
 class SaleBase(pydantic.BaseModel):
     date: datetime.date
 

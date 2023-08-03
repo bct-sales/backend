@@ -1,10 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 import pydantic
-import logging
 
-from backend.database.base import Database
-from backend.database.memorydb import InMemoryDatabase
+from backend.database.base import DatabaseSession
 from backend.restapi.shared import get_database
 
 
@@ -19,6 +17,5 @@ class _Item(pydantic.BaseModel):
 
 
 @router.get("/items", response_model=list[_Item])
-async def list_users_items(database: Annotated[Database, Depends(get_database)]):
-    items = database.list_items()
-    return items
+async def list_users_items(database: Annotated[DatabaseSession, Depends(get_database)]):
+    return database.list_items()
