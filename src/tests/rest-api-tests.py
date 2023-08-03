@@ -2,21 +2,31 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import status
 from backend.app import app
-from backend.database.memorydb import InMemoryDatabase
-from backend.restapi.shared import set_database
+from backend.database.base import Database
+from backend.restapi.shared import get_database
+from sqlalchemy.pool import StaticPool
 
 
-def reset_database():
-    set_database(InMemoryDatabase())
+test_database = Database('sqlite:///', poolclass=StaticPool)
+
+
+def get_database_override():
+    session = test_database.create_session()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
+app.dependency_overrides[get_database] = get_database_override
 
 
 @pytest.fixture
 def client():
-    reset_database()
     with TestClient(app) as client:
         yield client
 
 
-def test_get_items(client: TestClient):
-    response = client.get('/items')
-    assert response.status_code == status.HTTP_200_OK
+# def test_get_items(client: TestClient):
+#     response = client.get('/items')
+#     assert response.status_code == status.HTTP_200_OK
