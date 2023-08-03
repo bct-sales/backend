@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String
+from sqlalchemy import ForeignKey, Integer, String
 
 
 
@@ -31,7 +31,7 @@ class User(Base):
 
     password_hash: Mapped[str] = mapped_column(String)
 
-    items: Mapped[list[Item]] = relationship("Item", back_populates='owner')
+    items: Mapped[list[Item]] = relationship("Item", back_populates='owner', foreign_keys='Item.owner_id')
 
     def __repr__(self) -> str:
         return f'User(user_id={self.user_id!r}, email_address={self.email_address!r}, password_hash={self.password_hash!r})'
@@ -46,11 +46,17 @@ class Item(Base):
 
     price_in_cents: Mapped[int] = mapped_column(Integer)
 
-    owner: Mapped[User] = relationship("User", back_populates='items')
+    owner_id: Mapped[int] = mapped_column(ForeignKey('users.user_id'))
 
-    recipient: Mapped[User] = relationship("User")
+    owner: Mapped[User] = relationship("User", back_populates='items', foreign_keys=[owner_id])
 
-    sale_event: Mapped[SaleEvent] = relationship("SaleEvent")
+    recipient_id: Mapped[int] = mapped_column(ForeignKey('users.user_id'))
+
+    recipient: Mapped[User] = relationship("User", foreign_keys=[recipient_id])
+
+    sale_event_id: Mapped[int] = mapped_column(ForeignKey('sale_events.sale_event_id'))
+
+    sale_event: Mapped[SaleEvent] = relationship("SaleEvent", foreign_keys=[sale_event_id])
 
     def __repr__(self) -> str:
         return f'Item(item_id={self.item_id!r}, description={self.description!r}, price_in_cents={self.price_in_cents!r})'

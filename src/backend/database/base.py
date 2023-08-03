@@ -53,7 +53,7 @@ class Database:
     def __init__(self, url, poolclass: Optional[Type[Pool]]=None):
         connect_args = {'check_same_thread': False}
         self.__engine = create_engine(url, connect_args=connect_args, poolclass=poolclass)
-        self.__session_maker = sessionmaker(autocommit=False, autoflush=False, autobegin=False, bind=self.__engine)
+        self.__session_maker = sessionmaker(autocommit=False, autoflush=False, bind=self.__engine)
 
     def create_session(self) -> DatabaseSession:
         return DatabaseSession(self.__session_maker())
@@ -63,3 +63,6 @@ class Database:
 
     def create_tables(self):
         orm.Base.metadata.create_all(self.__engine)
+
+    def dispose(self):
+        self.__engine.dispose()
