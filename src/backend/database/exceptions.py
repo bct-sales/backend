@@ -8,3 +8,14 @@ class EmailAddressAlreadyInUseException(DatabaseException):
 
 class InvalidPasswordException(DatabaseException):
     pass
+
+
+class AuthenticationException(DatabaseException):
+    pass
+
+
+class UnknownUserException(AuthenticationException):
+    pass
+
+class WrongPasswordException(AuthenticationException):
+    pass

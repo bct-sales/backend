@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.restapi import access
+from backend.restapi import authentication
 from backend.restapi import items
 from backend.restapi import users
 
@@ -21,6 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(access.router)
+app.include_router(authentication.router)
 app.include_router(items.router)
 app.include_router(users.router)

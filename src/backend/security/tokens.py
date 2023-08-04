@@ -30,7 +30,7 @@ def _compute_expiration_date(duration: Optional[timedelta]) -> datetime:
     return now + duration
 
 
-def create_access_token(*, token_data: TokenData, duration: Optional[timedelta]) -> str:
+def create_access_token(*, token_data: TokenData, duration: Optional[timedelta] = None) -> str:
     settings = load_settings()
     expiration_date = _compute_expiration_date(duration)
     secret_key = settings.jwt_secret_key
