@@ -1,11 +1,15 @@
+from contextlib import contextmanager
+from typing import Callable, Optional, Type
+
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import Pool
+
 import backend.database.models as models
 import backend.database.orm as orm
-from sqlalchemy import create_engine, Engine
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.pool import Pool
-from typing import Callable, Optional, Type
-from contextlib import contextmanager
 import backend.security as security
+from backend.database.exceptions import *
 
 
 class DatabaseSession:
@@ -18,12 +22,18 @@ class DatabaseSession:
         self.__session.close()
 
     def create_user(self, user: models.UserCreate) -> None:
+        if not security.is_valid_password(user.password):
+            raise InvalidPasswordException()
         password_hash = security.hash_password(user.password)
         orm_user = orm.User(
             email_address=user.email_address,
             password_hash=password_hash,
         )
-        self.__session.add(orm_user)
+        try:
+            self.__session.add(orm_user)
+            self.__session.commit()
+        except IntegrityError as e:
+            raise EmailAddressAlreadyInUseException from e
 
     def find_user_with_email_address(self, *, email_address: str) -> Optional[orm.User]:
         return self.__session.query(orm.User).filter(orm.User.email_address == email_address).first()

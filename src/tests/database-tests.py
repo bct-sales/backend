@@ -3,6 +3,8 @@ from backend.database.base import Database, DatabaseSession
 from backend.database import models
 from sqlalchemy.pool import StaticPool
 
+from backend.database.exceptions import *
+
 
 @pytest.fixture
 def database():
@@ -29,15 +31,20 @@ def valid_password() -> str:
 
 
 def test_create_user(session: DatabaseSession, valid_password: str):
-    # Arrange
     email_address = 'test@gmail.com'
     user = models.UserCreate(email_address=email_address, password=valid_password)
     session.create_user(user)
-    session.commit()
 
-    # Act
     actual = session.login(email_address=email_address, password=valid_password)
 
-    # Assert
     assert actual is not None
     assert actual.email_address == email_address
+
+
+def test_create_user_with_existing_email_address(session: DatabaseSession, valid_password: str):
+    email_address = 'test@gmail.com'
+    user = models.UserCreate(email_address=email_address, password=valid_password)
+    session.create_user(user)
+
+    with pytest.raises(EmailAddressAlreadyInUseException):
+        session.create_user(user)

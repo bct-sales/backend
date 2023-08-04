@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
 
 
 
@@ -35,6 +35,10 @@ class User(Base):
 
     def __repr__(self) -> str:
         return f'User(user_id={self.user_id!r}, email_address={self.email_address!r}, password_hash={self.password_hash!r})'
+
+    __table_args__ = (
+        UniqueConstraint('email_address'),
+    )
 
 
 class Item(Base):
