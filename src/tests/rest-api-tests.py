@@ -47,3 +47,14 @@ def test_register_with_invalid_email_address(client: TestClient, session: Databa
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(session.list_users()) == 0
+
+
+def test_register_with_invalid_password(client: TestClient, session: DatabaseSession, valid_email_address: str, invalid_password: str):
+    payload = {
+        'email_address': valid_email_address,
+        'password': invalid_password
+    }
+    response = client.post('/register', json=payload)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert len(session.list_users()) == 0
