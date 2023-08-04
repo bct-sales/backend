@@ -6,6 +6,7 @@ from backend.database import models
 import backend.security as security
 from backend.restapi.shared import *
 from backend.database.exceptions import *
+from backend.security.scopes import Scopes
 
 
 
@@ -27,11 +28,12 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], data
     password = form_data.password
 
     try:
-        database.login(
+        user = database.login(
             email_address=email_address,
             password=password
         )
-        token_data = security.TokenData(email_address, scopes=set()) # TODO Scopes
+        role = Role.from_name(user.role)
+        token_data = security.TokenData(email_address=email_address, scopes=role.scopes)
         token = security.create_access_token(token_data=token_data)
 
         return {
