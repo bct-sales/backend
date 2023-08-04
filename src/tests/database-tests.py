@@ -4,6 +4,7 @@ from backend.database import models
 from sqlalchemy.pool import StaticPool
 
 from backend.database.exceptions import *
+from backend.security import roles
 
 
 @pytest.fixture
@@ -32,7 +33,7 @@ def valid_password() -> str:
 
 def test_create_user(session: DatabaseSession, valid_password: str):
     email_address = 'test@gmail.com'
-    user = models.UserCreate(email_address=email_address, password=valid_password)
+    user = models.UserCreate(email_address=email_address, password=valid_password, role=roles.SELLER.name)
     session.create_user(user)
 
     actual = session.login(email_address=email_address, password=valid_password)
@@ -43,7 +44,7 @@ def test_create_user(session: DatabaseSession, valid_password: str):
 
 def test_create_user_with_existing_email_address(session: DatabaseSession, valid_password: str):
     email_address = 'test@gmail.com'
-    user = models.UserCreate(email_address=email_address, password=valid_password)
+    user = models.UserCreate(email_address=email_address, password=valid_password, role=roles.SELLER.name)
     session.create_user(user)
 
     with pytest.raises(EmailAddressAlreadyInUseException):

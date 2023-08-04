@@ -1,9 +1,12 @@
 import pydantic
 import datetime
 
+from backend.security.roles import Role
+
 
 class UserBase(pydantic.BaseModel):
     email_address: str
+    role: str
 
 
 class UserCreate(UserBase):

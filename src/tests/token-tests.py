@@ -9,12 +9,10 @@ from datetime import timedelta
     'foo@domain.org',
 ])
 @pytest.mark.parametrize('scopes', [
-    set(),
-    {
-        scopes.LIST_ACCOUNTS
-    },
+    scopes.Scopes(),
+    scopes.Scopes(scopes.LIST_ACCOUNTS),
 ])
-def test_access_token(email_address: str, scopes: set[scopes.Scope]):
+def test_access_token(email_address: str, scopes: scopes.Scopes):
     token_data = TokenData(email_address=email_address, scopes=scopes)
     duration = timedelta(hours=1)
     access_token = create_access_token(token_data=token_data, duration=duration)

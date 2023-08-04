@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from backend.security.scopes import Scope
+from backend.security.scopes import Scope, Scopes
 from backend.settings import load_settings
 from jose import jwt
 
@@ -8,9 +8,9 @@ from jose import jwt
 class TokenData:
     __email_address: str
 
-    __scopes: set[Scope]
+    __scopes: Scopes
 
-    def __init__(self, email_address: str, scopes: set[Scope]):
+    def __init__(self, email_address: str, scopes: Scopes):
         self.__email_address = email_address
         self.__scopes = scopes
 
@@ -19,7 +19,7 @@ class TokenData:
         return self.__email_address
 
     @property
-    def scopes(self) -> set[Scope]:
+    def scopes(self) -> Scopes:
         return self.__scopes
 
 
@@ -50,7 +50,7 @@ def decode_access_token(token: str) -> Optional[TokenData]:
     try:
         data = jwt.decode(token=token, key=secret_key, algorithms=[algorithm])
         email_address = data['sub']
-        scopes = {Scope.from_name(name) for name in data['scopes']}
+        scopes = Scopes(*(Scope.from_name(name) for name in data['scopes']))
         return TokenData(email_address=email_address, scopes=scopes)
     except:
         return None

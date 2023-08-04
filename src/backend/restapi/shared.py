@@ -3,8 +3,10 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import OAuth2PasswordBearer
 
+from backend.database import orm
 from backend.database.base import Database, DatabaseSession
 from backend.security import scopes, tokens
+from backend.security.roles import Role
 
 
 def database_dependency():
@@ -27,25 +29,37 @@ oauth2_scheme = OAuth2PasswordBearer(
     scopes = {scope.name: scope.description for scope in scopes.all_scopes()}
 )
 
+def get_current_user(required_scopes: scopes.Scopes, access_token: str) -> orm.User:
+    access_token_data = tokens.decode_access_token(access_token)
 
-async def get_current_account(required_scopes: scopes.Scopes, token: Annotated[str, Depends(oauth2_scheme)]):
-    def create_http_exception(message):
-        return HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=message,
-            headers={"WWW-Authenticate": "Bearer"},
+    if not access_token_data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Invalid access token',
+            headers={"WWW-Authenticate": "Bearer"}
         )
 
-    token_data = tokens.decode_access_token(token)
-    if not token_data:
-        raise create_http_exception('Could not validate credentials')
+    available_scopes = access_token_data.scopes
+    if not available_scopes.has_permissions_for(required_scopes):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No permission',
+            headers={"WWW-Authenticate": "Bearer"}
+        )
 
-    if not has_required_scopes(token_data.scopes):
-        raise create_http_exception('Not enough permissions')
+    with _database.session as session:
+        user = session.find_user_with_email_address(email_address=access_token_data.email_address)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='Unknown user',
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+        return user
 
-    try:
-        with _database.session as session:
-            return session.find_user_with_email_address(email_address=token_data.email_address)
-    except:
-        # Should never happen
-        raise create_http_exception('Unknown user')
+
+def RequireScopes(required_scopes: scopes.Scopes):
+    def dependency(token: Annotated[str, Depends(oauth2_scheme)]):
+        return get_current_user(required_scopes, token)
+
+    return Depends(dependency)
