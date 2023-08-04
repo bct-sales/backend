@@ -24,6 +24,21 @@ class Scope:
         return hash(self.__name)
 
 
+class Scopes:
+    __scopes: frozenset[Scope]
+
+    def __init__(self, *scopes):
+        self.__scopes = frozenset(scopes)
+
+    @property
+    def scopes(self) -> frozenset[Scope]:
+        return self.__scopes
+
+
+    def has_permissions_for(self, scopes: Scopes) -> bool:
+        return self.scopes >= scopes.scopes
+
+
 class ScopeException(Exception):
     pass
 
