@@ -23,16 +23,20 @@ def session(database: Database):
         session.close()
 
 
-def test_create_user(session: DatabaseSession):
+@pytest.fixture
+def valid_password() -> str:
+    return 'ABCDabcd1234!@'
+
+
+def test_create_user(session: DatabaseSession, valid_password: str):
     # Arrange
     email_address = 'test@gmail.com'
-    password = 'xyz'
-    user = models.UserCreate(email_address=email_address, password=password)
+    user = models.UserCreate(email_address=email_address, password=valid_password)
     session.create_user(user)
     session.commit()
 
     # Act
-    actual = session.login(email_address=email_address, password=password)
+    actual = session.login(email_address=email_address, password=valid_password)
 
     # Assert
     assert actual is not None
