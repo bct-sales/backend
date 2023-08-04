@@ -7,6 +7,7 @@ from backend.database import orm
 from backend.database.base import Database, DatabaseSession
 from backend.security import scopes, tokens
 from backend.security.roles import Role
+from backend.settings import load_settings
 
 
 def database_dependency():
@@ -15,7 +16,8 @@ def database_dependency():
 
 
 def _create_database():
-    return Database('sqlite:///')
+    settings = load_settings()
+    return Database(settings.database_url)
 
 
 DatabaseDependency = Annotated[DatabaseSession, Depends(database_dependency)]

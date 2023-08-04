@@ -33,7 +33,7 @@ async def register_seller(seller_creation_data: _RegisterSellerData, database: D
         return {"result": "ok"}
     except Exception as e:
         logging.error(e)
-        raise HTTPException(status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.post("/login", tags=['authentication'])

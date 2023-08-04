@@ -24,10 +24,10 @@ class DatabaseSession:
         self.__session.close()
 
     def create_user(self, user: models.UserCreate) -> None:
-        if not security.is_valid_password(user.password):
-            raise InvalidPasswordException()
         if not security.is_valid_email_address(user.email_address):
             raise InvalidEmailAddressException()
+        if not security.is_valid_password(user.password):
+            raise InvalidPasswordException()
         password_hash = security.hash_password(user.password)
         orm_user = orm.User(
             email_address=user.email_address,
@@ -88,9 +88,11 @@ class Database:
             result.close()
 
     def drop_tables(self):
+        logging.critical('Dropping all tables!')
         orm.Base.metadata.drop_all(self.__engine)
 
     def create_tables(self):
+        logging.critical('Creating new tables!')
         orm.Base.metadata.create_all(self.__engine)
 
     def dispose(self):
