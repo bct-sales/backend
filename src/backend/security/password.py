@@ -13,3 +13,7 @@ def hash_password(password: str) -> str:
 
 def verify_password(*, hash: str, plaintext: str):
       return _pwd_cxt.verify(plaintext, hash)
+
+
+def is_valid_password(password: str) -> bool:
+     return len(password) >= 8
