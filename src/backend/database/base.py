@@ -10,7 +10,9 @@ import backend.database.models as models
 import backend.database.orm as orm
 import backend.security as security
 from backend.database.exceptions import *
+from backend.security import roles
 
+import logging
 
 class DatabaseSession:
     __session: Session
@@ -28,12 +30,13 @@ class DatabaseSession:
         orm_user = orm.User(
             email_address=user.email_address,
             password_hash=password_hash,
-            role=user.role,
+            role=roles.SELLER.name,
         )
         try:
             self.__session.add(orm_user)
             self.__session.commit()
         except IntegrityError as e:
+            logging.error(e)
             raise EmailAddressAlreadyInUseException from e
 
     def find_user_with_email_address(self, *, email_address: str) -> Optional[orm.User]:

@@ -6,19 +6,33 @@ from backend.database import models
 import backend.security as security
 from backend.restapi.shared import *
 from backend.database.exceptions import *
-from backend.security.scopes import Scopes
+from backend.security import roles
 
+import pydantic
+import logging
 
 
 router = APIRouter()
 
 
+
+class _RegisterSellerData(pydantic.BaseModel):
+    email_address: str
+    password: str
+
+
 @router.post("/register", tags=['authentication'])
-async def register_account(account_registration: models.UserCreate, database: DatabaseDependency):
+async def register_user(seller_creation_data: _RegisterSellerData, database: DatabaseDependency):
+    user_creation_data = models.UserCreate(
+        email_address=seller_creation_data.email_address,
+        role=roles.SELLER.name,
+        password=seller_creation_data.password
+    )
     try:
-        database.create_user(account_registration)
+        database.create_user(user_creation_data)
         return {"result": "ok"}
-    except:
+    except Exception as e:
+        logging.error(e)
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Email address already in use")
 
 
