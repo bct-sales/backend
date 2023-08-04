@@ -24,6 +24,6 @@ def client():
         yield client
 
 
-# def test_get_items(client: TestClient):
-#     response = client.get('/items')
-#     assert response.status_code == status.HTTP_200_OK
+def test_get_items(client: TestClient):
+    response = client.get('/items')
+    assert response.status_code == status.HTTP_200_OK

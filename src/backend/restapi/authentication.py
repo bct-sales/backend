@@ -2,18 +2,18 @@ from fastapi import APIRouter
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from backend.database.base import DatabaseSession
 from backend.database import models
 import backend.security as security
 from backend.restapi.shared import *
 from backend.database.exceptions import *
 
 
+
 router = APIRouter()
 
 
 @router.post("/register", tags=['authentication'])
-async def register_account(account_registration: models.UserCreate, database: Annotated[DatabaseSession, Depends(database_dependency)]):
+async def register_account(account_registration: models.UserCreate, database: DatabaseDependency):
     try:
         database.create_user(account_registration)
         return {"result": "ok"}
@@ -22,7 +22,7 @@ async def register_account(account_registration: models.UserCreate, database: An
 
 
 @router.post("/login", tags=['authentication'])
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], database: Annotated[DatabaseSession, Depends(database_dependency)]):
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], database: DatabaseDependency):
     email_address = form_data.username
     password = form_data.password
 
