@@ -39,10 +39,13 @@ class DatabaseSession:
     def find_user_with_email_address(self, *, email_address: str) -> Optional[orm.User]:
         return self.__session.query(orm.User).filter(orm.User.email_address == email_address).first()
 
-    def login(self, *, email_address: str, password: str) -> Optional[orm.User]:
-        if user := self.find_user_with_email_address(email_address=email_address):
-            if security.verify_password(hash=user.password_hash, plaintext=password):
-                return user
+    def login(self, *, email_address: str, password: str) -> orm.User:
+        user = self.find_user_with_email_address(email_address=email_address)
+        if user is None:
+            raise UnknownUserException()
+        if not security.verify_password(hash=user.password_hash, plaintext=password):
+            raise WrongPasswordException()
+        return user
 
     def list_users(self) -> list[orm.User]:
         return self.__session.query(orm.User).all()
