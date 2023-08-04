@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import Pool
 from typing import Callable, Optional, Type
+from contextlib import contextmanager
 import backend.security as security
 
 
@@ -57,6 +58,15 @@ class Database:
 
     def create_session(self) -> DatabaseSession:
         return DatabaseSession(self.__session_maker())
+
+    @property
+    @contextmanager
+    def session(self):
+        result = self.create_session()
+        try:
+            yield result
+        finally:
+            result.close()
 
     def drop_tables(self):
         orm.Base.metadata.drop_all(self.__engine)
