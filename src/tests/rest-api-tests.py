@@ -2,9 +2,11 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import status
 from backend.app import app
+from backend.database import models
 from backend.database.base import Database, DatabaseSession
 from backend.restapi.shared import database_dependency
 from sqlalchemy.pool import StaticPool
+from backend.security import roles
 
 
 test_database = Database('sqlite:///', poolclass=StaticPool)
@@ -60,3 +62,23 @@ def test_register(client: TestClient, session: DatabaseSession, valid_email_addr
     response = client.post('/register', json=payload)
 
     assert response.status_code == status.HTTP_200_OK
+    assert len(session.list_users()) == 1
+
+
+def test_register_with_existing_email_address(client: TestClient, session: DatabaseSession, valid_email_address: str, valid_password: str):
+    user_creation_data = models.UserCreate(
+        email_address=valid_email_address,
+        password=valid_password,
+        role=roles.SELLER.name,
+    )
+    session.create_user(user_creation_data)
+    assert len(session.list_users()) == 1
+
+    payload = {
+        'email_address': valid_email_address,
+        'password': valid_password
+    }
+    response = client.post('/register', json=payload)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert len(session.list_users()) == 1
