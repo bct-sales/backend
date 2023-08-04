@@ -11,11 +11,8 @@ test_database = Database('sqlite:///', poolclass=StaticPool)
 
 
 def database_dependency_override():
-    session = test_database.create_session()
-    try:
+    with test_database.session as session:
         yield session
-    finally:
-        session.close()
 
 
 app.dependency_overrides[database_dependency] = database_dependency_override
