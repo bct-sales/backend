@@ -37,4 +37,3 @@ def test_create_user(session: DatabaseSession):
     # Assert
     assert actual is not None
     assert actual.email_address == email_address
-
