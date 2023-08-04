@@ -3,14 +3,14 @@ from fastapi.testclient import TestClient
 from fastapi import status
 from backend.app import app
 from backend.database.base import Database
-from backend.restapi.shared import get_database
+from backend.restapi.shared import database_dependency
 from sqlalchemy.pool import StaticPool
 
 
 test_database = Database('sqlite:///', poolclass=StaticPool)
 
 
-def get_database_override():
+def database_dependency_override():
     session = test_database.create_session()
     try:
         yield session
@@ -18,7 +18,7 @@ def get_database_override():
         session.close()
 
 
-app.dependency_overrides[get_database] = get_database_override
+app.dependency_overrides[database_dependency] = database_dependency_override
 
 
 @pytest.fixture

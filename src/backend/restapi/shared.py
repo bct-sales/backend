@@ -6,7 +6,7 @@ from backend.security import scopes
 from backend.security import tokens
 
 
-def get_database():
+def database_dependency():
     with _database.session as session:
         yield session
 

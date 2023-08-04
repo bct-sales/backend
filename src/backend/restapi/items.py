@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 import pydantic
 
 from backend.database.base import DatabaseSession
-from backend.restapi.shared import get_database
+from backend.restapi.shared import database_dependency
 
 
 router = APIRouter(
@@ -17,5 +17,5 @@ class _Item(pydantic.BaseModel):
 
 
 @router.get("/items", response_model=list[_Item])
-async def list_users_items(database: Annotated[DatabaseSession, Depends(get_database)]):
+async def list_users_items(database: Annotated[DatabaseSession, Depends(database_dependency)]):
     return database.list_items()
