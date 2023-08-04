@@ -17,19 +17,15 @@ def test_create_user(session: DatabaseSession, valid_password: str):
     assert actual.email_address == email_address
 
 
-def test_create_user_with_existing_email_address(session: DatabaseSession, valid_password: str):
-    email_address = 'test@gmail.com'
-    user = models.UserCreate(email_address=email_address, password=valid_password, role=roles.SELLER.name)
+def test_create_user_with_existing_email_address(session: DatabaseSession, valid_email_address: str, valid_password: str):
+    user = models.UserCreate(email_address=valid_email_address, password=valid_password, role=roles.SELLER.name)
     session.create_user(user)
-
     with pytest.raises(EmailAddressAlreadyInUseException):
         session.create_user(user)
 
 
 def test_create_user_with_invalid_email_address(session: DatabaseSession, invalid_email_address: str, valid_password: str):
-    email_address = 'test@gmail.com'
-    user = models.UserCreate(email_address=email_address, password=valid_password, role=roles.SELLER.name)
-    session.create_user(user)
+    user = models.UserCreate(email_address=invalid_email_address, password=valid_password, role=roles.SELLER.name)
 
-    with pytest.raises(EmailAddressAlreadyInUseException):
+    with pytest.raises(InvalidEmailAddressException):
         session.create_user(user)

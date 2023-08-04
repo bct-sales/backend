@@ -22,7 +22,7 @@ class _RegisterSellerData(pydantic.BaseModel):
 
 
 @router.post("/register", tags=['authentication'])
-async def register_user(seller_creation_data: _RegisterSellerData, database: DatabaseDependency):
+async def register_seller(seller_creation_data: _RegisterSellerData, database: DatabaseDependency):
     user_creation_data = models.UserCreate(
         email_address=seller_creation_data.email_address,
         role=roles.SELLER.name,
@@ -33,7 +33,7 @@ async def register_user(seller_creation_data: _RegisterSellerData, database: Dat
         return {"result": "ok"}
     except Exception as e:
         logging.error(e)
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Email address already in use")
+        raise HTTPException(status.HTTP_400_BAD_REQUEST)
 
 
 @router.post("/login", tags=['authentication'])

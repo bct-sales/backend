@@ -6,6 +6,10 @@ class EmailAddressAlreadyInUseException(DatabaseException):
     pass
 
 
+class InvalidEmailAddressException(DatabaseException):
+    pass
+
+
 class InvalidPasswordException(DatabaseException):
     pass
 

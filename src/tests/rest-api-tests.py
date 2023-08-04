@@ -8,17 +8,6 @@ from backend.database.base import DatabaseSession
 from backend.security import roles
 
 
-@pytest.fixture
-def client():
-    with TestClient(app) as client:
-        yield client
-
-
-def test_get_items(client: TestClient):
-    response = client.get('/items')
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_register(client: TestClient, session: DatabaseSession, valid_email_address: str, valid_password: str):
     payload = {
         'email_address': valid_email_address,

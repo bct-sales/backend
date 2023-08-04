@@ -26,6 +26,8 @@ class DatabaseSession:
     def create_user(self, user: models.UserCreate) -> None:
         if not security.is_valid_password(user.password):
             raise InvalidPasswordException()
+        if not security.is_valid_email_address(user.email_address):
+            raise InvalidEmailAddressException()
         password_hash = security.hash_password(user.password)
         orm_user = orm.User(
             email_address=user.email_address,

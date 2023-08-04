@@ -1,11 +1,15 @@
 from typing import Iterator
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
 
 from backend.app import app
 from backend.database.base import Database, DatabaseSession
 from backend.restapi.shared import database_dependency
+
+import logging
+
 
 test_database = Database('sqlite:///', poolclass=StaticPool)
 
@@ -34,13 +38,23 @@ def valid_password() -> str:
 
 
 @pytest.fixture
+def invalid_password() -> str:
+    return 'abcd'
+
+
+@pytest.fixture
+def client():
+    with TestClient(app) as client:
+        yield client
+
+
+@pytest.fixture
 def database() -> Iterator[Database]:
-    database = Database('sqlite:///', poolclass=StaticPool)
-    database.create_tables()
+    test_database.create_tables()
     try:
-        yield database
+        yield test_database
     finally:
-        database.dispose()
+        test_database.dispose()
 
 
 @pytest.fixture
