@@ -62,6 +62,25 @@ class DatabaseSession:
     def list_users(self) -> list[orm.User]:
         return self.__session.query(orm.User).all()
 
+    def add_item(self, item: models.ItemCreate):
+        orm_item = orm.Item(
+            description=item.description,
+            price_in_cents=item.price_in_cents,
+            owner_id=item.owner_id,
+            recipient_id=item.recipient_id,
+            sale_event_id=item.sale_event_id,
+        )
+        self.__session.add(orm_item)
+        self.__session.commit()
+
+    def create_sales_event(self, sales_event: models.SalesEventCreate):
+        orm_sales_event = orm.SalesEvent(
+            date=sales_event.date,
+            description=sales_event.description,
+        )
+        self.__session.add(orm_sales_event)
+        self.__session.commit()
+
 
 class Database:
     __engine: Engine
