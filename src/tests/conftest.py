@@ -8,6 +8,8 @@ from typing import Iterator
 import pydantic
 import datetime
 import pytest
+import logging
+
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
@@ -18,11 +20,13 @@ from backend.db import models
 from backend.restapi.shared import database_dependency
 from backend.security import roles
 
-test_database = Database('sqlite:///', poolclass=StaticPool)
+
+test_database = Database(name='Test Database', url='sqlite:///', poolclass=StaticPool)
 
 
 def database_dependency_override():
     with test_database.session as session:
+        logging.info(f'Database dependency yielding {test_database}')
         yield session
 
 
@@ -57,15 +61,18 @@ def client():
 
 @pytest.fixture
 def database() -> Iterator[Database]:
+    logging.info(f"Creating tables in {str(test_database)}")
     test_database.create_tables()
     try:
         yield test_database
     finally:
+        logging.info(f"Dropping tables in {str(test_database)}")
         test_database.dispose()
 
 
 @pytest.fixture
 def session(database: Database) -> Iterator[DatabaseSession]:
+    logging.info(f'Creating session for {database}')
     session = database.create_session()
     try:
         yield session
@@ -96,7 +103,7 @@ def admin(session: DatabaseSession) -> models.UserCreate:
 
 
 @pytest.fixture
-def logged_in_seller(session: DatabaseSession, client: TestClient, seller: models.UserCreate) -> models.UserCreate:
+def seller_access_token(session: DatabaseSession, client: TestClient, seller: models.UserCreate) -> models.UserCreate:
     payload = {
         'grant_type': 'password',
         'username': seller.email_address,
@@ -109,11 +116,12 @@ def logged_in_seller(session: DatabaseSession, client: TestClient, seller: model
     response = client.post('/login', data=payload, headers=headers)
     assert response.status_code == status.HTTP_200_OK
 
-    return seller
+    access_token = response.json()['access_token']
+    return access_token
 
 
 @pytest.fixture
-def logged_in_admin(session: DatabaseSession, client: TestClient, admin: models.UserCreate) -> models.UserCreate:
+def admin_access_token(session: DatabaseSession, client: TestClient, admin: models.UserCreate) -> str:
     payload = {
         'grant_type': 'password',
         'username': admin.email_address,
@@ -126,7 +134,8 @@ def logged_in_admin(session: DatabaseSession, client: TestClient, admin: models.
     response = client.post('/login', data=payload, headers=headers)
     assert response.status_code == status.HTTP_200_OK
 
-    return admin
+    access_token = response.json()['access_token']
+    return access_token
 
 
 @pytest.fixture

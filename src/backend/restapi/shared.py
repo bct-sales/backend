@@ -35,7 +35,9 @@ def _create_database():
         sys.exit(-2)
 
     settings = load_settings()
-    return Database(settings.database_url)
+    url = settings.database_url
+    logging.info(f'Creating database with URL {url}')
+    return Database(name='Production Database', url=url)
 
 
 DatabaseDependency = Annotated[DatabaseSession, Depends(database_dependency)]
@@ -49,10 +51,12 @@ oauth2_scheme = OAuth2PasswordBearer(
     scopes = {scope.name: scope.description for scope in scopes.all_scopes()}
 )
 
-def get_current_user(required_scopes: scopes.Scopes, access_token: str) -> orm.User:
+
+def get_current_user(required_scopes: scopes.Scopes, access_token: str, session: DatabaseSession) -> orm.User:
     access_token_data = tokens.decode_access_token(access_token)
 
     if not access_token_data:
+        logging.error('User not logged in')
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Invalid access token',
@@ -61,25 +65,27 @@ def get_current_user(required_scopes: scopes.Scopes, access_token: str) -> orm.U
 
     available_scopes = access_token_data.scopes
     if not available_scopes.has_permissions_for(required_scopes):
+        logging.error(f'User has not required permissions {required_scopes}, only has {available_scopes}')
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='No permission',
             headers={"WWW-Authenticate": "Bearer"}
         )
 
-    with _database.session as session:
-        user = session.find_user_with_email_address(email_address=access_token_data.email_address)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Unknown user',
-                headers={"WWW-Authenticate": "Bearer"}
-            )
-        return user
+    user = session.find_user_with_id(user_id=access_token_data.user_id)
+    if not user:
+        logging.error(f'Could not find user with id {access_token_data.user_id}')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Unknown user',
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+
+    return user
 
 
 def RequireScopes(required_scopes: scopes.Scopes) -> orm.User:
-    def dependency(token: Annotated[str, Depends(oauth2_scheme)]):
-        return get_current_user(required_scopes, token)
+    def dependency(session: DatabaseDependency, token: Annotated[str, Depends(oauth2_scheme)]):
+        return get_current_user(session=session, required_scopes=required_scopes, access_token=token)
 
     return Depends(dependency)

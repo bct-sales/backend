@@ -15,6 +15,6 @@ if os.path.isfile(database_path):
     logging.error('Database already exists')
     sys.exit(-2)
 
-database = Database(url=settings.database_url)
+database = Database(name="Production Database", url=settings.database_url)
 
 database.create_tables()

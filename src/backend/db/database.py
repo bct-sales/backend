@@ -1,3 +1,4 @@
+from __future__ import annotations
 from contextlib import contextmanager
 from typing import Callable, Optional, Type
 
@@ -15,11 +16,55 @@ from backend.security import roles
 import logging
 
 
+class Database:
+    __name: str
+
+    __engine: Engine
+
+    __session_maker: Callable[[], Session]
+
+    def __init__(self, name: str, url: str, poolclass: Optional[Type[Pool]]=None):
+        self.__name = name
+        connect_args = {'check_same_thread': False}
+        self.__engine = create_engine(url, connect_args=connect_args, poolclass=poolclass)
+        self.__session_maker = sessionmaker(autocommit=False, autoflush=False, bind=self.__engine)
+
+    def create_session(self) -> DatabaseSession:
+        return DatabaseSession(self, self.__session_maker())
+
+    @property
+    @contextmanager
+    def session(self):
+        result = self.create_session()
+        try:
+            yield result
+        finally:
+            result.close()
+
+    def drop_tables(self):
+        orm.Base.metadata.drop_all(self.__engine)
+
+    def create_tables(self):
+        orm.Base.metadata.create_all(self.__engine)
+
+    def dispose(self):
+        self.__engine.dispose()
+
+    def __str__(self):
+        return f'{self.__name}@{id(self):016x}'
+
+
 class DatabaseSession:
     __session: Session
 
-    def __init__(self, session: Session):
+    __parent_database: Database
+
+    __logger: logging.Logger
+
+    def __init__(self, parent: Database, session: Session):
+        self.__logger = logging.getLogger('database')
         self.__session = session
+        self.__parent_database = parent
 
     def close(self):
         self.__session.close()
@@ -46,12 +91,19 @@ class DatabaseSession:
             raise
 
     def user_with_email_address_exists(self, *, email_address: str) -> bool:
+        self.__logger.debug(f'Checking if user with email address {email_address} exists')
         return self.find_user_with_email_address(email_address=email_address) is not None
 
     def find_user_with_email_address(self, *, email_address: str) -> Optional[orm.User]:
+        self.__logger.debug(f'Looking for user with email address {email_address}')
         return self.__session.query(orm.User).filter(orm.User.email_address == email_address).first()
 
+    def find_user_with_id(self, *, user_id: int) -> Optional[orm.User]:
+        self.__logger.debug(f'Looking for user with id {user_id} in {self.__parent_database}')
+        return self.__session.query(orm.User).filter(orm.User.user_id == user_id).first()
+
     def login(self, *, email_address: str, password: str) -> orm.User:
+        self.__logger.debug(f'Checking password for user with email address {email_address}')
         user = self.find_user_with_email_address(email_address=email_address)
         if user is None:
             raise UnknownUserException
@@ -74,6 +126,7 @@ class DatabaseSession:
         self.__session.commit()
 
     def create_sales_event(self, sales_event: models.SalesEventCreate) -> int:
+        self.__logger.debug(f'Creating sales event with data {sales_event}')
         if sales_event.start_time > sales_event.end_time:
             raise InvalidEventTimeInterval
         orm_sales_event = orm.SalesEvent(
@@ -92,35 +145,3 @@ class DatabaseSession:
 
     def list_sales_events(self) -> list[orm.SalesEvent]:
         return self.__session.query(orm.SalesEvent).all()
-
-
-class Database:
-    __engine: Engine
-
-    __session_maker: Callable[[], Session]
-
-    def __init__(self, url, poolclass: Optional[Type[Pool]]=None):
-        connect_args = {'check_same_thread': False}
-        self.__engine = create_engine(url, connect_args=connect_args, poolclass=poolclass)
-        self.__session_maker = sessionmaker(autocommit=False, autoflush=False, bind=self.__engine)
-
-    def create_session(self) -> DatabaseSession:
-        return DatabaseSession(self.__session_maker())
-
-    @property
-    @contextmanager
-    def session(self):
-        result = self.create_session()
-        try:
-            yield result
-        finally:
-            result.close()
-
-    def drop_tables(self):
-        orm.Base.metadata.drop_all(self.__engine)
-
-    def create_tables(self):
-        orm.Base.metadata.create_all(self.__engine)
-
-    def dispose(self):
-        self.__engine.dispose()

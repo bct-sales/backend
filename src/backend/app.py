@@ -23,4 +23,4 @@ app.add_middleware(
 
 app.include_router(authentication.router)
 app.include_router(items.router)
-app.include_router(events.router, prefix='/sales')
+app.include_router(events.router, prefix='/events')
