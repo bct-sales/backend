@@ -15,7 +15,6 @@ import logging
 router = APIRouter()
 
 
-
 class _RegisterSellerData(pydantic.BaseModel):
     email_address: str
     password: str

@@ -78,7 +78,7 @@ def get_current_user(required_scopes: scopes.Scopes, access_token: str) -> orm.U
         return user
 
 
-def RequireScopes(required_scopes: scopes.Scopes):
+def RequireScopes(required_scopes: scopes.Scopes) -> orm.User:
     def dependency(token: Annotated[str, Depends(oauth2_scheme)]):
         return get_current_user(required_scopes, token)
 

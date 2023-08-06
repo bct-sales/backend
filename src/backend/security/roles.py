@@ -39,6 +39,14 @@ def define_role(name: str, scopes: scopes.Scopes) -> Role:
     return role
 
 
-SELLER = define_role('seller', scopes.Scopes(scopes.ADD_ITEM, scopes.LIST_OWN_ITEMS))
+SELLER = define_role('seller', scopes.Scopes(
+    scopes.ADD_ITEM,
+    scopes.LIST_OWN_ITEMS,
+    scopes.LIST_SALES_EVENTS,
+))
 
-ADMIN = define_role('admin', scopes.Scopes(scopes.LIST_ACCOUNTS, scopes.LIST_ALL_ITEMS))
+ADMIN = define_role('admin', scopes.Scopes(
+    scopes.LIST_ACCOUNTS,
+    scopes.LIST_ALL_ITEMS,
+    scopes.LIST_SALES_EVENTS,
+))

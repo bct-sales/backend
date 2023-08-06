@@ -66,6 +66,7 @@ def define_scope(name: str, description: str):
 LIST_ACCOUNTS = define_scope('accounts:list', 'List all accounts')
 LIST_ALL_ITEMS = define_scope('items:list-all', 'List all items')
 LIST_OWN_ITEMS = define_scope('items:list-own', 'List own items')
+LIST_SALES_EVENTS = define_scope('events:list', 'List all sales events')
 ADD_ITEM = define_scope('items:add', 'Add item')
 
 def all_scopes() -> set[Scope]:

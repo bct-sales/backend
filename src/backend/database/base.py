@@ -81,6 +81,9 @@ class DatabaseSession:
         self.__session.add(orm_sales_event)
         self.__session.commit()
 
+    def list_sales_events(self) -> list[orm.SalesEvent]:
+        return self.__session.query(orm.SalesEvent).all()
+
 
 class Database:
     __engine: Engine
