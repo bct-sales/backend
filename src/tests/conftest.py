@@ -1,8 +1,5 @@
 import os
 
-from backend.db.models import UserCreate
-from backend.security import roles
-
 # Prevents original database_dependency from complaining
 os.environ['BCT_DATABASE_PATH'] = ':memory:'
 
@@ -10,12 +7,15 @@ from typing import Iterator
 
 import pydantic
 import pytest
+from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
 
 from backend.app import app
 from backend.db.database import Database, DatabaseSession
+from backend.db.models import UserCreate
 from backend.restapi.shared import database_dependency
+from backend.security import roles
 
 test_database = Database('sqlite:///', poolclass=StaticPool)
 
@@ -98,3 +98,37 @@ def admin(session: DatabaseSession) -> User:
     user_creation = UserCreate(email_address=email_address, role=role.name, password=password)
     session.create_user(user_creation)
     return seller
+
+
+@pytest.fixture
+def logged_in_seller(session: DatabaseSession, client: TestClient, seller: User) -> User:
+    payload = {
+        'grant_type': 'password',
+        'username': seller.email_address,
+        'password': seller.password
+    }
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    response = client.post('/login', data=payload, headers=headers)
+    assert response.status_code == status.HTTP_200_OK
+
+    return seller
+
+
+@pytest.fixture
+def logged_in_admin(session: DatabaseSession, client: TestClient, admin: User) -> User:
+    payload = {
+        'grant_type': 'password',
+        'username': admin.email_address,
+        'password': admin.password
+    }
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    response = client.post('/login', data=payload, headers=headers)
+    assert response.status_code == status.HTTP_200_OK
+
+    return admin
