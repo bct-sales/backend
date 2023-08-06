@@ -7,7 +7,7 @@ from backend.database.base import DatabaseSession
 from backend.security import roles
 
 
-def test_register(client: TestClient, session: DatabaseSession, valid_email_address: str, valid_password: str):
+def test_register_seller(client: TestClient, session: DatabaseSession, valid_email_address: str, valid_password: str):
     payload = {
         'email_address': valid_email_address,
         'password': valid_password
