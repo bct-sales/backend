@@ -95,11 +95,9 @@ class Database:
             result.close()
 
     def drop_tables(self):
-        logging.critical('Dropping all tables!')
         orm.Base.metadata.drop_all(self.__engine)
 
     def create_tables(self):
-        logging.critical('Creating new tables!')
         orm.Base.metadata.create_all(self.__engine)
 
     def dispose(self):
