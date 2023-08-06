@@ -57,13 +57,29 @@ def test_create_event_as_seller(client: TestClient,
                                 session: DatabaseSession,
                                 seller_access_token: models.UserCreate):
     payload = {
-        'date': datetime.date(2000, 1, 1),
-        'start_time': datetime.time(9, 0),
-        'end_time': datetime.time(12, 0),
+        'date': datetime.date(2000, 1, 1).isoformat(),
+        'start_time': datetime.time(9, 0).isoformat(),
+        'end_time': datetime.time(12, 0).isoformat(),
         'location': 'between here and there',
         'description': 'description',
     }
     headers = {'Authorization': f'Bearer {seller_access_token}'}
-    response = client.post('/events', data=payload, headers=headers)
+    response = client.post('/events', json=payload, headers=headers)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_create_event_as_admin(client: TestClient,
+                               session: DatabaseSession,
+                               admin_access_token: models.UserCreate):
+    payload = {
+        'date': datetime.date(2000, 1, 1).isoformat(),
+        'start_time': datetime.time(9, 0).isoformat(),
+        'end_time': datetime.time(12, 0).isoformat(),
+        'location': 'between here and there',
+        'description': 'description',
+    }
+    headers = {'Authorization': f'Bearer {admin_access_token}'}
+    response = client.post('/events', json=payload, headers=headers)
+
+    assert response.status_code == status.HTTP_200_OK

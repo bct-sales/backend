@@ -81,7 +81,7 @@ class DatabaseSession:
         orm_user = orm.User(
             email_address=user.email_address,
             password_hash=password_hash,
-            role=roles.SELLER.name,
+            role=user.role,
         )
         try:
             self.__session.add(orm_user)

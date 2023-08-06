@@ -25,6 +25,11 @@ class Scope:
     def __hash__(self) -> int:
         return hash(self.__name)
 
+    def __str__(self) -> str:
+        return self.__name
+
+    def __repr__(self) -> str:
+        return f'Scope(name={self.name!r}, description={self.description!r})'
 
 class Scopes:
     __scopes: frozenset[Scope]
@@ -47,6 +52,12 @@ class Scopes:
             return self.scopes == other.scopes
         else:
             return NotImplemented
+
+    def __str__(self):
+        return " ".join(str(scope) for scope in self.__scopes)
+
+    def __repr__(self):
+        return f"Scopes({', '.join(repr(scope) for scope in self)})"
 
 
 class ScopeException(Exception):

@@ -25,6 +25,12 @@ class Role:
     def scopes(self) -> scopes.Scopes:
         return self.__scopes
 
+    def __str__(self):
+        return self.__name
+
+    def __repr__(self):
+        return f'roles.{self.__name}'
+
 
 class RoleException(Exception):
     pass
@@ -49,4 +55,5 @@ ADMIN = define_role('admin', scopes.Scopes(
     scopes.LIST_ACCOUNTS,
     scopes.LIST_ALL_ITEMS,
     scopes.LIST_SALES_EVENTS,
+    scopes.ADD_SALES_EVENTS,
 ))

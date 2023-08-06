@@ -46,6 +46,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], data
             password=password
         )
         role = Role.from_name(user.role)
+        logging.debug(f'User {email_address} logged in, role {role}')
         token_data = security.TokenData(user_id=user.user_id, scopes=role.scopes)
         token = security.create_access_token(token_data=token_data)
 
