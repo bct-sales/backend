@@ -54,9 +54,9 @@ class DatabaseSession:
     def login(self, *, email_address: str, password: str) -> orm.User:
         user = self.find_user_with_email_address(email_address=email_address)
         if user is None:
-            raise UnknownUserException()
+            raise UnknownUserException
         if not security.verify_password(hash=user.password_hash, plaintext=password):
-            raise WrongPasswordException()
+            raise WrongPasswordException
         return user
 
     def list_users(self) -> list[orm.User]:
@@ -74,6 +74,8 @@ class DatabaseSession:
         self.__session.commit()
 
     def create_sales_event(self, sales_event: models.SalesEventCreate) -> int:
+        if sales_event.start_time > sales_event.end_time:
+            raise InvalidEventTimeInterval
         orm_sales_event = orm.SalesEvent(
             date=sales_event.date,
             start_time=sales_event.start_time,

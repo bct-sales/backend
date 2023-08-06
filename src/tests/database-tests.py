@@ -72,3 +72,15 @@ def test_create_sales_event(session: DatabaseSession, date: datetime.date, start
     assert orm_sales_event.end_time == end_time
     assert orm_sales_event.location == location
     assert orm_sales_event.description == description
+
+
+def test_create_sales_event_with_invalid_time(session: DatabaseSession):
+    sales_event = models.SalesEventCreate(
+        date=datetime.date(2000, 1, 1),
+        start_time=datetime.time(19, 0),
+        end_time=datetime.time(9, 0),
+        location='here',
+        description="it's red"
+    )
+    with pytest.raises(InvalidEventTimeInterval):
+        session.create_sales_event(sales_event)

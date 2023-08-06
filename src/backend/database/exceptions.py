@@ -28,3 +28,8 @@ class UnknownUserException(AuthenticationException):
 class WrongPasswordException(AuthenticationException):
     def __init__(self):
         super().__init__('wrong password')
+
+
+class InvalidEventTimeInterval(DatabaseException):
+    def __init__(self):
+        super().__init__('Start time and end time do not form valid interval')
