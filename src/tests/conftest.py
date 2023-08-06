@@ -13,6 +13,7 @@ from backend.app import app
 from backend.database.base import Database, DatabaseSession
 from backend.restapi.shared import database_dependency
 
+
 test_database = Database('sqlite:///', poolclass=StaticPool)
 
 
