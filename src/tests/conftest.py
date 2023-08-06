@@ -1,3 +1,8 @@
+import os
+
+# Prevents original database_dependency from complaining
+os.environ['BCT_DATABASE_PATH'] = ':memory:'
+
 from typing import Iterator
 
 import pytest
@@ -7,9 +12,6 @@ from sqlalchemy.pool import StaticPool
 from backend.app import app
 from backend.database.base import Database, DatabaseSession
 from backend.restapi.shared import database_dependency
-
-import logging
-
 
 test_database = Database('sqlite:///', poolclass=StaticPool)
 

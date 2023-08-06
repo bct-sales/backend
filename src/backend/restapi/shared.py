@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Security, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from backend.database import orm
@@ -9,13 +9,31 @@ from backend.security import scopes, tokens
 from backend.security.roles import Role
 from backend.settings import load_settings
 
+import logging
+import sys
+import os
+
 
 def database_dependency():
+    global _database
+    if not _database:
+        _database = _create_database()
+
     with _database.session as session:
         yield session
 
 
 def _create_database():
+    settings = load_settings()
+
+    if settings.database_path is None:
+        logging.error("Use BCT_DATABASE_PATH to specify which database to use")
+        sys.exit(-1)
+
+    if settings.database_path != ':memory:' and not os.path.isfile(settings.database_path):
+        logging.error("Database does not exist")
+        sys.exit(-2)
+
     settings = load_settings()
     return Database(settings.database_url)
 
