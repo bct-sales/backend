@@ -4,20 +4,8 @@ from fastapi.testclient import TestClient
 
 from backend.db.database import DatabaseSession
 from backend.db import models
+
 import datetime
-
-
-# def test_create_event(client: TestClient, session: DatabaseSession, logged_in_seller: User):
-#     payload = {
-
-#     }
-#     headers = {
-#         'Content-Type': 'application/x-www-form-urlencoded'
-#     }
-
-#     response = client.post('/login', data=payload, headers=headers)
-
-#     assert response.status_code == status.HTTP_200_OK
 
 
 def test_list_events_not_logged_in(client: TestClient,
@@ -63,3 +51,19 @@ def test_list_events_as_admin(client: TestClient,
     assert json[0]['start_time'] == sales_event.start_time.isoformat()
     assert json[0]['end_time'] == sales_event.end_time.isoformat()
     assert json[0]['location'] == sales_event.location
+
+
+def test_create_event_as_seller(client: TestClient,
+                                session: DatabaseSession,
+                                seller_access_token: models.UserCreate):
+    payload = {
+        'date': datetime.date(2000, 1, 1),
+        'start_time': datetime.time(9, 0),
+        'end_time': datetime.time(12, 0),
+        'location': 'between here and there',
+        'description': 'description',
+    }
+    headers = {'Authorization': f'Bearer {seller_access_token}'}
+    response = client.post('/events', data=payload, headers=headers)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
