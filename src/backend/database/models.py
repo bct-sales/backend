@@ -19,6 +19,7 @@ class User(UserBase):
 
 class SalesEventBase(pydantic.BaseModel):
     date: datetime.date
+    description: str
 
 
 class SalesEventCreate(SalesEventBase):
