@@ -15,7 +15,7 @@ class TokenData:
         self.__scopes = scopes
 
     @property
-    def user_id(self) -> str:
+    def user_id(self) -> int:
         return self.__user_id
 
     @property
