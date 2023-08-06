@@ -73,9 +73,9 @@ class DatabaseSession:
         self.__session.add(orm_item)
         self.__session.commit()
 
-    def create_sales_event(self, sales_event: models.SalesEventCreate):
+    def create_sales_event(self, sales_event: models.SalesEventCreate) -> int:
         orm_sales_event = orm.SalesEvent(
-            date=str(sales_event.date),
+            date=sales_event.date,
             start_time=sales_event.start_time,
             end_time=sales_event.end_time,
             location=sales_event.location,
@@ -83,6 +83,10 @@ class DatabaseSession:
         )
         self.__session.add(orm_sales_event)
         self.__session.commit()
+        return orm_sales_event.sale_event_id
+
+    def find_sales_event_by_id(self, id: int) -> Optional[orm.SalesEvent]:
+        return self.__session.query(orm.SalesEvent).filter(orm.SalesEvent.sale_event_id == id).first()
 
     def list_sales_events(self) -> list[orm.SalesEvent]:
         return self.__session.query(orm.SalesEvent).all()

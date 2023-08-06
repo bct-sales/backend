@@ -5,6 +5,8 @@ from backend.database.base import DatabaseSession
 from backend.database.exceptions import *
 from backend.security import roles
 
+import datetime
+
 
 def test_create_user(session: DatabaseSession, valid_password: str):
     email_address = 'test@gmail.com'
@@ -29,3 +31,44 @@ def test_create_user_with_invalid_email_address(session: DatabaseSession, invali
 
     with pytest.raises(InvalidEmailAddressException):
         session.create_user(user)
+
+
+@pytest.mark.parametrize('date', [
+    datetime.date(year, month, day)
+    for year in [2000, 2010]
+    for month in [1, 5, 9, 12]
+    for day in [1, 5, 28]
+])
+@pytest.mark.parametrize('start_time', [
+    datetime.time(hour=9, minute=0),
+    datetime.time(hour=10, minute=30),
+])
+@pytest.mark.parametrize('end_time', [
+    datetime.time(hour=11, minute=0),
+    datetime.time(hour=15, minute=30),
+])
+@pytest.mark.parametrize('location', [
+    'Brussels',
+    'Antwerp'
+])
+@pytest.mark.parametrize('description', [
+    '',
+    'some description'
+])
+def test_create_sales_event(session: DatabaseSession, date: datetime.date, start_time: datetime.time, end_time: datetime.time, location: str, description: str):
+    sales_event = models.SalesEventCreate(
+        date=date,
+        start_time=start_time,
+        end_time=end_time,
+        location=location,
+        description=description
+    )
+    event_id = session.create_sales_event(sales_event)
+    orm_sales_event = session.find_sales_event_by_id(event_id)
+
+    assert orm_sales_event is not None
+    assert orm_sales_event.date == date
+    assert orm_sales_event.start_time == start_time
+    assert orm_sales_event.end_time == end_time
+    assert orm_sales_event.location == location
+    assert orm_sales_event.description == description
