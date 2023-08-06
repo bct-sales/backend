@@ -120,7 +120,7 @@ class DatabaseSession:
             price_in_cents=item.price_in_cents,
             owner_id=item.owner_id,
             recipient_id=item.recipient_id,
-            sale_event_id=item.sale_event_id,
+            sales_event_id=item.sales_event_id,
         )
         self.__session.add(orm_item)
         self.__session.commit()
@@ -138,10 +138,10 @@ class DatabaseSession:
         )
         self.__session.add(orm_sales_event)
         self.__session.commit()
-        return orm_sales_event.sale_event_id
+        return orm_sales_event.sales_event_id
 
     def find_sales_event_by_id(self, id: int) -> Optional[orm.SalesEvent]:
-        return self.__session.query(orm.SalesEvent).filter(orm.SalesEvent.sale_event_id == id).first()
+        return self.__session.query(orm.SalesEvent).filter(orm.SalesEvent.sales_event_id == id).first()
 
     def list_sales_events(self) -> list[orm.SalesEvent]:
         return self.__session.query(orm.SalesEvent).all()

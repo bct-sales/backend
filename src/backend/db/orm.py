@@ -10,9 +10,9 @@ class Base(DeclarativeBase):
 
 
 class SalesEvent(Base):
-    __tablename__ = 'sale_events'
+    __tablename__ = 'sales_events'
 
-    sale_event_id: Mapped[int] = mapped_column(primary_key=True)
+    sales_event_id: Mapped[int] = mapped_column(primary_key=True)
 
     date: Mapped[date] = mapped_column(Date)
 
@@ -25,7 +25,7 @@ class SalesEvent(Base):
     description: Mapped[str] = mapped_column(String)
 
     def __repr__(self) -> str:
-        return f'SalesEvent(sale_event_id={self.sale_event_id!r}, date={self.date!r}, description={self.description!r})'
+        return f'SalesEvent(sales_event_id={self.sales_event_id!r}, date={self.date!r}, description={self.description!r})'
 
 
 class User(Base):
@@ -66,7 +66,7 @@ class Item(Base):
 
     recipient: Mapped[User] = relationship("User", foreign_keys=[recipient_id])
 
-    sales_event_id: Mapped[int] = mapped_column(ForeignKey('sale_events.sale_event_id'))
+    sales_event_id: Mapped[int] = mapped_column(ForeignKey('sales_events.sales_event_id'))
 
     sales_event: Mapped[SalesEvent] = relationship("SalesEvent", foreign_keys=[sales_event_id])
 
