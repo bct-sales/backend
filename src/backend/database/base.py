@@ -62,9 +62,6 @@ class DatabaseSession:
     def list_users(self) -> list[orm.User]:
         return self.__session.query(orm.User).all()
 
-    def list_items(self) -> list[models.Item]:
-        return []
-
 
 class Database:
     __engine: Engine

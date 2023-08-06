@@ -6,17 +6,17 @@ from jose import jwt
 
 
 class TokenData:
-    __email_address: str
+    __user_id: int
 
     __scopes: Scopes
 
-    def __init__(self, email_address: str, scopes: Scopes):
-        self.__email_address = email_address
+    def __init__(self, user_id: int, scopes: Scopes):
+        self.__user_id = user_id
         self.__scopes = scopes
 
     @property
-    def email_address(self) -> str:
-        return self.__email_address
+    def user_id(self) -> str:
+        return self.__user_id
 
     @property
     def scopes(self) -> Scopes:
@@ -36,7 +36,7 @@ def create_access_token(*, token_data: TokenData, duration: Optional[timedelta] 
     secret_key = settings.jwt_secret_key
     algorithm = settings.jwt_algorithm
     claims = {
-        'sub': token_data.email_address,
+        'sub': str(token_data.user_id),
         'exp': expiration_date,
         'scopes': [scope.name for scope in token_data.scopes],
     }
@@ -49,8 +49,8 @@ def decode_access_token(token: str) -> Optional[TokenData]:
     algorithm = settings.jwt_algorithm
     try:
         data = jwt.decode(token=token, key=secret_key, algorithms=[algorithm])
-        email_address = data['sub']
+        user_id = int(data['sub'])
         scopes = Scopes(*(Scope.from_name(name) for name in data['scopes']))
-        return TokenData(email_address=email_address, scopes=scopes)
+        return TokenData(user_id=user_id, scopes=scopes)
     except:
         return None
