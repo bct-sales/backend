@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from backend.database import orm
-from backend.database.base import Database, DatabaseSession
+from backend.db import orm
+from backend.db.base import Database, DatabaseSession
 from backend.security import scopes, tokens
 from backend.security.roles import Role
 from backend.settings import load_settings

@@ -1,6 +1,6 @@
 import os
 
-from backend.database.models import UserCreate
+from backend.db.models import UserCreate
 from backend.security import roles
 
 # Prevents original database_dependency from complaining
@@ -14,7 +14,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
 
 from backend.app import app
-from backend.database.base import Database, DatabaseSession
+from backend.db.base import Database, DatabaseSession
 from backend.restapi.shared import database_dependency
 
 test_database = Database('sqlite:///', poolclass=StaticPool)

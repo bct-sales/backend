@@ -2,8 +2,8 @@ import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from backend.database import models
-from backend.database.base import DatabaseSession
+from backend.db import models
+from backend.db.base import DatabaseSession
 from backend.security import roles
 
 

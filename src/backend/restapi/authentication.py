@@ -2,10 +2,10 @@ from fastapi import APIRouter
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from backend.database import models
+from backend.db import models
 import backend.security as security
 from backend.restapi.shared import *
-from backend.database.exceptions import *
+from backend.db.exceptions import *
 from backend.security import roles
 
 import pydantic

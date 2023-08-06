@@ -2,7 +2,7 @@ from typing import Annotated, Any
 
 import pydantic
 from fastapi import APIRouter, Depends
-from backend.database import models
+from backend.db import models
 
 from backend.restapi.shared import *
 from backend.security.scopes import Scopes

@@ -2,8 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter
 
-from backend.database import models
-from backend.database.exceptions import *
+from backend.db import models
+from backend.db.exceptions import *
 from backend.restapi.shared import *
 from backend.security import scopes
 

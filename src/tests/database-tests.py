@@ -1,8 +1,8 @@
 import pytest
 
-from backend.database import models
-from backend.database.base import DatabaseSession
-from backend.database.exceptions import *
+from backend.db import models
+from backend.db.base import DatabaseSession
+from backend.db.exceptions import *
 from backend.security import roles
 
 import datetime

@@ -6,10 +6,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import Pool
 
-import backend.database.models as models
-import backend.database.orm as orm
+import backend.db.models as models
+import backend.db.orm as orm
 import backend.security as security
-from backend.database.exceptions import *
+from backend.db.exceptions import *
 from backend.security import roles
 
 import logging
