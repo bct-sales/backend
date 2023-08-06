@@ -73,36 +73,30 @@ def session(database: Database) -> Iterator[DatabaseSession]:
         session.close()
 
 
-class User(pydantic.BaseModel):
-    email_address: str
-    password: str
-    role: str
-
-
 @pytest.fixture
-def seller(session: DatabaseSession) -> User:
+def seller(session: DatabaseSession) -> models.UserCreate:
     email_address = 'seller@example.com'
     password = 'AJXfksj18392+'
     role = roles.SELLER
-    seller = User(email_address=email_address, password=password, role=role.name)
+    seller = models.UserCreate(email_address=email_address, password=password, role=role.name)
     user_creation = models.UserCreate(email_address=email_address, role=role.name, password=password)
     session.create_user(user_creation)
     return seller
 
 
 @pytest.fixture
-def admin(session: DatabaseSession) -> User:
+def admin(session: DatabaseSession) -> models.UserCreate:
     email_address = 'admin@example.com'
     password = 'fjkdlAKLDJ19491*'
     role = roles.ADMIN
-    seller = User(email_address=email_address, password=password, role=role.name)
+    seller = models.UserCreate(email_address=email_address, password=password, role=role.name)
     user_creation = models.UserCreate(email_address=email_address, role=role.name, password=password)
     session.create_user(user_creation)
     return seller
 
 
 @pytest.fixture
-def logged_in_seller(session: DatabaseSession, client: TestClient, seller: User) -> User:
+def logged_in_seller(session: DatabaseSession, client: TestClient, seller: models.UserCreate) -> models.UserCreate:
     payload = {
         'grant_type': 'password',
         'username': seller.email_address,
@@ -119,7 +113,7 @@ def logged_in_seller(session: DatabaseSession, client: TestClient, seller: User)
 
 
 @pytest.fixture
-def logged_in_admin(session: DatabaseSession, client: TestClient, admin: User) -> User:
+def logged_in_admin(session: DatabaseSession, client: TestClient, admin: models.UserCreate) -> models.UserCreate:
     payload = {
         'grant_type': 'password',
         'username': admin.email_address,
