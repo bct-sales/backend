@@ -82,7 +82,19 @@ class User(pydantic.BaseModel):
 def seller(session: DatabaseSession) -> User:
     email_address = 'seller@example.com'
     password = 'AJXfksj18392+'
-    seller = User(email_address=email_address, password=password, role=roles.SELLER.name)
-    user_creation = UserCreate(email_address=email_address, role=roles.SELLER.name, password=password)
+    role = roles.SELLER
+    seller = User(email_address=email_address, password=password, role=role.name)
+    user_creation = UserCreate(email_address=email_address, role=role.name, password=password)
+    session.create_user(user_creation)
+    return seller
+
+
+@pytest.fixture
+def admin(session: DatabaseSession) -> User:
+    email_address = 'admin@example.com'
+    password = 'fjkdlAKLDJ19491*'
+    role = roles.ADMIN
+    seller = User(email_address=email_address, password=password, role=role.name)
+    user_creation = UserCreate(email_address=email_address, role=role.name, password=password)
     session.create_user(user_creation)
     return seller
