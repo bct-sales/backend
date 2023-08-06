@@ -37,3 +37,17 @@ def test_login_with_nonexisting_email_address(client: TestClient, session: Datab
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+
+def test_login_with_wrong_password(client: TestClient, session: DatabaseSession, seller: Seller, valid_password):
+    payload = {
+        'grant_type': 'password',
+        'username': seller.email_address,
+        'password': valid_password,
+    }
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    response = client.post('/login', data=payload, headers=headers)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
