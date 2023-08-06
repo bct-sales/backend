@@ -3,10 +3,10 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from backend.database.base import DatabaseSession
-from tests.conftest import Seller
+from tests.conftest import User
 
 
-def test_login(client: TestClient, session: DatabaseSession, seller: Seller):
+def test_login(client: TestClient, session: DatabaseSession, seller: User):
     payload = {
         'grant_type': 'password',
         'username': seller.email_address,
@@ -36,7 +36,7 @@ def test_login_with_nonexisting_email_address(client: TestClient, session: Datab
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_login_with_wrong_password(client: TestClient, session: DatabaseSession, seller: Seller, valid_password):
+def test_login_with_wrong_password(client: TestClient, session: DatabaseSession, seller: User, valid_password):
     payload = {
         'grant_type': 'password',
         'username': seller.email_address,

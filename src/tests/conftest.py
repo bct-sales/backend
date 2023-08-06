@@ -72,16 +72,17 @@ def session(database: Database) -> Iterator[DatabaseSession]:
         session.close()
 
 
-class Seller(pydantic.BaseModel):
+class User(pydantic.BaseModel):
     email_address: str
     password: str
+    role: str
 
 
 @pytest.fixture
-def seller(session: DatabaseSession) -> Seller:
+def seller(session: DatabaseSession) -> User:
     email_address = 'seller@example.com'
     password = 'AJXfksj18392+'
-    seller = Seller(email_address=email_address, password=password)
+    seller = User(email_address=email_address, password=password, role=roles.SELLER.name)
     user_creation = UserCreate(email_address=email_address, role=roles.SELLER.name, password=password)
     session.create_user(user_creation)
     return seller
