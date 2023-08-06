@@ -9,7 +9,7 @@ class Base(DeclarativeBase):
     pass
 
 
-class SaleEvent(Base):
+class SalesEvent(Base):
     __tablename__ = 'sale_events'
 
     sale_event_id: Mapped[int] = mapped_column(primary_key=True)
@@ -62,7 +62,7 @@ class Item(Base):
 
     sale_event_id: Mapped[int] = mapped_column(ForeignKey('sale_events.sale_event_id'))
 
-    sale_event: Mapped[SaleEvent] = relationship("SaleEvent", foreign_keys=[sale_event_id])
+    sale_event: Mapped[SalesEvent] = relationship("SaleEvent", foreign_keys=[sale_event_id])
 
     def __repr__(self) -> str:
         return f'Item(item_id={self.item_id!r}, description={self.description!r}, price_in_cents={self.price_in_cents!r})'
