@@ -69,13 +69,28 @@ def test_create_event_as_seller(client: TestClient,
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
+@pytest.mark.parametrize('date', [
+    datetime.date(2050, 1, 1),
+    datetime.date(2060, 12, 31),
+])
+@pytest.mark.parametrize('start_time', [
+    datetime.time(9, 0),
+    datetime.time(10, 30),
+])
+@pytest.mark.parametrize('end_time', [
+    datetime.time(11, 30),
+    datetime.time(15, 0),
+])
 def test_create_event_as_admin(client: TestClient,
                                session: DatabaseSession,
-                               admin_access_token: models.UserCreate):
+                               admin_access_token: models.UserCreate,
+                               date: datetime.date,
+                               start_time: datetime.time,
+                               end_time: datetime.time):
     payload = {
-        'date': datetime.date(2000, 1, 1).isoformat(),
-        'start_time': datetime.time(9, 0).isoformat(),
-        'end_time': datetime.time(12, 0).isoformat(),
+        'date': date.isoformat(),
+        'start_time': start_time.isoformat(),
+        'end_time': end_time.isoformat(),
         'location': 'between here and there',
         'description': 'description',
     }
@@ -83,3 +98,11 @@ def test_create_event_as_admin(client: TestClient,
     response = client.post('/events', json=payload, headers=headers)
 
     assert response.status_code == status.HTTP_200_OK
+
+    events = session.list_sales_events()
+
+    assert len(events) == 1
+    event = events[0]
+    assert event.date == date
+    assert event.start_time == start_time
+    assert event.end_time == end_time
