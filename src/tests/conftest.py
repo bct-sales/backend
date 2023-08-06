@@ -6,6 +6,7 @@ os.environ['BCT_DATABASE_PATH'] = ':memory:'
 from typing import Iterator
 
 import pydantic
+import datetime
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
@@ -13,7 +14,7 @@ from sqlalchemy.pool import StaticPool
 
 from backend.app import app
 from backend.db.database import Database, DatabaseSession
-from backend.db.models import UserCreate
+from backend.db import models
 from backend.restapi.shared import database_dependency
 from backend.security import roles
 
@@ -84,7 +85,7 @@ def seller(session: DatabaseSession) -> User:
     password = 'AJXfksj18392+'
     role = roles.SELLER
     seller = User(email_address=email_address, password=password, role=role.name)
-    user_creation = UserCreate(email_address=email_address, role=role.name, password=password)
+    user_creation = models.UserCreate(email_address=email_address, role=role.name, password=password)
     session.create_user(user_creation)
     return seller
 
@@ -95,7 +96,7 @@ def admin(session: DatabaseSession) -> User:
     password = 'fjkdlAKLDJ19491*'
     role = roles.ADMIN
     seller = User(email_address=email_address, password=password, role=role.name)
-    user_creation = UserCreate(email_address=email_address, role=role.name, password=password)
+    user_creation = models.UserCreate(email_address=email_address, role=role.name, password=password)
     session.create_user(user_creation)
     return seller
 
@@ -132,3 +133,16 @@ def logged_in_admin(session: DatabaseSession, client: TestClient, admin: User) -
     assert response.status_code == status.HTTP_200_OK
 
     return admin
+
+
+@pytest.fixture
+def sales_event(session: DatabaseSession) -> models.SalesEventCreate:
+    sales_event = models.SalesEventCreate(
+        date=datetime.date(2050, 1, 1),
+        start_time=datetime.time(9, 0),
+        end_time=datetime.time(12, 0),
+        location='earth',
+        description='only green clothes',
+    )
+    session.create_sales_event(sales_event)
+    return sales_event
