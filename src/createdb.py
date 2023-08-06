@@ -1,4 +1,4 @@
-from backend.db.base import Database
+from backend.db.database import Database
 from backend.settings import load_settings
 import logging
 import sys

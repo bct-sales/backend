@@ -3,7 +3,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from backend.db import models
-from backend.db.base import DatabaseSession
+from backend.db.database import DatabaseSession
 from backend.security import roles
 
 

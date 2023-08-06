@@ -14,7 +14,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
 
 from backend.app import app
-from backend.db.base import Database, DatabaseSession
+from backend.db.database import Database, DatabaseSession
 from backend.restapi.shared import database_dependency
 
 test_database = Database('sqlite:///', poolclass=StaticPool)

@@ -2,7 +2,7 @@ import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from backend.db.base import DatabaseSession
+from backend.db.database import DatabaseSession
 from tests.conftest import User
 
 
