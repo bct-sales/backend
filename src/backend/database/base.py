@@ -65,12 +65,6 @@ class DatabaseSession:
     def list_items(self) -> list[models.Item]:
         return []
 
-    def begin(self) -> None:
-        self.__session.begin()
-
-    def commit(self) -> None:
-        self.__session.commit()
-
 
 class Database:
     __engine: Engine
