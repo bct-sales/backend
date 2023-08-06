@@ -36,4 +36,4 @@ testpaths = [
 python_files = [
     "*-tests.py"
 ]
-log_level = "INFO"
+log_level = "DEBUG"

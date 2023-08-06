@@ -33,6 +33,7 @@ def test_list_events_as_seller(client: TestClient,
     headers = {'Authorization': f'Bearer {seller_access_token}'}
     response = client.get('/events', headers=headers)
     assert response.status_code == status.HTTP_200_OK
+    assert response.json() == ''
 
 
 def test_list_events_as_admin(client: TestClient,

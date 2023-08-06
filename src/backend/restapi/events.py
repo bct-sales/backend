@@ -16,8 +16,7 @@ def get_sales_events(database: DatabaseDependency,
                         scopes.LIST_SALES_EVENTS,
                     ))]):
     orm_sales_events = database.list_sales_events()
-    return []
-    # return [models.SalesEvent.model_validate(event) for event in orm_sales_events]
+    return [models.SalesEvent.model_validate(event) for event in orm_sales_events]
 
 
 @router.post('/')

@@ -26,7 +26,6 @@ test_database = Database(name='Test Database', url='sqlite:///', poolclass=Stati
 
 def database_dependency_override():
     with test_database.session as session:
-        logging.info(f'Database dependency yielding {test_database}')
         yield session
 
 
@@ -72,7 +71,6 @@ def database() -> Iterator[Database]:
 
 @pytest.fixture
 def session(database: Database) -> Iterator[DatabaseSession]:
-    logging.info(f'Creating session for {database}')
     session = database.create_session()
     try:
         yield session
