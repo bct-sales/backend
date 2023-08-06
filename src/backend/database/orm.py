@@ -19,7 +19,7 @@ class SalesEvent(Base):
     description: Mapped[str] = mapped_column(String)
 
     def __repr__(self) -> str:
-        return f'SaleEvent(sale_event_id={self.sale_event_id!r}, date={self.date!r}, description={self.description!r})'
+        return f'SalesEvent(sale_event_id={self.sale_event_id!r}, date={self.date!r}, description={self.description!r})'
 
 
 class User(Base):
@@ -60,9 +60,9 @@ class Item(Base):
 
     recipient: Mapped[User] = relationship("User", foreign_keys=[recipient_id])
 
-    sale_event_id: Mapped[int] = mapped_column(ForeignKey('sale_events.sale_event_id'))
+    sales_event_id: Mapped[int] = mapped_column(ForeignKey('sale_events.sale_event_id'))
 
-    sale_event: Mapped[SalesEvent] = relationship("SaleEvent", foreign_keys=[sale_event_id])
+    sales_event: Mapped[SalesEvent] = relationship("SalesEvent", foreign_keys=[sales_event_id])
 
     def __repr__(self) -> str:
         return f'Item(item_id={self.item_id!r}, description={self.description!r}, price_in_cents={self.price_in_cents!r})'
