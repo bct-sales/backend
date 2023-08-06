@@ -75,7 +75,10 @@ class DatabaseSession:
 
     def create_sales_event(self, sales_event: models.SalesEventCreate):
         orm_sales_event = orm.SalesEvent(
-            date=sales_event.date,
+            date=str(sales_event.date),
+            start_time=sales_event.start_time,
+            end_time=sales_event.end_time,
+            location=sales_event.location,
             description=sales_event.description,
         )
         self.__session.add(orm_sales_event)

@@ -19,6 +19,9 @@ class User(UserBase):
 
 class SalesEventBase(pydantic.BaseModel):
     date: datetime.date
+    start_time: datetime.time
+    end_time: datetime.time
+    location: str
     description: str
 
 
