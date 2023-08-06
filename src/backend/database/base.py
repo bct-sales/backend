@@ -14,6 +14,7 @@ from backend.security import roles
 
 import logging
 
+
 class DatabaseSession:
     __session: Session
 
@@ -25,9 +26,12 @@ class DatabaseSession:
 
     def create_user(self, user: models.UserCreate) -> None:
         if not security.is_valid_email_address(user.email_address):
-            raise InvalidEmailAddressException()
+            raise InvalidEmailAddressException
         if not security.is_valid_password(user.password):
-            raise InvalidPasswordException()
+            raise InvalidPasswordException
+        if self.user_with_email_address_exists(email_address=user.email_address):
+            raise EmailAddressAlreadyInUseException
+
         password_hash = security.hash_password(user.password)
         orm_user = orm.User(
             email_address=user.email_address,
@@ -39,7 +43,10 @@ class DatabaseSession:
             self.__session.commit()
         except IntegrityError as e:
             logging.error(e)
-            raise EmailAddressAlreadyInUseException from e
+            raise
+
+    def user_with_email_address_exists(self, *, email_address: str) -> bool:
+        return self.find_user_with_email_address(email_address=email_address) is not None
 
     def find_user_with_email_address(self, *, email_address: str) -> Optional[orm.User]:
         return self.__session.query(orm.User).filter(orm.User.email_address == email_address).first()

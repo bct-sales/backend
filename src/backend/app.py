@@ -2,10 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.restapi import authentication
 from backend.restapi import items
-from backend.restapi import users
-from backend.settings import load_settings
-
-
 
 
 app = FastAPI()
