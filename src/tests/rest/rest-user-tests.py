@@ -7,16 +7,14 @@ from backend.db import models
 
 
 def test_list_items_not_logged_in(client: TestClient,
-                                   session: DatabaseSession,
-                                   sales_event: models.SalesEventCreate):
+                                   session: DatabaseSession):
     response = client.get('/me/items')
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_list_items_as_seller(client: TestClient,
                               session: DatabaseSession,
-                              seller_headers: dict[str, str],
-                              sales_event: models.SalesEventCreate):
+                              seller_headers: dict[str, str]):
     response = client.get('/me/items', headers=seller_headers)
     json = response.json()
 
@@ -25,9 +23,19 @@ def test_list_items_as_seller(client: TestClient,
 
 def test_list_items_as_admin(client: TestClient,
                              session: DatabaseSession,
-                             admin_headers: dict[str, str],
-                             sales_event: models.SalesEventCreate):
+                             admin_headers: dict[str, str]):
     response = client.get('/me/items', headers=admin_headers)
-    json = response.json()
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+# def test_add_item_as_admin(client: TestClient,
+#                            session: DatabaseSession,
+#                            admin_headers: dict[str, str],
+#                            sales_event: models.SalesEventCreate):
+#     payload = {
+
+#     }
+#     response = client.post('/me/items', headers=admin_headers, json=payload)
+
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED

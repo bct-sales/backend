@@ -10,7 +10,7 @@ import datetime
 
 def test_list_events_not_logged_in(client: TestClient,
                                    session: DatabaseSession,
-                                   sales_event: models.SalesEventCreate):
+                                   sales_event: models.SalesEvent):
     response = client.get('/events')
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -18,25 +18,27 @@ def test_list_events_not_logged_in(client: TestClient,
 def test_list_events_as_seller(client: TestClient,
                                session: DatabaseSession,
                                seller_headers: dict[str, str],
-                               sales_event: models.SalesEventCreate):
+                               sales_event: models.SalesEvent):
     response = client.get('/events', headers=seller_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) == 1
-    assert len(json[0]) == 6
-    assert 'sales_event_id' in json[0]
-    assert json[0]['date'] == sales_event.date.isoformat()
-    assert json[0]['description'] == sales_event.description
-    assert json[0]['start_time'] == sales_event.start_time.isoformat()
-    assert json[0]['end_time'] == sales_event.end_time.isoformat()
-    assert json[0]['location'] == sales_event.location
+
+    event = json[0]
+    assert len(event) == 6
+    assert event['sales_event_id'] == sales_event.sales_event_id
+    assert event['date'] == sales_event.date.isoformat()
+    assert event['description'] == sales_event.description
+    assert event['start_time'] == sales_event.start_time.isoformat()
+    assert event['end_time'] == sales_event.end_time.isoformat()
+    assert event['location'] == sales_event.location
 
 
 def test_list_events_as_admin(client: TestClient,
                               session: DatabaseSession,
                               admin_headers: dict[str, str],
-                              sales_event: models.SalesEventCreate):
+                              sales_event: models.SalesEvent):
     response = client.get('/events', headers=admin_headers)
     json = response.json()
 
@@ -44,9 +46,8 @@ def test_list_events_as_admin(client: TestClient,
     assert len(json) == 1
 
     event = json[0]
-
     assert len(event) == 6
-    assert 'sales_event_id' in event
+    assert event['sales_event_id'] == sales_event.sales_event_id
     assert event['date'] == sales_event.date.isoformat()
     assert event['description'] == sales_event.description
     assert event['start_time'] == sales_event.start_time.isoformat()

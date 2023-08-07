@@ -1,6 +1,6 @@
 import pytest
 
-from backend.db import models
+from backend.db import models, orm
 from backend.db.database import DatabaseSession
 from backend.db.exceptions import *
 
@@ -30,15 +30,15 @@ import datetime
     'some description'
 ])
 def test_create_sales_event(session: DatabaseSession, date: datetime.date, start_time: datetime.time, end_time: datetime.time, location: str, description: str):
-    sales_event = models.SalesEventCreate(
+    sales_event_create = models.SalesEventCreate(
         date=date,
         start_time=start_time,
         end_time=end_time,
         location=location,
         description=description
     )
-    event_id = session.create_sales_event(sales_event)
-    orm_sales_event = session.find_sales_event_by_id(event_id)
+    result = session.create_sales_event(sales_event_create)
+    orm_sales_event = session.find_sales_event_by_id(result.sales_event_id)
 
     assert orm_sales_event is not None
     assert orm_sales_event.date == date
