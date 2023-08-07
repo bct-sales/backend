@@ -45,17 +45,39 @@ def test_add_item_as_admin(client: TestClient,
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
+@pytest.mark.parametrize('description', [
+    'blue jeans',
+    'white t-shirt',
+    'cowboy boots',
+])
+@pytest.mark.parametrize('price_in_cents', [
+    0,
+    100,
+    1000,
+    5000,
+])
 def test_add_item_as_seller(client: TestClient,
                             session: DatabaseSession,
                             seller: models.User,
                             seller_headers: dict[str, str],
-                            sales_event: models.SalesEvent):
+                            sales_event: models.SalesEvent,
+                            description: str,
+                            price_in_cents: int):
+    recipient_id = seller.user_id
+    sales_event_id = sales_event.sales_event_id
     payload = {
-        'description': 'cowboy boots',
-        'price_in_cents': 5000,
-        'recipient_id': seller.user_id,
-        'sales_event_id': sales_event.sales_event_id,
+        'description': description,
+        'price_in_cents': price_in_cents,
+        'recipient_id': recipient_id,
+        'sales_event_id': sales_event_id,
     }
     response = client.post('/me/items', headers=seller_headers, json=payload)
 
     assert response.status_code == status.HTTP_201_CREATED
+
+    item = models.Item.model_validate_json(response.read())
+    assert item.description == description
+    assert item.price_in_cents == price_in_cents
+    assert item.owner_id == seller.user_id
+    assert item.recipient_id == recipient_id
+    assert item.sales_event_id == sales_event_id
