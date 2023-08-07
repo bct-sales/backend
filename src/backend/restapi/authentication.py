@@ -20,7 +20,7 @@ class _RegisterSellerData(pydantic.BaseModel):
     password: str
 
 
-@router.post("/register", tags=['authentication'])
+@router.post("/register", tags=['authentication'], status_code=status.HTTP_201_CREATED)
 async def register_seller(seller_creation_data: _RegisterSellerData, database: DatabaseDependency):
     user_creation_data = models.UserCreate(
         email_address=seller_creation_data.email_address,

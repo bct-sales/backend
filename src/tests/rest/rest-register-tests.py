@@ -14,7 +14,7 @@ def test_register_seller(client: TestClient, session: DatabaseSession, valid_ema
     }
     response = client.post('/api/v1/register', json=payload)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
     assert len(session.list_users()) == 1
 
 
