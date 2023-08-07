@@ -90,3 +90,18 @@ def test_add_item_as_seller(client: TestClient,
     assert item_in_database.owner_id == seller.user_id
     assert item_in_database.recipient_id == recipient_id
     assert item_in_database.sales_event_id == sales_event_id
+
+
+def test_add_item_as_seller_missing_fields(client: TestClient,
+                                           session: DatabaseSession,
+                                           seller: models.User,
+                                           seller_headers: dict[str, str],
+                                           sales_event: models.SalesEvent):
+    payload = {
+        'description': 'blue jeans',
+        'price_in_cents': 2000,
+        'recipient_id': seller.user_id,
+    }
+    response = client.post('/me/items', headers=seller_headers, json=payload)
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
