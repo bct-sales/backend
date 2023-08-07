@@ -18,3 +18,12 @@
 * Add Item to Sale
 * Close Sale
 * Abort Sale
+
+## Technologies
+
+* Python
+* FastAPI
+* Poetry
+* Pydantic
+* SQLAlchemy
+* SQLite
