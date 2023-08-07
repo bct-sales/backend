@@ -22,7 +22,5 @@ def get_sales_events(database: DatabaseDependency,
 @router.post('/')
 def add_sales_event(event_data: models.SalesEventCreate,
                     database: DatabaseDependency,
-                    user: Annotated[orm.User, RequireScopes(scopes.Scopes(
-                       scopes.ADD_SALES_EVENTS,
-                   ))]):
+                    user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_SALES_EVENTS))]):
     database.create_sales_event(event_data)
