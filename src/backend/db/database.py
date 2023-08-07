@@ -91,19 +91,19 @@ class DatabaseSession:
             raise
 
     def user_with_email_address_exists(self, *, email_address: str) -> bool:
-        self.__logger.debug(f'Checking if user with email address {email_address} exists')
+        self.__logger.debug(f'Checking if user with email address {email_address!r} exists')
         return self.find_user_with_email_address(email_address=email_address) is not None
 
     def find_user_with_email_address(self, *, email_address: str) -> Optional[orm.User]:
-        self.__logger.debug(f'Looking for user with email address {email_address}')
+        self.__logger.debug(f'Looking for user with email address {email_address!r}')
         return self.__session.query(orm.User).filter(orm.User.email_address == email_address).first()
 
     def find_user_with_id(self, *, user_id: int) -> Optional[orm.User]:
-        self.__logger.debug(f'Looking for user with id {user_id} in {self.__parent_database}')
+        self.__logger.debug(f'Looking for user with id {user_id!r}')
         return self.__session.query(orm.User).filter(orm.User.user_id == user_id).first()
 
     def login(self, *, email_address: str, password: str) -> orm.User:
-        self.__logger.debug(f'Checking password for user with email address {email_address}')
+        self.__logger.debug(f'Checking password for user with email address {email_address!r}')
         user = self.find_user_with_email_address(email_address=email_address)
         if user is None:
             raise UnknownUserException
@@ -115,7 +115,7 @@ class DatabaseSession:
         return self.__session.query(orm.User).all()
 
     def create_item(self, item: models.ItemCreate):
-        self.__logger.debug(f'Creating item with data {item}')
+        self.__logger.debug(f'Creating item with data {item!r}')
         orm_item = orm.Item(
             description=item.description,
             price_in_cents=item.price_in_cents,
@@ -127,11 +127,11 @@ class DatabaseSession:
         self.__session.commit()
 
     def list_items_owned_by(self, owner: int) -> list[orm.Item]:
-        self.__logger.debug(f'Looking for items created by user {owner}')
+        self.__logger.debug(f'Looking for items created by user {owner!r}')
         return self.__session.query(orm.Item).filter(orm.Item.owner_id == owner).all()
 
-    def create_sales_event(self, sales_event: models.SalesEventCreate) -> int:
-        self.__logger.debug(f'Creating sales event with data {sales_event}')
+    def create_sales_event(self, sales_event: models.SalesEventCreate) -> orm.SalesEvent:
+        self.__logger.debug(f'Creating sales event with data {sales_event!r}')
         if sales_event.start_time > sales_event.end_time:
             raise InvalidEventTimeInterval
         orm_sales_event = orm.SalesEvent(
@@ -143,9 +143,10 @@ class DatabaseSession:
         )
         self.__session.add(orm_sales_event)
         self.__session.commit()
-        return orm_sales_event.sales_event_id
+        return orm_sales_event
 
     def find_sales_event_by_id(self, id: int) -> Optional[orm.SalesEvent]:
+        self.__logger.debug(f'Looking for sale event with id {id!r}')
         return self.__session.query(orm.SalesEvent).filter(orm.SalesEvent.sales_event_id == id).first()
 
     def list_sales_events(self) -> list[orm.SalesEvent]:
