@@ -15,10 +15,9 @@ def test_list_events_not_logged_in(client: TestClient,
 
 def test_list_events_as_seller(client: TestClient,
                                session: DatabaseSession,
-                               seller_access_token: str,
+                               seller_headers: dict[str, str],
                                sales_event: models.SalesEventCreate):
-    headers = {'Authorization': f'Bearer {seller_access_token}'}
-    response = client.get('/me/items', headers=headers)
+    response = client.get('/me/items', headers=seller_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
@@ -26,10 +25,9 @@ def test_list_events_as_seller(client: TestClient,
 
 def test_list_events_as_admin(client: TestClient,
                               session: DatabaseSession,
-                              admin_access_token: str,
+                              admin_headers: dict[str, str],
                               sales_event: models.SalesEventCreate):
-    headers = {'Authorization': f'Bearer {admin_access_token}'}
-    response = client.get('/me/items', headers=headers)
+    response = client.get('/me/items', headers=admin_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
