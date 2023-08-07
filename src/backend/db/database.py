@@ -115,17 +115,18 @@ class DatabaseSession:
     def list_users(self) -> list[orm.User]:
         return self.__session.query(orm.User).all()
 
-    def create_item(self, item: models.ItemCreate):
+    def create_item(self, *, item: models.ItemCreate, owner_id: int) -> orm.Item:
         self.__logger.debug(f'Creating item with data {item!r}')
         orm_item = orm.Item(
             description=item.description,
             price_in_cents=item.price_in_cents,
-            owner_id=item.owner_id,
+            owner_id=owner_id,
             recipient_id=item.recipient_id,
             sales_event_id=item.sales_event_id,
         )
         self.__session.add(orm_item)
         self.__session.commit()
+        return orm_item
 
     def list_items_owned_by(self, owner: int) -> list[orm.Item]:
         self.__logger.debug(f'Looking for items created by user {owner!r}')

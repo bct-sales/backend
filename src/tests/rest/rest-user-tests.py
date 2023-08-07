@@ -29,16 +29,17 @@ def test_list_items_as_admin(client: TestClient,
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-# def test_add_item_as_admin(client: TestClient,
-#                            session: DatabaseSession,
-#                            admin: orm.User,
-#                            admin_headers: dict[str, str],
-#                            sales_event: models.SalesEvent):
-#     payload = {
-#         'description': 'blue jeans',
-#         'price_in_cents': 1000,
-#         'owner_id': admin.user_id,
-#     }
-#     response = client.post('/me/items', headers=admin_headers, json=payload)
+def test_add_item_as_admin(client: TestClient,
+                           session: DatabaseSession,
+                           admin: models.User,
+                           admin_headers: dict[str, str],
+                           sales_event: models.SalesEvent):
+    payload = {
+        'description': 'blue jeans',
+        'price_in_cents': 2000,
+        'recipient_id': admin.user_id,
+        'sales_event_id': sales_event.sales_event_id,
+    }
+    response = client.post('/me/items', headers=admin_headers, json=payload)
 
-#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED

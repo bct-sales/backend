@@ -31,14 +31,12 @@ class SalesEventCreate(SalesEventBase):
 
 class SalesEvent(SalesEventBase):
     model_config = pydantic.ConfigDict(from_attributes=True)
-
     sales_event_id: int
 
 
 class ItemBase(pydantic.BaseModel):
     description: str
     price_in_cents: pydantic.NonNegativeInt
-    owner_id: int
     recipient_id: int
     sales_event_id: int
 
@@ -49,5 +47,5 @@ class ItemCreate(ItemBase):
 
 class Item(ItemBase):
     model_config = pydantic.ConfigDict(from_attributes=True)
-
     item_id: int
+    owner_id: int
