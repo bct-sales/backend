@@ -69,7 +69,7 @@ class DatabaseSession:
     def close(self):
         self.__session.close()
 
-    def create_user(self, user: models.UserCreate) -> None:
+    def create_user(self, user: models.UserCreate) -> orm.User:
         if not security.is_valid_email_address(user.email_address):
             raise InvalidEmailAddressException
         if not security.is_valid_password(user.password):
@@ -86,6 +86,7 @@ class DatabaseSession:
         try:
             self.__session.add(orm_user)
             self.__session.commit()
+            return orm_user
         except IntegrityError as e:
             logging.error(e)
             raise

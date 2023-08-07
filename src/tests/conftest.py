@@ -16,7 +16,7 @@ from sqlalchemy.pool import StaticPool
 
 from backend.app import app
 from backend.db.database import Database, DatabaseSession
-from backend.db import models
+from backend.db import models, orm
 from backend.restapi.shared import database_dependency
 from backend.security import roles
 
@@ -79,33 +79,40 @@ def session(database: Database) -> Iterator[DatabaseSession]:
 
 
 @pytest.fixture
-def seller(session: DatabaseSession) -> models.UserCreate:
+def seller_password() -> str:
+    return 'A B C d 1 23 4 5 +'
+
+
+@pytest.fixture
+def admin_password() -> str:
+    return 'x B C d 1 23 4 5 +'
+
+
+@pytest.fixture
+def seller(session: DatabaseSession, seller_password: str) -> orm.User:
     email_address = 'seller@example.com'
-    password = 'AJXfksj18392+'
     role = roles.SELLER
-    seller = models.UserCreate(email_address=email_address, password=password, role=role.name)
-    user_creation = models.UserCreate(email_address=email_address, role=role.name, password=password)
-    session.create_user(user_creation)
-    return seller
+    user_creation = models.UserCreate(email_address=email_address, role=role.name, password=seller_password)
+    return session.create_user(user_creation)
 
 
 @pytest.fixture
-def admin(session: DatabaseSession) -> models.UserCreate:
+def admin(session: DatabaseSession, admin_password: str) -> orm.User:
     email_address = 'admin@example.com'
-    password = 'fjkdlAKLDJ19491*'
     role = roles.ADMIN
-    seller = models.UserCreate(email_address=email_address, password=password, role=role.name)
-    user_creation = models.UserCreate(email_address=email_address, role=role.name, password=password)
-    session.create_user(user_creation)
-    return seller
+    user_creation = models.UserCreate(email_address=email_address, role=role.name, password=admin_password)
+    return session.create_user(user_creation)
 
 
 @pytest.fixture
-def seller_access_token(session: DatabaseSession, client: TestClient, seller: models.UserCreate) -> models.UserCreate:
+def seller_access_token(session: DatabaseSession,
+                        client: TestClient,
+                        seller: orm.User,
+                        seller_password: str) -> models.UserCreate:
     payload = {
         'grant_type': 'password',
         'username': seller.email_address,
-        'password': seller.password
+        'password': seller_password
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -119,11 +126,14 @@ def seller_access_token(session: DatabaseSession, client: TestClient, seller: mo
 
 
 @pytest.fixture
-def admin_access_token(session: DatabaseSession, client: TestClient, admin: models.UserCreate) -> str:
+def admin_access_token(session: DatabaseSession,
+                       client: TestClient,
+                       admin: orm.User,
+                       admin_password: str) -> str:
     payload = {
         'grant_type': 'password',
         'username': admin.email_address,
-        'password': admin.password
+        'password': admin_password
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
