@@ -89,25 +89,27 @@ def admin_password() -> str:
 
 
 @pytest.fixture
-def seller(session: DatabaseSession, seller_password: str) -> orm.User:
+def seller(session: DatabaseSession, seller_password: str) -> models.User:
     email_address = 'seller@example.com'
     role = roles.SELLER
     user_creation = models.UserCreate(email_address=email_address, role=role.name, password=seller_password)
-    return session.create_user(user_creation)
+    orm_user = session.create_user(user_creation)
+    return models.User.model_validate(orm_user)
 
 
 @pytest.fixture
-def admin(session: DatabaseSession, admin_password: str) -> orm.User:
+def admin(session: DatabaseSession, admin_password: str) -> models.User:
     email_address = 'admin@example.com'
     role = roles.ADMIN
     user_creation = models.UserCreate(email_address=email_address, role=role.name, password=admin_password)
-    return session.create_user(user_creation)
+    orm_user = session.create_user(user_creation)
+    return models.User.model_validate(orm_user)
 
 
 @pytest.fixture
 def seller_access_token(session: DatabaseSession,
                         client: TestClient,
-                        seller: orm.User,
+                        seller: models.User,
                         seller_password: str) -> models.UserCreate:
     payload = {
         'grant_type': 'password',

@@ -9,7 +9,7 @@ from backend.db.database import DatabaseSession
 
 def test_login(client: TestClient,
                session: DatabaseSession,
-               seller: orm.User,
+               seller: models.User,
                seller_password: str):
     payload = {
         'grant_type': 'password',
@@ -45,7 +45,7 @@ def test_login_with_nonexisting_email_address(client: TestClient,
 
 def test_login_with_wrong_password(client: TestClient,
                                    session: DatabaseSession,
-                                   seller: orm.User,
+                                   seller: models.User,
                                    valid_password: str):
     payload = {
         'grant_type': 'password',

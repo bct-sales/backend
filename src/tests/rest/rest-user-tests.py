@@ -31,13 +31,13 @@ def test_list_items_as_admin(client: TestClient,
 
 # def test_add_item_as_admin(client: TestClient,
 #                            session: DatabaseSession,
-#                            admin: models.UserCreate,
+#                            admin: orm.User,
 #                            admin_headers: dict[str, str],
 #                            sales_event: models.SalesEvent):
 #     payload = {
 #         'description': 'blue jeans',
 #         'price_in_cents': 1000,
-#         'owner_id':
+#         'owner_id': admin.user_id,
 #     }
 #     response = client.post('/me/items', headers=admin_headers, json=payload)
 
