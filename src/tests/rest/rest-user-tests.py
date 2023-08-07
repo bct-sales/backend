@@ -43,3 +43,19 @@ def test_add_item_as_admin(client: TestClient,
     response = client.post('/me/items', headers=admin_headers, json=payload)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_add_item_as_seller(client: TestClient,
+                            session: DatabaseSession,
+                            seller: models.User,
+                            seller_headers: dict[str, str],
+                            sales_event: models.SalesEvent):
+    payload = {
+        'description': 'cowboy boots',
+        'price_in_cents': 5000,
+        'recipient_id': seller.user_id,
+        'sales_event_id': sales_event.sales_event_id,
+    }
+    response = client.post('/me/items', headers=seller_headers, json=payload)
+
+    assert response.status_code == status.HTTP_201_CREATED

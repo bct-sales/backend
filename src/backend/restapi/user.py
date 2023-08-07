@@ -19,7 +19,7 @@ async def list_items(database: DatabaseDependency,
     return database.list_items_owned_by(user.user_id)
 
 
-@router.post("/items", response_model=models.Item)
+@router.post("/items", response_model=models.Item, status_code=status.HTTP_201_CREATED)
 async def create_item(database: DatabaseDependency,
                       user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_ITEM))],
                       item: models.ItemCreate):
