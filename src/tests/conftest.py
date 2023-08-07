@@ -120,7 +120,7 @@ def seller_access_token(session: DatabaseSession,
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    response = client.post('/login', data=payload, headers=headers)
+    response = client.post('/api/v1/login', data=payload, headers=headers)
     assert response.status_code == status.HTTP_200_OK
 
     access_token = response.json()['access_token']
@@ -141,7 +141,7 @@ def admin_access_token(session: DatabaseSession,
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    response = client.post('/login', data=payload, headers=headers)
+    response = client.post('/api/v1/login', data=payload, headers=headers)
     assert response.status_code == status.HTTP_200_OK
 
     access_token = response.json()['access_token']

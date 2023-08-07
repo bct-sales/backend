@@ -10,7 +10,7 @@ app = FastAPI()
 # CORS
 
 origins = [
-    "http://localhost:3000",
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
@@ -21,6 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(authentication.router)
-app.include_router(user.router, prefix='/me')
-app.include_router(events.router, prefix='/events')
+app.include_router(authentication.router, prefix='/api/v1')
+app.include_router(user.router, prefix='/api/v1/me')
+app.include_router(events.router, prefix='/api/v1/events')

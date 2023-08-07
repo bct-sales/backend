@@ -47,7 +47,7 @@ _database = _create_database()
 
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl = 'login',
+    tokenUrl = '/api/v1/login',
     scopes = {scope.name: scope.description for scope in scopes.all_scopes()}
 )
 

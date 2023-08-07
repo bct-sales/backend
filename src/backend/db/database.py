@@ -70,6 +70,7 @@ class DatabaseSession:
         self.__session.close()
 
     def create_user(self, user: models.UserCreate) -> orm.User:
+        self.__logger.debug(f'Creating user with email address {user.email_address!r}')
         if not security.is_valid_email_address(user.email_address):
             raise InvalidEmailAddressException
         if not security.is_valid_password(user.password):

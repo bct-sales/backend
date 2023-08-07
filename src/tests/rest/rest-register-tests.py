@@ -12,7 +12,7 @@ def test_register_seller(client: TestClient, session: DatabaseSession, valid_ema
         'email_address': valid_email_address,
         'password': valid_password
     }
-    response = client.post('/register', json=payload)
+    response = client.post('/api/v1/register', json=payload)
 
     assert response.status_code == status.HTTP_200_OK
     assert len(session.list_users()) == 1
@@ -31,7 +31,7 @@ def test_register_with_existing_email_address(client: TestClient, session: Datab
         'email_address': valid_email_address,
         'password': valid_password
     }
-    response = client.post('/register', json=payload)
+    response = client.post('/api/v1/register', json=payload)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(session.list_users()) == 1
@@ -42,7 +42,7 @@ def test_register_with_invalid_email_address(client: TestClient, session: Databa
         'email_address': invalid_email_address,
         'password': valid_password
     }
-    response = client.post('/register', json=payload)
+    response = client.post('/api/v1/register', json=payload)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(session.list_users()) == 0
@@ -53,7 +53,7 @@ def test_register_with_invalid_password(client: TestClient, session: DatabaseSes
         'email_address': valid_email_address,
         'password': invalid_password
     }
-    response = client.post('/register', json=payload)
+    response = client.post('/api/v1/register', json=payload)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(session.list_users()) == 0

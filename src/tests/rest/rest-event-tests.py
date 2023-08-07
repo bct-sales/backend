@@ -11,7 +11,7 @@ import datetime
 def test_list_events_not_logged_in(client: TestClient,
                                    session: DatabaseSession,
                                    sales_event: models.SalesEvent):
-    response = client.get('/events')
+    response = client.get('/api/v1/events')
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -19,7 +19,7 @@ def test_list_events_as_seller(client: TestClient,
                                session: DatabaseSession,
                                seller_headers: dict[str, str],
                                sales_event: models.SalesEvent):
-    response = client.get('/events', headers=seller_headers)
+    response = client.get('/api/v1/events', headers=seller_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
@@ -39,7 +39,7 @@ def test_list_events_as_admin(client: TestClient,
                               session: DatabaseSession,
                               admin_headers: dict[str, str],
                               sales_event: models.SalesEvent):
-    response = client.get('/events', headers=admin_headers)
+    response = client.get('/api/v1/events', headers=admin_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
@@ -65,7 +65,7 @@ def test_create_event_as_seller(client: TestClient,
         'location': 'between here and there',
         'description': 'description',
     }
-    response = client.post('/events', json=payload, headers=seller_headers)
+    response = client.post('/api/v1/events', json=payload, headers=seller_headers)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -95,7 +95,7 @@ def test_create_event_as_admin(client: TestClient,
         'location': 'between here and there',
         'description': 'description',
     }
-    response = client.post('/events', json=payload, headers=admin_headers)
+    response = client.post('/api/v1/events', json=payload, headers=admin_headers)
 
     assert response.status_code == status.HTTP_201_CREATED
 
