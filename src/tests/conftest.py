@@ -137,7 +137,7 @@ def admin_access_token(session: DatabaseSession, client: TestClient, admin: mode
 
 
 @pytest.fixture
-def sales_event(session: DatabaseSession) -> models.SalesEventCreate:
+def sales_event(session: DatabaseSession) -> models.SalesEvent:
     sales_event = models.SalesEventCreate(
         date=datetime.date(2050, 1, 1),
         start_time=datetime.time(9, 0),
@@ -145,8 +145,8 @@ def sales_event(session: DatabaseSession) -> models.SalesEventCreate:
         location='earth',
         description='only green clothes',
     )
-    session.create_sales_event(sales_event)
-    return sales_event
+    orm_sales_event = session.create_sales_event(sales_event)
+    return models.SalesEvent.model_validate(orm_sales_event)
 
 
 def create_authorization_headers(token: str):
