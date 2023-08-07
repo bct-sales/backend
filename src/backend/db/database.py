@@ -132,6 +132,10 @@ class DatabaseSession:
         self.__logger.debug(f'Looking for items created by user {owner!r}')
         return self.__session.query(orm.Item).filter(orm.Item.owner_id == owner).all()
 
+    def list_items(self) -> list[orm.Item]:
+        self.__logger.debug(f'Looking for all items')
+        return self.__session.query(orm.Item).all()
+
     def create_sales_event(self, sales_event: models.SalesEventCreate) -> orm.SalesEvent:
         self.__logger.debug(f'Creating sales event with data {sales_event!r}')
         if sales_event.start_time > sales_event.end_time:

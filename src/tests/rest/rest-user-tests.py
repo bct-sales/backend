@@ -75,9 +75,18 @@ def test_add_item_as_seller(client: TestClient,
 
     assert response.status_code == status.HTTP_201_CREATED
 
-    item = models.Item.model_validate_json(response.read())
-    assert item.description == description
-    assert item.price_in_cents == price_in_cents
-    assert item.owner_id == seller.user_id
-    assert item.recipient_id == recipient_id
-    assert item.sales_event_id == sales_event_id
+    response_item = models.Item.model_validate_json(response.read())
+    assert response_item.description == description
+    assert response_item.price_in_cents == price_in_cents
+    assert response_item.owner_id == seller.user_id
+    assert response_item.recipient_id == recipient_id
+    assert response_item.sales_event_id == sales_event_id
+
+    items_in_database = session.list_items()
+    assert len(items_in_database) == 1
+    item_in_database = items_in_database[0]
+    assert item_in_database.description == description
+    assert item_in_database.price_in_cents == price_in_cents
+    assert item_in_database.owner_id == seller.user_id
+    assert item_in_database.recipient_id == recipient_id
+    assert item_in_database.sales_event_id == sales_event_id
