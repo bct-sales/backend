@@ -4,17 +4,17 @@ class DatabaseException(Exception):
 
 class EmailAddressAlreadyInUseException(DatabaseException):
     def __init__(self):
-        super().__init__('email address already in use')
+        super().__init__('Email address is already in use')
 
 
 class InvalidEmailAddressException(DatabaseException):
     def __init__(self):
-        super().__init__('invalid email address')
+        super().__init__('Invalid email address')
 
 
 class InvalidPasswordException(DatabaseException):
     def __init__(self):
-        super().__init__('invalid password')
+        super().__init__('Invalid password')
 
 
 class AuthenticationException(DatabaseException):
@@ -23,11 +23,11 @@ class AuthenticationException(DatabaseException):
 
 class UnknownUserException(AuthenticationException):
     def __init__(self):
-        super().__init__('unknown user')
+        super().__init__('Unknown user')
 
 class WrongPasswordException(AuthenticationException):
     def __init__(self):
-        super().__init__('wrong password')
+        super().__init__('Wrong password')
 
 
 class InvalidEventTimeInterval(DatabaseException):
