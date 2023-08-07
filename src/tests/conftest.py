@@ -147,3 +147,17 @@ def sales_event(session: DatabaseSession) -> models.SalesEventCreate:
     )
     session.create_sales_event(sales_event)
     return sales_event
+
+
+def create_authorization_headers(token: str):
+    return {'Authorization': f'Bearer {token}'}
+
+
+@pytest.fixture
+def seller_headers(seller_access_token: str) -> dict[str, str]:
+    return create_authorization_headers(seller_access_token)
+
+
+@pytest.fixture
+def admin_headers(admin_access_token: str) -> dict[str, str]:
+    return create_authorization_headers(admin_access_token)

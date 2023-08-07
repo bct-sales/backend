@@ -17,10 +17,9 @@ def test_list_events_not_logged_in(client: TestClient,
 
 def test_list_events_as_seller(client: TestClient,
                                session: DatabaseSession,
-                               seller_access_token: str,
+                               seller_headers: dict[str, str],
                                sales_event: models.SalesEventCreate):
-    headers = {'Authorization': f'Bearer {seller_access_token}'}
-    response = client.get('/events', headers=headers)
+    response = client.get('/events', headers=seller_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
@@ -36,26 +35,28 @@ def test_list_events_as_seller(client: TestClient,
 
 def test_list_events_as_admin(client: TestClient,
                               session: DatabaseSession,
-                              admin_access_token: str,
+                              admin_headers: dict[str, str],
                               sales_event: models.SalesEventCreate):
-    headers = {'Authorization': f'Bearer {admin_access_token}'}
-    response = client.get('/events', headers=headers)
+    response = client.get('/events', headers=admin_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
     assert len(json) == 1
-    assert len(json[0]) == 6
-    assert 'sales_event_id' in json[0]
-    assert json[0]['date'] == sales_event.date.isoformat()
-    assert json[0]['description'] == sales_event.description
-    assert json[0]['start_time'] == sales_event.start_time.isoformat()
-    assert json[0]['end_time'] == sales_event.end_time.isoformat()
-    assert json[0]['location'] == sales_event.location
+
+    event = json[0]
+
+    assert len(event) == 6
+    assert 'sales_event_id' in event
+    assert event['date'] == sales_event.date.isoformat()
+    assert event['description'] == sales_event.description
+    assert event['start_time'] == sales_event.start_time.isoformat()
+    assert event['end_time'] == sales_event.end_time.isoformat()
+    assert event['location'] == sales_event.location
 
 
 def test_create_event_as_seller(client: TestClient,
                                 session: DatabaseSession,
-                                seller_access_token: models.UserCreate):
+                                seller_headers: dict[str, str]):
     payload = {
         'date': datetime.date(2000, 1, 1).isoformat(),
         'start_time': datetime.time(9, 0).isoformat(),
@@ -63,8 +64,7 @@ def test_create_event_as_seller(client: TestClient,
         'location': 'between here and there',
         'description': 'description',
     }
-    headers = {'Authorization': f'Bearer {seller_access_token}'}
-    response = client.post('/events', json=payload, headers=headers)
+    response = client.post('/events', json=payload, headers=seller_headers)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -83,7 +83,7 @@ def test_create_event_as_seller(client: TestClient,
 ])
 def test_create_event_as_admin(client: TestClient,
                                session: DatabaseSession,
-                               admin_access_token: models.UserCreate,
+                               admin_headers: dict[str, str],
                                date: datetime.date,
                                start_time: datetime.time,
                                end_time: datetime.time):
@@ -94,8 +94,7 @@ def test_create_event_as_admin(client: TestClient,
         'location': 'between here and there',
         'description': 'description',
     }
-    headers = {'Authorization': f'Bearer {admin_access_token}'}
-    response = client.post('/events', json=payload, headers=headers)
+    response = client.post('/events', json=payload, headers=admin_headers)
 
     assert response.status_code == status.HTTP_200_OK
 
