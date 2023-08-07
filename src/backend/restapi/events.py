@@ -19,8 +19,9 @@ def get_sales_events(database: DatabaseDependency,
     return [models.SalesEvent.model_validate(event) for event in orm_sales_events]
 
 
-@router.post('/')
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=models.SalesEvent)
 def add_sales_event(event_data: models.SalesEventCreate,
                     database: DatabaseDependency,
                     user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_SALES_EVENTS))]):
-    database.create_sales_event(event_data)
+    orm_sales_event = database.create_sales_event(event_data)
+    return models.SalesEvent.model_validate(orm_sales_event)

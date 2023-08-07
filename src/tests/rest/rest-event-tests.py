@@ -97,7 +97,12 @@ def test_create_event_as_admin(client: TestClient,
     }
     response = client.post('/events', json=payload, headers=admin_headers)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
+
+    event = models.SalesEvent.model_validate_json(response.read())
+    assert event.date == date
+    assert event.start_time == start_time
+    assert event.end_time == end_time
 
     events = session.list_sales_events()
 
