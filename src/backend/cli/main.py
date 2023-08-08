@@ -23,9 +23,11 @@ def reset():
     database.create_tables()
 
 
-@db.command(help="Adds dummy seller and admin")
-def populate():
+@db.command(help="Removes ALL data and adds dummy seller and admin")
+def repopulate():
     database = get_database()
+    database.drop_tables()
+    database.create_tables()
     with database.session as session:
         session.create_user(models.UserCreate(
             email_address='seller@bct.be',
@@ -42,5 +44,12 @@ def populate():
             start_time=datetime.time(9, 0),
             end_time=datetime.time(18, 0),
             location='Leuven',
-            description='Sales'
+            description='Leuven Sales'
+        ))
+        session.create_sales_event(models.SalesEventCreate(
+            date=datetime.date(2040, 1, 1),
+            start_time=datetime.time(10, 0),
+            end_time=datetime.time(12, 0),
+            location='Brussels',
+            description='Brussels Sales'
         ))
