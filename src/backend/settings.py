@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     jwt_algorithm: str = 'HS256'
 
-    jwt_expiration: int = 30
+    jwt_expiration: int = 6 * 60 # 6 Hours
 
     @pydantic.computed_field
     @property
