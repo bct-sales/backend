@@ -129,9 +129,9 @@ class DatabaseSession:
         self.__session.commit()
         return orm_item
 
-    def list_items_owned_by(self, owner: int) -> list[orm.Item]:
+    def list_items_owned_by(self, *, owner: int, sale_event: int) -> list[orm.Item]:
         self.__logger.debug(f'Looking for items created by user {owner!r}')
-        return self.__session.query(orm.Item).filter(orm.Item.owner_id == owner).all()
+        return self.__session.query(orm.Item).filter(orm.Item.owner_id == owner).filter(orm.Item.sales_event_id == sale_event).all()
 
     def list_items(self) -> list[orm.Item]:
         self.__logger.debug(f'Looking for all items')

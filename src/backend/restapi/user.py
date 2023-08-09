@@ -13,10 +13,11 @@ router = APIRouter(
 )
 
 
-@router.get("/items", response_model=list[models.Item])
-async def list_items(database: DatabaseDependency,
+@router.get("/events/{event_id}/items", response_model=list[models.Item])
+async def list_items(event_id: int,
+                     database: DatabaseDependency,
                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.LIST_OWN_ITEMS))]):
-    return database.list_items_owned_by(user.user_id)
+    return database.list_items_owned_by(owner=user.user_id, sale_event=event_id)
 
 
 @router.post("/items", response_model=models.Item, status_code=status.HTTP_201_CREATED)

@@ -7,24 +7,31 @@ from backend.db import models
 
 
 def test_list_items_not_logged_in(client: TestClient,
-                                   session: DatabaseSession):
-    response = client.get('/api/v1/me/items')
+                                  sales_event: models.SalesEvent,
+                                  session: DatabaseSession):
+    url = f'/api/v1/me/events/{sales_event.sales_event_id}/items'
+    response = client.get(url=url)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_list_items_as_seller(client: TestClient,
                               session: DatabaseSession,
+                              sales_event: models.SalesEvent,
                               seller_headers: dict[str, str]):
-    response = client.get('/api/v1/me/items', headers=seller_headers)
+    url = f'/api/v1/me/events/{sales_event.sales_event_id}/items'
+    response = client.get(url=url, headers=seller_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
+    # TODO
 
 
 def test_list_items_as_admin(client: TestClient,
                              session: DatabaseSession,
+                             sales_event: models.SalesEvent,
                              admin_headers: dict[str, str]):
-    response = client.get('/api/v1/me/items', headers=admin_headers)
+    url = f'/api/v1/me/events/{sales_event.sales_event_id}/items'
+    response = client.get(url=url, headers=admin_headers)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -40,7 +47,8 @@ def test_add_item_as_admin(client: TestClient,
         'recipient_id': admin.user_id,
         'sales_event_id': sales_event.sales_event_id,
     }
-    response = client.post('/api/v1/me/items', headers=admin_headers, json=payload)
+    url = '/api/v1/me/items'
+    response = client.post(url=url, headers=admin_headers, json=payload)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -71,7 +79,8 @@ def test_add_item_as_seller(client: TestClient,
         'recipient_id': recipient_id,
         'sales_event_id': sales_event_id,
     }
-    response = client.post('/api/v1/me/items', headers=seller_headers, json=payload)
+    url = '/api/v1/me/items'
+    response = client.post(url=url, headers=seller_headers, json=payload)
 
     assert response.status_code == status.HTTP_201_CREATED
 
@@ -102,6 +111,7 @@ def test_add_item_as_seller_missing_fields(client: TestClient,
         'price_in_cents': 2000,
         'recipient_id': seller.user_id,
     }
-    response = client.post('/api/v1/me/items', headers=seller_headers, json=payload)
+    url = '/api/v1/me/items'
+    response = client.post(url=url, headers=seller_headers, json=payload)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
