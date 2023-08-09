@@ -161,6 +161,18 @@ def sales_event(session: DatabaseSession) -> models.SalesEvent:
     return models.SalesEvent.model_validate(orm_sales_event)
 
 
+@pytest.fixture
+def item(session: DatabaseSession, sales_event: models.SalesEvent, seller: models.User) -> models.Item:
+    item = models.ItemCreate(
+        description='Sneakers',
+        price_in_cents=1000,
+        recipient_id=seller.user_id,
+        sales_event_id=sales_event.sales_event_id,
+    )
+    orm_item = session.create_item(item=item, owner_id=seller.user_id)
+    return models.Item.model_validate(orm_item)
+
+
 def create_authorization_headers(token: str):
     return {'Authorization': f'Bearer {token}'}
 

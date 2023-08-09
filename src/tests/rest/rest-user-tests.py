@@ -17,13 +17,16 @@ def test_list_items_not_logged_in(client: TestClient,
 def test_list_items_as_seller(client: TestClient,
                               session: DatabaseSession,
                               sales_event: models.SalesEvent,
+                              item: models.Item,
                               seller_headers: dict[str, str]):
     url = f'/api/v1/me/events/{sales_event.sales_event_id}/items'
     response = client.get(url=url, headers=seller_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    # TODO
+    assert len(json) == 1
+    assert json[0]['item_id'] == item.item_id
+    assert json[0]['description'] == item.description
 
 
 def test_list_items_as_admin(client: TestClient,
