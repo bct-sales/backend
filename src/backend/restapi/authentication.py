@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from typing import Annotated
+from typing import Annotated, Literal
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from backend.db import models
@@ -35,7 +35,12 @@ async def register_seller(seller_creation_data: _RegisterSellerData, database: D
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.post("/login", tags=['authentication'])
+class _LoginResponse(pydantic.BaseModel):
+    access_token: str
+    role: str
+    token_type: Literal["bearer"]
+
+@router.post("/login", tags=['authentication'], response_model=_LoginResponse)
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], database: DatabaseDependency):
     email_address = form_data.username
     password = form_data.password
@@ -50,10 +55,12 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], data
         token_data = security.TokenData(user_id=user.user_id, scopes=role.scopes)
         token = security.create_access_token(token_data=token_data)
 
-        return {
-            "access_token": token,
-            "token_type": "bearer",
-        }
+        return _LoginResponse(
+            access_token=token,
+            role=role.name,
+            token_type="bearer",
+        )
+
     except UnknownUserException:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No user with this email address")
     except WrongPasswordException:
