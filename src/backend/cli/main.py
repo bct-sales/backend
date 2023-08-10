@@ -54,6 +54,20 @@ def repopulate():
             location='Brussels',
             description='Brussels Sales'
         ))
+        session.create_sales_event(models.SalesEventCreate(
+            date=datetime.date(2050, 1, 1),
+            start_time=datetime.time(10, 0),
+            end_time=datetime.time(12, 0),
+            location='Antwerp',
+            description='Antwerp Sales'
+        ))
+        session.create_sales_event(models.SalesEventCreate(
+            date=datetime.date(2060, 1, 1),
+            start_time=datetime.time(10, 0),
+            end_time=datetime.time(12, 0),
+            location='Ghent',
+            description='Ghent Sales'
+        ))
         session.create_item(item=models.ItemCreate(
             description='T-Shirt',
             price_in_cents=200,
