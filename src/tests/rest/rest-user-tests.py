@@ -119,3 +119,30 @@ def test_add_item_as_seller_missing_fields(client: TestClient,
     response = client.post(url=url, headers=seller_headers, json=payload)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_update_item(client: TestClient,
+                     session: DatabaseSession,
+                     seller: models.User,
+                     item: models.Item,
+                     seller_headers: dict[str, str]):
+    updated_description = 'updated description'
+    updated_price = 1234
+    updated_recipient_id = seller.user_id
+    payload = {
+        'description': updated_description,
+        'price_in_cents': updated_price,
+        'recipient_id': updated_recipient_id,
+    }
+    url = f'/api/v1/me/items/{item.item_id}'
+    response = client.put(url=url, headers=seller_headers, json=payload)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    updated_item = session.find_item_by_id(item.item_id)
+    assert updated_item is not None
+    assert updated_item.description == updated_description
+    assert updated_item.price_in_cents == updated_price
+    assert updated_item.recipient_id == updated_recipient_id
+    assert updated_item.owner_id == item.owner_id
+    assert updated_item.sales_event_id == item.sales_event_id
