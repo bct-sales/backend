@@ -39,7 +39,7 @@ def test_list_items_as_seller(client: TestClient,
             },
         ],
         'links': {
-            'add': f'/api/v1/me/events/{item.sales_event_id}/items',
+            'add': f'/api/v1/me/items',
         }
     }
 

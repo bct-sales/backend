@@ -55,7 +55,7 @@ async def list_items(event_id: int,
     return _ListItemsResponse(
         items=items,
         links=_ListItemsResponse_Links(
-            add=f'/api/v1/me/events/{event_id}/items'
+            add=f'/api/v1/me/items'
         )
     )
 
