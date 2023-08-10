@@ -1,4 +1,4 @@
-from typing import Annotated, Any
+from typing import Annotated, Any, Optional
 
 import pydantic
 from fastapi import APIRouter, Depends
@@ -70,9 +70,10 @@ async def create_item(database: DatabaseDependency,
 
 
 class _EditItemRequest(pydantic.BaseModel):
-    description: str
-    price_in_cents: int
-    recipient_id: int
+    description: Optional[str] = None
+    price_in_cents: Optional[int] = None
+    recipient_id: Optional[int] = None
+    sales_event_id: Optional[int] = None
 
 
 @router.put('/items/{item_id}')
@@ -89,5 +90,6 @@ def edit_item(database: DatabaseDependency,
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
     for field, value in update:
-        setattr(orm_item, field, value)
+        if value is not None:
+            setattr(orm_item, field, value)
     database.commit()
