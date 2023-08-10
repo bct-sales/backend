@@ -55,7 +55,7 @@ async def list_items(event_id: int,
     return _ListItemsResponse(
         items=items,
         links=_ListItemsResponse_Links(
-            add=f'/me/events/{event_id}/items'
+            add=f'/me/items'
         )
     )
 
@@ -78,26 +78,6 @@ async def create_item(database: DatabaseDependency,
     orm_item = database.create_item(item=item)
     return models.Item.model_validate(orm_item)
 
-
-
-class _CreateItemForEventPayload(pydantic.BaseModel):
-    description: str
-    price_in_cents: pydantic.NonNegativeInt
-    recipient_id: int
-
-
-@router.post("/events/{event_id}/items", response_model=models.Item, status_code=status.HTTP_201_CREATED)
-async def create_item_in_event(database: DatabaseDependency,
-                               user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_OWN_ITEM))],
-                               event_id: int,
-                               payload: _CreateItemForEventPayload):
-    item = models.ItemCreate(
-        **dict(payload),
-        sales_event_id=event_id,
-        owner_id=user.user_id
-    )
-    orm_item = database.create_item(item=item)
-    return models.Item.model_validate(orm_item)
 
 
 class _EditItemRequest(pydantic.BaseModel):
