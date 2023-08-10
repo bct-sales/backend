@@ -36,6 +36,7 @@ async def register_seller(seller_creation_data: _RegisterSellerData, database: D
 
 
 class _LoginResponse(pydantic.BaseModel):
+    user_id: int
     access_token: str
     role: str
     token_type: Literal["bearer"]
@@ -56,6 +57,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], data
         token = security.create_access_token(token_data=token_data)
 
         return _LoginResponse(
+            user_id=user.user_id,
             access_token=token,
             role=role.name,
             token_type="bearer",
