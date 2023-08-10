@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import logging
 from typing import Optional
 from backend.security.scopes import Scope, Scopes
 from backend.settings import load_settings
@@ -52,5 +53,6 @@ def decode_access_token(token: str) -> Optional[TokenData]:
         user_id = int(data['sub'])
         scopes = Scopes(*(Scope.from_name(name) for name in data['scopes']))
         return TokenData(user_id=user_id, scopes=scopes)
-    except:
+    except Exception as e:
+        logging.error(f'Failed to decode token: {e}')
         return None
