@@ -84,7 +84,8 @@ LIST_ACCOUNTS = define_scope('accounts:list', 'List all accounts')
 # Items
 LIST_ALL_ITEMS = define_scope('items:list-all', 'List all items')
 LIST_OWN_ITEMS = define_scope('items:list-own', 'List own items')
-ADD_ITEM = define_scope('items:add', 'Add item')
+ADD_OWN_ITEM = define_scope('items:add-own', 'Add own item')
+EDIT_OWN_ITEM = define_scope('items:edit-own', 'Edit own item')
 
 def all_scopes() -> set[Scope]:
     return set(_scopes.values())
