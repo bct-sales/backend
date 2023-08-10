@@ -62,7 +62,32 @@ async def list_items(event_id: int,
 
 @router.post("/items", response_model=models.Item, status_code=status.HTTP_201_CREATED)
 async def create_item(database: DatabaseDependency,
-                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_ITEM))],
+                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_OWN_ITEM))],
                       item: models.ItemCreate):
     orm_item = database.create_item(item=item, owner_id=user.user_id)
     return models.Item.model_validate(orm_item)
+
+
+
+class _EditItemRequest(pydantic.BaseModel):
+    description: str
+    price_in_cents: int
+    recipient_id: int
+
+
+@router.put('/items/{item_id}')
+def edit_item(database: DatabaseDependency,
+              user: Annotated[orm.User, RequireScopes(scopes.Scopes(
+                  scopes.EDIT_OWN_ITEM,
+              ))],
+              item_id: int,
+              update: _EditItemRequest):
+    orm_item = database.find_item_by_id(id=item_id)
+    if orm_item is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    if orm_item.owner_id != user.user_id:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+    for field, value in update:
+        setattr(orm_item, field, value)
+    database.commit()
