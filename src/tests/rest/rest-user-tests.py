@@ -146,7 +146,6 @@ def test_update_item(client: TestClient,
     payload = {
         'description': updated_description,
         'price_in_cents': updated_price,
-        'recipient_id': updated_recipient_id,
     }
     url = f'/api/v1/me/items/{item.item_id}'
     response = client.put(url=url, headers=seller_headers, json=payload)
@@ -157,6 +156,6 @@ def test_update_item(client: TestClient,
     assert updated_item is not None
     assert updated_item.description == updated_description
     assert updated_item.price_in_cents == updated_price
-    assert updated_item.recipient_id == updated_recipient_id
+    assert updated_item.recipient_id == item.recipient_id
     assert updated_item.owner_id == item.owner_id
     assert updated_item.sales_event_id == item.sales_event_id
