@@ -157,4 +157,9 @@ class DatabaseSession:
         return self.__session.query(orm.SalesEvent).filter(orm.SalesEvent.sales_event_id == id).first()
 
     def list_sales_events(self) -> list[orm.SalesEvent]:
+        self.__logger.debug(f'Listing all events')
         return self.__session.query(orm.SalesEvent).all()
+
+    def find_item_by_id(self, id: int) -> Optional[orm.Item]:
+        self.__logger.debug(f'Finding item with id {id!r}')
+        return self.__session.query(orm.Item).filter(orm.Item.item_id == id).first()
