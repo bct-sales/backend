@@ -142,7 +142,6 @@ def test_update_item(client: TestClient,
                      seller_headers: dict[str, str]):
     updated_description = 'updated description'
     updated_price = 1234
-    updated_recipient_id = seller.user_id
     payload = {
         'description': updated_description,
         'price_in_cents': updated_price,
