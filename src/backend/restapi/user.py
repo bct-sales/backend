@@ -60,13 +60,24 @@ async def list_items(event_id: int,
     )
 
 
+
+class _CreateItemPayload(pydantic.BaseModel):
+    description: str
+    price_in_cents: pydantic.NonNegativeInt
+    recipient_id: int
+    sales_event_id: int
+
+
 @router.post("/items", response_model=models.Item, status_code=status.HTTP_201_CREATED)
 async def create_item(database: DatabaseDependency,
                       user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_OWN_ITEM))],
-                      item: models.ItemCreate):
-    orm_item = database.create_item(item=item, owner_id=user.user_id)
+                      payload: _CreateItemPayload):
+    item = models.ItemCreate(
+        **dict(payload),
+        owner_id=user.user_id
+    )
+    orm_item = database.create_item(item=item)
     return models.Item.model_validate(orm_item)
-
 
 
 class _EditItemRequest(pydantic.BaseModel):

@@ -116,12 +116,12 @@ class DatabaseSession:
     def list_users(self) -> list[orm.User]:
         return self.__session.query(orm.User).all()
 
-    def create_item(self, *, item: models.ItemCreate, owner_id: int) -> orm.Item:
+    def create_item(self, *, item: models.ItemCreate) -> orm.Item:
         self.__logger.debug(f'Creating item with data {item!r}')
         orm_item = orm.Item(
             description=item.description,
             price_in_cents=item.price_in_cents,
-            owner_id=owner_id,
+            owner_id=item.owner_id,
             recipient_id=item.recipient_id,
             sales_event_id=item.sales_event_id,
         )

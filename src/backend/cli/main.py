@@ -72,14 +72,14 @@ def repopulate():
             description='T-Shirt',
             price_in_cents=200,
             recipient_id=seller.user_id,
-            sales_event_id=event.sales_event_id
-        ), owner_id=seller.user_id)
+            sales_event_id=event.sales_event_id,
+            owner_id=seller.user_id))
         session.create_item(item=models.ItemCreate(
             description='Jeans',
             price_in_cents=800,
             recipient_id=seller.user_id,
-            sales_event_id=event.sales_event_id
-        ), owner_id=seller.user_id)
+            sales_event_id=event.sales_event_id,
+            owner_id=seller.user_id))
 
 
 @cli.group
