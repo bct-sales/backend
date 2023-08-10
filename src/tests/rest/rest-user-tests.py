@@ -34,12 +34,12 @@ def test_list_items_as_seller(client: TestClient,
                 'sales_event_id': item.sales_event_id,
                 'recipient_id': item.recipient_id,
                 'links': {
-                    'edit': f'/api/v1/me/items/{item.item_id}'
+                    'edit': f'/me/items/{item.item_id}'
                 },
             },
         ],
         'links': {
-            'add': f'/api/v1/me/items',
+            'add': f'/me/items',
         }
     }
 

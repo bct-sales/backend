@@ -44,7 +44,7 @@ async def list_items(event_id: int,
             item_id=item.item_id,
             owner_id=item.owner_id,
             links=_ListItemsResponse_Item_Links(
-                edit=f'/api/v1/me/items/{item.item_id}',
+                edit=f'/me/items/{item.item_id}',
             ),
             recipient_id=item.recipient_id,
             price_in_cents=item.price_in_cents,
@@ -55,7 +55,7 @@ async def list_items(event_id: int,
     return _ListItemsResponse(
         items=items,
         links=_ListItemsResponse_Links(
-            add=f'/api/v1/me/items'
+            add=f'/me/items'
         )
     )
 
@@ -83,6 +83,7 @@ def edit_item(database: DatabaseDependency,
               ))],
               item_id: int,
               update: _EditItemRequest):
+    print('!1')
     orm_item = database.find_item_by_id(id=item_id)
     if orm_item is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
