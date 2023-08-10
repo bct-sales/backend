@@ -24,9 +24,10 @@ def test_list_items_as_seller(client: TestClient,
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(json) == 1
-    assert json[0]['item_id'] == item.item_id
-    assert json[0]['description'] == item.description
+    assert 'items' in json
+    items = json['items']
+    assert items[0]['item_id'] == item.item_id
+    assert items[0]['description'] == item.description
 
 
 def test_list_items_as_admin(client: TestClient,
