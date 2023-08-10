@@ -44,7 +44,7 @@ async def list_items(event_id: int,
             item_id=item.item_id,
             owner_id=item.owner_id,
             links=_ListItemsResponse_Item_Links(
-                edit=f'/api/v1/items/{item.item_id}',
+                edit=f'/api/v1/me/items/{item.item_id}',
             ),
             recipient_id=item.recipient_id,
             price_in_cents=item.price_in_cents,
@@ -55,7 +55,7 @@ async def list_items(event_id: int,
     return _ListItemsResponse(
         items=items,
         links=_ListItemsResponse_Links(
-            add='/api/v1/me/events/{event_id}/items'
+            add=f'/api/v1/me/events/{event_id}/items'
         )
     )
 

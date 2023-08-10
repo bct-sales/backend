@@ -24,10 +24,24 @@ def test_list_items_as_seller(client: TestClient,
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    assert 'items' in json
-    items = json['items']
-    assert items[0]['item_id'] == item.item_id
-    assert items[0]['description'] == item.description
+    assert json == {
+        'items': [
+            {
+                'item_id': item.item_id,
+                'description': item.description,
+                'price_in_cents': item.price_in_cents,
+                'owner_id': item.owner_id,
+                'sales_event_id': item.sales_event_id,
+                'recipient_id': item.recipient_id,
+                'links': {
+                    'edit': f'/api/v1/me/items/{item.item_id}'
+                },
+            },
+        ],
+        'links': {
+            'add': f'/api/v1/me/events/{item.sales_event_id}/items',
+        }
+    }
 
 
 def test_list_items_as_admin(client: TestClient,
