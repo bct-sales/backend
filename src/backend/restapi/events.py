@@ -1,3 +1,4 @@
+import datetime
 from typing import Annotated, Optional
 
 from fastapi import APIRouter
@@ -11,7 +12,17 @@ from backend.security import scopes
 
 router = APIRouter()
 
-@router.get('/', response_model=list[models.SalesEvent])
+
+class _GetSalesEventResponse(pydantic.BaseModel):
+    sales_event_id: int
+    date: datetime.date
+    start_time: datetime.time
+    end_time: datetime.time
+    location: str
+    description: str
+
+
+@router.get('/', response_model=list[_GetSalesEventResponse])
 def get_sales_events(database: DatabaseDependency,
                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(
                         scopes.LIST_SALES_EVENTS,
@@ -31,9 +42,9 @@ def add_sales_event(event_data: models.SalesEventCreate,
 
 class _UpdateSalesPayload(pydantic.BaseModel):
     date: Optional[str] = None
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
-    location: Optional[str] = None
+    start_time: Optional[datetime.date] = None
+    end_time: Optional[datetime.time] = None
+    location: Optional[datetime.time] = None
     description: Optional[str] = None
 
 
