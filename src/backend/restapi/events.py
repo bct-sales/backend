@@ -13,7 +13,8 @@ from backend.security import scopes
 router = APIRouter()
 
 
-class _GetSalesEventResponse(pydantic.BaseModel):
+class _GetSalesEventResponse_Event(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
     sales_event_id: int
     date: datetime.date
     start_time: datetime.time
@@ -22,13 +23,19 @@ class _GetSalesEventResponse(pydantic.BaseModel):
     description: str
 
 
-@router.get('/', response_model=list[_GetSalesEventResponse])
+class _GetSalesEventResponse(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+    events: list[_GetSalesEventResponse_Event]
+
+
+@router.get('/', response_model=_GetSalesEventResponse)
 def get_sales_events(database: DatabaseDependency,
                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(
                         scopes.LIST_SALES_EVENTS,
                     ))]):
     orm_sales_events = database.list_sales_events()
-    return [models.SalesEvent.model_validate(event) for event in orm_sales_events]
+    events = [_GetSalesEventResponse_Event.model_validate(event) for event in orm_sales_events]
+    return _GetSalesEventResponse(events=events)
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=models.SalesEvent)
