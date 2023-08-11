@@ -87,7 +87,7 @@ def dev():
     pass
 
 
-@debug.command
+@dev.command
 @click.argument('email')
 def genauth(email):
     database = get_database()
