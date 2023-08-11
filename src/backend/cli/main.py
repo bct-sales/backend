@@ -83,16 +83,16 @@ def repopulate():
 
 
 @cli.group
-def token():
+def dev():
     pass
 
 
-@token.command
-@click.argument('user')
-def create(user):
+@debug.command
+@click.argument('email')
+def genauth(email):
     database = get_database()
     with database.session as session:
-        user = session.find_user_with_email_address(email_address=user)
+        user = session.find_user_with_email_address(email_address=email)
 
     if user is None:
         print(f'Error: no user found with email address {user}')
@@ -101,4 +101,9 @@ def create(user):
     role = roles.Role.from_name(user.role)
     token_data = TokenData(user_id=user.user_id, scopes=role.scopes)
     access_token = create_access_token(token_data=token_data, duration=datetime.timedelta(days=365))
-    print(access_token)
+    print(f'''
+const accessToken = `{access_token}`;
+const emailAddress = `{email}`;
+const role = '{role.name}';
+const userId = {user.user_id};
+          '''.strip())
