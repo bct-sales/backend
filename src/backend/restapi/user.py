@@ -94,7 +94,6 @@ def edit_item(database: DatabaseDependency,
               ))],
               item_id: int,
               update: _EditItemRequest):
-    print('!1')
     orm_item = database.find_item_by_id(id=item_id)
     if orm_item is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
