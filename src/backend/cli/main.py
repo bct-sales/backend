@@ -41,7 +41,7 @@ def repopulate():
             password='123456789'
         ))
         event = session.create_sales_event(models.SalesEventCreate(
-            date=datetime.date(2030, 12, 18),
+            date=datetime.date(2023, 12, 18),
             start_time=datetime.time(9, 0),
             end_time=datetime.time(18, 0),
             location='Leuven',
