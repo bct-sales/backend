@@ -23,16 +23,21 @@ def test_list_events_as_seller(client: TestClient,
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(json) == 1
-
-    event = json[0]
-    assert len(event) == 6
-    assert event['sales_event_id'] == sales_event.sales_event_id
-    assert event['date'] == sales_event.date.isoformat()
-    assert event['description'] == sales_event.description
-    assert event['start_time'] == sales_event.start_time.isoformat()
-    assert event['end_time'] == sales_event.end_time.isoformat()
-    assert event['location'] == sales_event.location
+    assert json == {
+        'events': [
+            {
+                'sales_event_id': sales_event.sales_event_id,
+                'date': sales_event.date.isoformat(),
+                'description': sales_event.description,
+                'start_time': sales_event.start_time.isoformat(),
+                'end_time': sales_event.end_time.isoformat(),
+                'location': sales_event.location,
+                'links': {
+                    'edit': f'/events/{sales_event.sales_event_id}'
+                }
+            }
+        ]
+    }
 
 
 def test_list_events_as_admin(client: TestClient,
@@ -43,16 +48,21 @@ def test_list_events_as_admin(client: TestClient,
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(json) == 1
-
-    event = json[0]
-    assert len(event) == 6
-    assert event['sales_event_id'] == sales_event.sales_event_id
-    assert event['date'] == sales_event.date.isoformat()
-    assert event['description'] == sales_event.description
-    assert event['start_time'] == sales_event.start_time.isoformat()
-    assert event['end_time'] == sales_event.end_time.isoformat()
-    assert event['location'] == sales_event.location
+    assert json == {
+        'events': [
+            {
+                'sales_event_id': sales_event.sales_event_id,
+                'date': sales_event.date.isoformat(),
+                'description': sales_event.description,
+                'start_time': sales_event.start_time.isoformat(),
+                'end_time': sales_event.end_time.isoformat(),
+                'location': sales_event.location,
+                'links': {
+                    'edit': f'/events/{sales_event.sales_event_id}'
+                }
+            }
+        ]
+    }
 
 
 def test_create_event_as_seller(client: TestClient,

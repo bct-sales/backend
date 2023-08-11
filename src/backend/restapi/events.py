@@ -13,6 +13,10 @@ from backend.security import scopes
 router = APIRouter()
 
 
+class _GetSalesEventResponse_Event_Links(pydantic.BaseModel):
+    edit: str
+
+
 class _GetSalesEventResponse_Event(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
     sales_event_id: int
@@ -21,6 +25,7 @@ class _GetSalesEventResponse_Event(pydantic.BaseModel):
     end_time: datetime.time
     location: str
     description: str
+    links: _GetSalesEventResponse_Event_Links
 
 
 class _GetSalesEventResponse(pydantic.BaseModel):
@@ -34,7 +39,20 @@ def get_sales_events(database: DatabaseDependency,
                         scopes.LIST_SALES_EVENTS,
                     ))]):
     orm_sales_events = database.list_sales_events()
-    events = [_GetSalesEventResponse_Event.model_validate(event) for event in orm_sales_events]
+    events = [
+        _GetSalesEventResponse_Event(
+            sales_event_id=event.sales_event_id,
+            date=event.date,
+            start_time=event.start_time,
+            end_time=event.end_time,
+            description=event.description,
+            location=event.location,
+            links=_GetSalesEventResponse_Event_Links(
+                edit=f'/events/{event.sales_event_id}'
+            )
+        )
+        for event in orm_sales_events
+    ]
     return _GetSalesEventResponse(events=events)
 
 
