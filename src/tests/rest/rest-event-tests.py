@@ -121,3 +121,26 @@ def test_create_event_as_admin(client: TestClient,
     assert event.date == date
     assert event.start_time == start_time
     assert event.end_time == end_time
+
+
+def test_edit_event_as_admin(client: TestClient,
+                             session: DatabaseSession,
+                             admin_headers: dict[str, str],
+                             sales_event: models.SalesEvent):
+    new_description = 'new description'
+    new_location = 'new location'
+    payload = {
+        'description': new_description,
+        'location': new_location
+    }
+    response = client.put(f'/api/v1/events/{sales_event.sales_event_id}', json=payload, headers=admin_headers)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    orm_sales_event = session.find_sales_event_by_id(sales_event.sales_event_id)
+    assert orm_sales_event is not None
+    assert orm_sales_event.description == new_description
+    assert orm_sales_event.location == new_location
+    assert orm_sales_event.date == sales_event.date
+    assert orm_sales_event.start_time == sales_event.start_time
+    assert orm_sales_event.end_time == sales_event.end_time
