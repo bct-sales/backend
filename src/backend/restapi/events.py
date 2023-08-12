@@ -66,10 +66,10 @@ def add_sales_event(event_data: models.SalesEventCreate,
 
 
 class _UpdateSalesPayload(pydantic.BaseModel):
-    date: Optional[str] = None
-    start_time: Optional[datetime.date] = None
+    date: Optional[datetime.date] = None
+    start_time: Optional[datetime.time] = None
     end_time: Optional[datetime.time] = None
-    location: Optional[datetime.time] = None
+    location: Optional[str] = None
     description: Optional[str] = None
 
 
@@ -82,5 +82,6 @@ def update_sales_event(database: DatabaseDependency,
     if orm_sales_event is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     for field, value in payload:
-        setattr(orm_sales_event, field, value)
+        if value:
+            setattr(orm_sales_event, field, value)
     database.commit()
