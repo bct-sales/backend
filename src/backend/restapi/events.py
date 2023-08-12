@@ -28,9 +28,13 @@ class _GetSalesEventResponse_Event(pydantic.BaseModel):
     links: _GetSalesEventResponse_Event_Links
 
 
+class _GetSalesEventResponse_Links(pydantic.BaseModel):
+    add: str
+
 class _GetSalesEventResponse(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
     events: list[_GetSalesEventResponse_Event]
+    links: _GetSalesEventResponse_Links
 
 
 @router.get('/', response_model=_GetSalesEventResponse)
@@ -53,7 +57,12 @@ def get_sales_events(database: DatabaseDependency,
         )
         for event in orm_sales_events
     ]
-    return _GetSalesEventResponse(events=events)
+    return _GetSalesEventResponse(
+        events=events,
+        links=_GetSalesEventResponse_Links(
+            add='/events'
+        )
+    )
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=models.SalesEvent)
