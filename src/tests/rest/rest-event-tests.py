@@ -144,3 +144,18 @@ def test_edit_event_as_admin(client: TestClient,
     assert orm_sales_event.date == sales_event.date
     assert orm_sales_event.start_time == sales_event.start_time
     assert orm_sales_event.end_time == sales_event.end_time
+
+
+def test_edit_event_as_seller(client: TestClient,
+                              session: DatabaseSession,
+                              seller_headers: dict[str, str],
+                              sales_event: models.SalesEvent):
+    new_description = 'new description'
+    new_location = 'new location'
+    payload = {
+        'description': new_description,
+        'location': new_location
+    }
+    response = client.put(f'/api/v1/events/{sales_event.sales_event_id}', json=payload, headers=seller_headers)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
