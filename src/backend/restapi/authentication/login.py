@@ -14,13 +14,14 @@ import logging
 router = APIRouter()
 
 
-class _LoginResponse(pydantic.BaseModel):
-    user_id: int
+class Response(pydantic.BaseModel):
+    user_id: pydantic.NonNegativeInt
     access_token: str
-    role: str
+    role: Literal['seller', 'admin']
     token_type: Literal["bearer"]
 
-@router.post("/login", tags=['authentication'], response_model=_LoginResponse)
+
+@router.post("/login", tags=['authentication'], response_model=Response)
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], database: DatabaseDependency):
     email_address = form_data.username
     password = form_data.password
@@ -35,7 +36,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], data
         token_data = security.TokenData(user_id=user.user_id, scopes=role.scopes)
         token = security.create_access_token(token_data=token_data)
 
-        return _LoginResponse(
+        return Response(
             user_id=user.user_id,
             access_token=token,
             role=role.name,

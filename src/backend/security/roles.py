@@ -1,24 +1,27 @@
 from __future__ import annotations
+from typing import Literal, cast
 from backend.security import scopes
 
 
+RoleName = Literal['seller', 'admin']
+
 class Role:
-    __name: str
+    __name: RoleName
 
     __scopes: scopes.Scopes
 
     @staticmethod
     def from_name(name: str) -> Role:
-        if name not in _roles:
+        if not name in _roles:
             raise RoleException(f'Unknown role {name}')
-        return _roles[name]
+        return _roles[cast(RoleName, name)]
 
-    def __init__(self, name: str, scopes: scopes.Scopes):
+    def __init__(self, name: RoleName, scopes: scopes.Scopes):
         self.__name = name
         self.__scopes = scopes
 
     @property
-    def name(self) -> str:
+    def name(self) -> RoleName:
         return self.__name
 
     @property
@@ -36,10 +39,10 @@ class RoleException(Exception):
     pass
 
 
-_roles: dict[str, Role] = {}
+_roles: dict[RoleName, Role] = {}
 
 
-def define_role(name: str, scopes: scopes.Scopes) -> Role:
+def define_role(name: RoleName, scopes: scopes.Scopes) -> Role:
     role = Role(name=name, scopes=scopes)
     _roles[name] = role
     return role
