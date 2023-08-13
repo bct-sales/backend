@@ -22,7 +22,7 @@ class _UpdateSalesPayload(pydantic.BaseModel):
 
 
 @router.put('/{event_id}', tags=['events'])
-def update_sales_event(database: DatabaseDependency,
+async def update_sales_event(database: DatabaseDependency,
                        payload: _UpdateSalesPayload,
                        event_id: int,
                        user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.EDIT_SALES_EVENT))]):
