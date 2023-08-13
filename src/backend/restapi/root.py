@@ -15,7 +15,7 @@ class Response(pydantic.BaseModel):
 
 
 @router.get('/', tags=['root'])
-def root():
+async def root():
     response = Response(
         links=Links(
             registration='/register',
