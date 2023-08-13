@@ -14,11 +14,15 @@ import logging
 router = APIRouter()
 
 
+class Links(pydantic.BaseModel):
+    events: str
+
 class Response(pydantic.BaseModel):
     user_id: pydantic.NonNegativeInt
     access_token: str
     role: Literal['seller', 'admin']
     token_type: Literal["bearer"]
+    links: Links
 
 
 @router.post("/login", tags=['authentication'], response_model=Response)
@@ -41,6 +45,9 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], data
             access_token=token,
             role=role.name,
             token_type="bearer",
+            links=Links(
+                events='/events'
+            )
         )
 
     except UnknownUserException:

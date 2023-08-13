@@ -11,7 +11,7 @@ from backend.security.scopes import Scopes
 router = APIRouter()
 
 
-class _CreateItemPayload(pydantic.BaseModel):
+class AddItemData(pydantic.BaseModel):
     description: str
     price_in_cents: pydantic.NonNegativeInt
     recipient_id: int
@@ -24,7 +24,7 @@ class _CreateItemPayload(pydantic.BaseModel):
 async def add_item(database: DatabaseDependency,
                    user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_OWN_ITEM))],
                    event_id: int,
-                   payload: _CreateItemPayload):
+                   payload: AddItemData):
     item = models.ItemCreate(
         **dict(payload),
         sales_event_id=event_id,

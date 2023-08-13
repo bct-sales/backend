@@ -26,7 +26,6 @@ async def register_seller(seller_creation_data: SellerRegistrationData, database
     )
     try:
         database.create_user(user_creation_data)
-        return {"result": "ok"}
     except Exception as e:
         logging.error(e)
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(e))

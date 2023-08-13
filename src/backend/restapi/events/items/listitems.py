@@ -11,39 +11,40 @@ from backend.security.scopes import Scopes
 router = APIRouter()
 
 
-class _ListItemsResponse_Item_Links(pydantic.BaseModel):
+class ItemLinks(pydantic.BaseModel):
     edit: str
 
 
-class _ListItemsResponse_Item(models.Item):
+class Item(models.Item):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
-    links: _ListItemsResponse_Item_Links
+    links: ItemLinks
 
 
-class _ListItemsResponse_Links(pydantic.BaseModel):
+class Links(pydantic.BaseModel):
     add: str
 
-class _ListItemsResponse(pydantic.BaseModel):
+
+class Response(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
-    items: list[_ListItemsResponse_Item]
-    links: _ListItemsResponse_Links
+    items: list[Item]
+    links: Links
 
 
 @router.get("/",
-            response_model=_ListItemsResponse,
+            response_model=Response,
             tags=['items'])
 async def list_items(event_id: int,
                      database: DatabaseDependency,
                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.LIST_OWN_ITEMS))]):
     orm_items = database.list_items_owned_by(owner=user.user_id, sale_event=event_id)
     items = [
-        _ListItemsResponse_Item(
+        Item(
             description=item.description,
             item_id=item.item_id,
             owner_id=item.owner_id,
-            links=_ListItemsResponse_Item_Links(
+            links=ItemLinks(
                 edit=f'/events/{event_id}/items/{item.item_id}',
             ),
             recipient_id=item.recipient_id,
@@ -52,9 +53,9 @@ async def list_items(event_id: int,
         )
         for item in orm_items
     ]
-    return _ListItemsResponse(
+    return Response(
         items=items,
-        links=_ListItemsResponse_Links(
+        links=Links(
             add=f'/events/{event_id}/items'
         )
     )

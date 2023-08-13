@@ -11,7 +11,7 @@ from backend.security.scopes import Scopes
 router = APIRouter()
 
 
-class _EditItemRequest(pydantic.BaseModel):
+class EditItemData(pydantic.BaseModel):
     description: Optional[str] = None
     price_in_cents: Optional[int] = None
     recipient_id: Optional[int] = None
@@ -19,12 +19,12 @@ class _EditItemRequest(pydantic.BaseModel):
 
 
 @router.put('/{item_id}', tags=['items'])
-async def edit_item(database: DatabaseDependency,
+async def update_item(database: DatabaseDependency,
               user: Annotated[orm.User, RequireScopes(scopes.Scopes(
                   scopes.EDIT_OWN_ITEM,
               ))],
               item_id: int,
-              update: _EditItemRequest):
+              update: EditItemData):
     orm_item = database.find_item_by_id(id=item_id)
     if orm_item is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)

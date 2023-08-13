@@ -16,6 +16,9 @@ class Response(pydantic.BaseModel):
 
 @router.get('/', tags=['root'])
 async def root():
+    """
+    Starting point of REST API
+    """
     response = Response(
         links=Links(
             registration='/register',

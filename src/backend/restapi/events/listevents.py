@@ -1,10 +1,9 @@
 import datetime
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter
 import pydantic
 
-from backend.db import models
 from backend.db.exceptions import *
 from backend.restapi.shared import *
 from backend.security import scopes
@@ -13,33 +12,33 @@ from backend.security import scopes
 router = APIRouter()
 
 
-class _GetSalesEventResponse_Event_Links(pydantic.BaseModel):
+class EventLinks(pydantic.BaseModel):
     edit: str
 
 
-class _GetSalesEventResponse_Event(pydantic.BaseModel):
+class Event(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
-    sales_event_id: int
+    sales_event_id: pydantic.NonNegativeInt
     date: datetime.date
     start_time: datetime.time
     end_time: datetime.time
     location: str
     description: str
-    links: _GetSalesEventResponse_Event_Links
+    links: EventLinks
 
 
-class _GetSalesEventResponse_Links(pydantic.BaseModel):
+class SalesLinks(pydantic.BaseModel):
     add: str
 
 
-class _GetSalesEventResponse(pydantic.BaseModel):
+class Response(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
-    events: list[_GetSalesEventResponse_Event]
-    links: _GetSalesEventResponse_Links
+    events: list[Event]
+    links: SalesLinks
 
 
 @router.get('/',
-            response_model=_GetSalesEventResponse,
+            response_model=Response,
             tags=['events'])
 async def get_sales_events(database: DatabaseDependency,
                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(
@@ -47,22 +46,22 @@ async def get_sales_events(database: DatabaseDependency,
                     ))]):
     orm_sales_events = database.list_sales_events()
     events = [
-        _GetSalesEventResponse_Event(
+        Event(
             sales_event_id=event.sales_event_id,
             date=event.date,
             start_time=event.start_time,
             end_time=event.end_time,
             description=event.description,
             location=event.location,
-            links=_GetSalesEventResponse_Event_Links(
+            links=EventLinks(
                 edit=f'/events/{event.sales_event_id}'
             )
         )
         for event in orm_sales_events
     ]
-    return _GetSalesEventResponse(
+    return Response(
         events=events,
-        links=_GetSalesEventResponse_Links(
+        links=SalesLinks(
             add='/events'
         )
     )

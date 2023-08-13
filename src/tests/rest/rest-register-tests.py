@@ -44,7 +44,7 @@ def test_register_with_invalid_email_address(client: TestClient, session: Databa
     }
     response = client.post('/api/v1/register', json=payload)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(session.list_users()) == 0
 
 

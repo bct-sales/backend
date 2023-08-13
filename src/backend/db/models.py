@@ -13,7 +13,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     model_config = pydantic.ConfigDict(from_attributes=True)
-    user_id: int
+    user_id: pydantic.NonNegativeInt
     password_hash: str
 
 
@@ -31,15 +31,15 @@ class SalesEventCreate(SalesEventBase):
 
 class SalesEvent(SalesEventBase):
     model_config = pydantic.ConfigDict(from_attributes=True)
-    sales_event_id: int
+    sales_event_id: pydantic.NonNegativeInt
 
 
 class ItemBase(pydantic.BaseModel):
     description: str
     price_in_cents: pydantic.NonNegativeInt
-    recipient_id: int
-    sales_event_id: int
-    owner_id: int
+    recipient_id: pydantic.NonNegativeInt
+    sales_event_id: pydantic.NonNegativeInt
+    owner_id: pydantic.NonNegativeInt
 
 
 class ItemCreate(ItemBase):
@@ -48,4 +48,4 @@ class ItemCreate(ItemBase):
 
 class Item(ItemBase):
     model_config = pydantic.ConfigDict(from_attributes=True)
-    item_id: int
+    item_id: pydantic.NonNegativeInt

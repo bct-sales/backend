@@ -13,7 +13,7 @@ from backend.security import scopes
 router = APIRouter()
 
 
-class _UpdateSalesPayload(pydantic.BaseModel):
+class UpdateSalesData(pydantic.BaseModel):
     date: Optional[datetime.date] = None
     start_time: Optional[datetime.time] = None
     end_time: Optional[datetime.time] = None
@@ -23,7 +23,7 @@ class _UpdateSalesPayload(pydantic.BaseModel):
 
 @router.put('/{event_id}', tags=['events'])
 async def update_sales_event(database: DatabaseDependency,
-                       payload: _UpdateSalesPayload,
+                       payload: UpdateSalesData,
                        event_id: int,
                        user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.EDIT_SALES_EVENT))]):
     orm_sales_event = database.find_sales_event_by_id(event_id)
