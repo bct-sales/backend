@@ -64,7 +64,10 @@ def test_list_events_as_admin(client: TestClient,
                     'edit': f'/events/{sales_event.sales_event_id}'
                 }
             }
-        ]
+        ],
+        'links': {
+            'add': f'/events'
+        },
     }
 
 
