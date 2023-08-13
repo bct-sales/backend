@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     jwt_expiration: int = 6 * 60 # 6 Hours
 
-    @pydantic.computed_field
+    @pydantic.computed_field # type: ignore[misc]
     @property
     def database_url(self) -> str:
         if self.database_path:
