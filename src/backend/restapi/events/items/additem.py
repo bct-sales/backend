@@ -21,10 +21,10 @@ class _CreateItemPayload(pydantic.BaseModel):
              response_model=models.Item,
              status_code=status.HTTP_201_CREATED,
              tags=['items'])
-async def create_item(database: DatabaseDependency,
-                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_OWN_ITEM))],
-                      event_id: int,
-                      payload: _CreateItemPayload):
+async def add_item(database: DatabaseDependency,
+                   user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_OWN_ITEM))],
+                   event_id: int,
+                   payload: _CreateItemPayload):
     item = models.ItemCreate(
         **dict(payload),
         sales_event_id=event_id,
