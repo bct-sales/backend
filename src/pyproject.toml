@@ -24,6 +24,8 @@ reportlab-qrcode = "^0.1.4"
 mypy = "^1.4.1"
 pytest = "^7.4.0"
 httpx = "^0.24.1"
+types-passlib = "^1.7.7.12"
+types-python-jose = "^3.3.4.8"
 
 [build-system]
 requires = ["poetry-core"]
