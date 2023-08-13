@@ -6,13 +6,13 @@ from backend.db import models
 import backend.security as security
 from backend.restapi.shared import *
 from backend.db.exceptions import *
-from backend.security import roles
 
 import pydantic
 import logging
 
 
 router = APIRouter()
+
 
 class _LoginResponse(pydantic.BaseModel):
     user_id: int
