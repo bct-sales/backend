@@ -1,7 +1,6 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from backend.restapi import authentication
-from backend.restapi import user
 from backend.restapi import events
 
 
@@ -24,7 +23,6 @@ app.add_middleware(
 root_router = APIRouter(prefix="/api/v1")
 
 root_router.include_router(authentication.router)
-root_router.include_router(user.router, prefix='/me')
-root_router.include_router(events.router, prefix='/events')
+root_router.include_router(events.router)
 
 app.include_router(root_router)
