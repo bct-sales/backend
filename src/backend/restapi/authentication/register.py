@@ -12,13 +12,13 @@ import logging
 router = APIRouter()
 
 
-class _RegisterSellerData(pydantic.BaseModel):
-    email_address: str
+class SellerRegistrationData(pydantic.BaseModel):
+    email_address: pydantic.EmailStr
     password: str
 
 
 @router.post("/register", tags=['authentication'], status_code=status.HTTP_201_CREATED)
-async def register_seller(seller_creation_data: _RegisterSellerData, database: DatabaseDependency):
+async def register_seller(seller_creation_data: SellerRegistrationData, database: DatabaseDependency):
     user_creation_data = models.UserCreate(
         email_address=seller_creation_data.email_address,
         role=roles.SELLER.name,
