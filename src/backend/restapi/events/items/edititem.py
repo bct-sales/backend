@@ -19,7 +19,7 @@ class _EditItemRequest(pydantic.BaseModel):
 
 
 @router.put('/{item_id}', tags=['items'])
-def edit_item(database: DatabaseDependency,
+async def edit_item(database: DatabaseDependency,
               user: Annotated[orm.User, RequireScopes(scopes.Scopes(
                   scopes.EDIT_OWN_ITEM,
               ))],
