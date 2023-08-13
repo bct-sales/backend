@@ -41,7 +41,7 @@ class _GetSalesEventResponse(pydantic.BaseModel):
 @router.get('/',
             response_model=_GetSalesEventResponse,
             tags=['events'])
-def get_sales_events(database: DatabaseDependency,
+async def get_sales_events(database: DatabaseDependency,
                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(
                         scopes.LIST_SALES_EVENTS,
                     ))]):
