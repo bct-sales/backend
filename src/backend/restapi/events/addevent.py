@@ -16,7 +16,7 @@ router = APIRouter()
              status_code=status.HTTP_201_CREATED,
              response_model=models.SalesEvent,
              tags=['events'])
-def add_sales_event(event_data: models.SalesEventCreate,
+async def add_sales_event(event_data: models.SalesEventCreate,
                     database: DatabaseDependency,
                     user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.ADD_SALES_EVENTS))]):
     orm_sales_event = database.create_sales_event(event_data)
