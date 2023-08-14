@@ -1,5 +1,5 @@
 import pydantic
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 
 router = APIRouter()
@@ -15,14 +15,14 @@ class Response(pydantic.BaseModel):
 
 
 @router.get('/', tags=['root'])
-async def root():
+async def root(request: Request):
     """
     Starting point of REST API
     """
     response = Response(
         links=Links(
-            registration='/register',
-            login='/login',
+            registration=str(request.url_for('register_seller')),
+            login=str(request.url_for('login')),
         )
     )
     return response

@@ -1,7 +1,7 @@
 import datetime
 from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 import pydantic
 
 from backend.db.exceptions import *
@@ -40,10 +40,9 @@ class Response(pydantic.BaseModel):
 @router.get('/',
             response_model=Response,
             tags=['events'])
-async def get_sales_events(database: DatabaseDependency,
-                     user: Annotated[orm.User, RequireScopes(scopes.Scopes(
-                        scopes.LIST_SALES_EVENTS,
-                    ))]):
+async def list_sales_events(request: Request,
+                           database: DatabaseDependency,
+                           user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.LIST_SALES_EVENTS))]):
     orm_sales_events = database.list_sales_events()
     events = [
         Event(
@@ -54,7 +53,7 @@ async def get_sales_events(database: DatabaseDependency,
             description=event.description,
             location=event.location,
             links=EventLinks(
-                edit=f'/events/{event.sales_event_id}'
+                edit=str(request.url_for('update_sales_event', event_id=event.sales_event_id)),
             )
         )
         for event in orm_sales_events
@@ -62,6 +61,6 @@ async def get_sales_events(database: DatabaseDependency,
     return Response(
         events=events,
         links=SalesLinks(
-            add='/events'
+            add=str(request.url_for('list_sales_events')),
         )
     )

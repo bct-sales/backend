@@ -1,7 +1,7 @@
 from typing import Annotated, Any, Optional
 
 import pydantic
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from backend.db import models
 
 from backend.restapi.shared import *
@@ -35,7 +35,8 @@ class Response(pydantic.BaseModel):
 @router.get("/",
             response_model=Response,
             tags=['items'])
-async def list_items(event_id: int,
+async def list_items(request: Request,
+                     event_id: int,
                      database: DatabaseDependency,
                      user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.LIST_OWN_ITEMS))]):
     orm_items = database.list_items_owned_by(owner=user.user_id, sale_event=event_id)
@@ -45,7 +46,7 @@ async def list_items(event_id: int,
             item_id=item.item_id,
             owner_id=item.owner_id,
             links=ItemLinks(
-                edit=f'/events/{event_id}/items/{item.item_id}',
+                edit=str(request.url_for("update_item", event_id=event_id, item_id=item.item_id)),
             ),
             recipient_id=item.recipient_id,
             price_in_cents=item.price_in_cents,
@@ -56,6 +57,6 @@ async def list_items(event_id: int,
     return Response(
         items=items,
         links=Links(
-            add=f'/events/{event_id}/items'
+            add=str(request.url_for('list_items', event_id=event_id)),
         )
     )

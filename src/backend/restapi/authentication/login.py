@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from typing import Annotated, Literal
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -25,8 +25,11 @@ class Response(pydantic.BaseModel):
     links: Links
 
 
-@router.post("/login", tags=['authentication'], response_model=Response)
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], database: DatabaseDependency):
+@router.post("/login",
+             tags=['authentication'],
+             response_model=Response)
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+                database: DatabaseDependency):
     email_address = form_data.username
     password = form_data.password
 
@@ -49,7 +52,6 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], data
                 events='/events'
             )
         )
-
     except UnknownUserException:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No user with this email address")
     except WrongPasswordException:
