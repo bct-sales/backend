@@ -8,6 +8,7 @@ router = APIRouter()
 class Links(pydantic.BaseModel):
     registration: str
     login: str
+    events: str
 
 
 class Response(pydantic.BaseModel):
@@ -23,6 +24,7 @@ async def root(request: Request):
         links=Links(
             registration=str(request.url_for('register_seller')),
             login=str(request.url_for('login')),
+            events=str(request.url_for('list_sales_events')),
         )
     )
     return response
