@@ -48,7 +48,7 @@ async def list_sales_events(request: Request,
     events = [
         Event(
             sales_event_id=event.sales_event_id,
-            date=event.date,``
+            date=event.date,
             start_time=event.start_time,
             end_time=event.end_time,
             description=event.description,
