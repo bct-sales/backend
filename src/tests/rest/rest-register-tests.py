@@ -7,18 +7,26 @@ from backend.db.database import DatabaseSession
 from backend.security import roles
 
 
-def test_register_seller(client: TestClient, session: DatabaseSession, valid_email_address: str, valid_password: str):
+def test_register_seller(client: TestClient,
+                         session: DatabaseSession,
+                         register_url: str,
+                         valid_email_address: str,
+                         valid_password: str):
     payload = {
         'email_address': valid_email_address,
         'password': valid_password
     }
-    response = client.post('/api/v1/register', json=payload)
+    response = client.post(register_url, json=payload)
 
     assert response.status_code == status.HTTP_201_CREATED
     assert len(session.list_users()) == 1
 
 
-def test_register_with_existing_email_address(client: TestClient, session: DatabaseSession, valid_email_address: str, valid_password: str):
+def test_register_with_existing_email_address(client: TestClient,
+                                              session: DatabaseSession,
+                                              register_url: str,
+                                              valid_email_address: str,
+                                              valid_password: str):
     user_creation_data = models.UserCreate(
         email_address=valid_email_address,
         password=valid_password,
@@ -31,29 +39,37 @@ def test_register_with_existing_email_address(client: TestClient, session: Datab
         'email_address': valid_email_address,
         'password': valid_password
     }
-    response = client.post('/api/v1/register', json=payload)
+    response = client.post(register_url, json=payload)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(session.list_users()) == 1
 
 
-def test_register_with_invalid_email_address(client: TestClient, session: DatabaseSession, invalid_email_address: str, valid_password: str):
+def test_register_with_invalid_email_address(client: TestClient,
+                                             session: DatabaseSession,
+                                             register_url: str,
+                                             invalid_email_address: str,
+                                             valid_password: str):
     payload = {
         'email_address': invalid_email_address,
         'password': valid_password
     }
-    response = client.post('/api/v1/register', json=payload)
+    response = client.post(register_url, json=payload)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(session.list_users()) == 0
 
 
-def test_register_with_invalid_password(client: TestClient, session: DatabaseSession, valid_email_address: str, invalid_password: str):
+def test_register_with_invalid_password(client: TestClient,
+                                        session: DatabaseSession,
+                                        register_url: str,
+                                        valid_email_address: str,
+                                        invalid_password: str):
     payload = {
         'email_address': valid_email_address,
         'password': invalid_password
     }
-    response = client.post('/api/v1/register', json=payload)
+    response = client.post(register_url, json=payload)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(session.list_users()) == 0
