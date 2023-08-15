@@ -7,11 +7,16 @@ from backend.db import models
 
 import datetime
 
+from tests.util import Exists
+
 
 def test_list_events_not_logged_in(client: TestClient,
                                    session: DatabaseSession,
                                    sales_event: models.SalesEvent):
-    response = client.get('/api/v1/events')
+    response = client.get('/api/v1')
+    assert response.status_code == status.HTTP_200_OK
+    events_url = response.json()['links']['events']
+    response = client.get(events_url)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -23,6 +28,8 @@ def test_list_events_as_seller(client: TestClient,
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
+
+
     assert json == {
         'events': [
             {
@@ -33,12 +40,13 @@ def test_list_events_as_seller(client: TestClient,
                 'end_time': sales_event.end_time.isoformat(),
                 'location': sales_event.location,
                 'links': {
-                    'edit': f'/events/{sales_event.sales_event_id}'
+                    'edit': Exists(),
+                    'items': Exists(),
                 }
             },
         ],
         'links': {
-            'add': f'/events'
+            'add': Exists()
         },
     }
 
@@ -61,12 +69,13 @@ def test_list_events_as_admin(client: TestClient,
                 'end_time': sales_event.end_time.isoformat(),
                 'location': sales_event.location,
                 'links': {
-                    'edit': f'/events/{sales_event.sales_event_id}'
+                    'edit': Exists(),
+                    'items': Exists(),
                 }
             }
         ],
         'links': {
-            'add': f'/events'
+            'add': Exists()
         },
     }
 

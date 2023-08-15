@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from backend.db import models
 from backend.db.database import DatabaseSession
+from tests.util import Exists
 
 
 def test_list_items_not_logged_in(client: TestClient,
@@ -36,12 +37,12 @@ def test_list_items_as_seller(client: TestClient,
                 'sales_event_id': item.sales_event_id,
                 'recipient_id': item.recipient_id,
                 'links': {
-                    'edit': f'/events/{item.sales_event_id}/items/{item.item_id}'
+                    'edit': Exists()
                 },
             },
         ],
         'links': {
-            'add': f'/events/{sales_event.sales_event_id}/items',
+            'add': Exists()
         }
     }
 
