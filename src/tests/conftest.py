@@ -242,3 +242,30 @@ def fetch_event_edit_url(fetch_event):
     def fetch(headers: dict[str, str], event_id: int):
         return fetch_event(headers, event_id)['links']['edit']
     return fetch
+
+
+@pytest.fixture
+def fetch_event_items_url(fetch_event):
+    def fetch(headers: dict[str, str], event_id: int):
+        return fetch_event(headers, event_id)['links']['items']
+    return fetch
+
+
+@pytest.fixture
+def fetch_item(client: TestClient,
+               fetch_event_items_url):
+    def fetch(headers: dict[str, str], event_id: int, item_id: int):
+        items_url = fetch_event_items_url(headers, event_id)
+        response = client.get(items_url, headers=headers)
+        item = next(item for item in response.json()['items'] if item['item_id'] == item_id)
+        return item
+    return fetch
+
+
+@pytest.fixture
+def fetch_item_edit_url(client: TestClient,
+                        fetch_item):
+    def fetch(headers: dict[str, str], event_id: int, item_id: int):
+        item = fetch_item(headers, event_id, item_id)
+        return item['links']['edit']
+    return fetch
