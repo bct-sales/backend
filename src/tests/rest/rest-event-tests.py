@@ -12,10 +12,8 @@ from tests.util import Exists
 
 def test_list_events_not_logged_in(client: TestClient,
                                    session: DatabaseSession,
+                                   events_url: str,
                                    sales_event: models.SalesEvent):
-    response = client.get('/api/v1')
-    assert response.status_code == status.HTTP_200_OK
-    events_url = response.json()['links']['events']
     response = client.get(events_url)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -28,8 +26,6 @@ def test_list_events_as_seller(client: TestClient,
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-
-
     assert json == {
         'events': [
             {
