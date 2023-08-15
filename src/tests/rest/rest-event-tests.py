@@ -141,11 +141,9 @@ def test_create_event_as_admin(client: TestClient,
 def test_edit_event_as_admin(client: TestClient,
                              session: DatabaseSession,
                              admin_headers: dict[str, str],
-                             fetch_events,
+                             fetch_event,
                              sales_event: models.SalesEvent):
-    events: list = fetch_events(admin_headers)
-    event = next(event for event in events if event['sales_event_id'] == sales_event.sales_event_id)
-    url = event['links']['edit']
+    url = fetch_event(admin_headers, sales_event.sales_event_id)['links']['edit']
 
     new_description = 'new description'
     new_location = 'new location'

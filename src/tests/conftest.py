@@ -227,3 +227,11 @@ def fetch_events(client: TestClient,
         response = client.get(events_url, headers=headers)
         return response.json()['events']
     return fetch
+
+
+@pytest.fixture
+def fetch_event(fetch_events):
+    def fetch(headers: dict[str, str], event_id: int):
+        events = fetch_events(headers)
+        return next(event for event in events if event['sales_event_id'] == event_id)
+    return fetch
