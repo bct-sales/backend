@@ -13,6 +13,7 @@ router = APIRouter()
 
 
 class EventLinks(pydantic.BaseModel):
+    items: str
     edit: str
 
 
@@ -47,12 +48,13 @@ async def list_sales_events(request: Request,
     events = [
         Event(
             sales_event_id=event.sales_event_id,
-            date=event.date,
+            date=event.date,``
             start_time=event.start_time,
             end_time=event.end_time,
             description=event.description,
             location=event.location,
             links=EventLinks(
+                items=str(request.url_for('list_items', event_id=event.sales_event_id)),
                 edit=str(request.url_for('update_sales_event', event_id=event.sales_event_id)),
             )
         )
