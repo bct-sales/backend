@@ -235,3 +235,10 @@ def fetch_event(fetch_events):
         events = fetch_events(headers)
         return next(event for event in events if event['sales_event_id'] == event_id)
     return fetch
+
+
+@pytest.fixture
+def fetch_event_edit_url(fetch_event):
+    def fetch(headers: dict[str, str], event_id: int):
+        return fetch_event(headers, event_id)['links']['edit']
+    return fetch

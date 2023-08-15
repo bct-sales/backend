@@ -141,9 +141,9 @@ def test_create_event_as_admin(client: TestClient,
 def test_edit_event_as_admin(client: TestClient,
                              session: DatabaseSession,
                              admin_headers: dict[str, str],
-                             fetch_event,
+                             fetch_event_edit_url,
                              sales_event: models.SalesEvent):
-    url = fetch_event(admin_headers, sales_event.sales_event_id)['links']['edit']
+    url = fetch_event_edit_url(admin_headers, sales_event.sales_event_id)
 
     new_description = 'new description'
     new_location = 'new location'
@@ -167,13 +167,15 @@ def test_edit_event_as_admin(client: TestClient,
 def test_edit_event_as_seller(client: TestClient,
                               session: DatabaseSession,
                               seller_headers: dict[str, str],
+                              fetch_event_edit_url,
                               sales_event: models.SalesEvent):
+    url = fetch_event_edit_url(seller_headers, sales_event.sales_event_id)
     new_description = 'new description'
     new_location = 'new location'
     payload = {
         'description': new_description,
         'location': new_location
     }
-    response = client.put(f'/api/v1/events/{sales_event.sales_event_id}', json=payload, headers=seller_headers)
+    response = client.put(url, json=payload, headers=seller_headers)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
