@@ -21,8 +21,9 @@ def test_list_events_not_logged_in(client: TestClient,
 def test_list_events_as_seller(client: TestClient,
                                session: DatabaseSession,
                                seller_headers: dict[str, str],
+                               events_url: str,
                                sales_event: models.SalesEvent):
-    response = client.get('/api/v1/events', headers=seller_headers)
+    response = client.get(events_url, headers=seller_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
@@ -50,8 +51,9 @@ def test_list_events_as_seller(client: TestClient,
 def test_list_events_as_admin(client: TestClient,
                               session: DatabaseSession,
                               admin_headers: dict[str, str],
+                              events_url: str,
                               sales_event: models.SalesEvent):
-    response = client.get('/api/v1/events', headers=admin_headers)
+    response = client.get(events_url, headers=admin_headers)
     json = response.json()
 
     assert response.status_code == status.HTTP_200_OK
@@ -78,6 +80,7 @@ def test_list_events_as_admin(client: TestClient,
 
 def test_create_event_as_seller(client: TestClient,
                                 session: DatabaseSession,
+                                events_url: str,
                                 seller_headers: dict[str, str]):
     payload = {
         'date': datetime.date(2000, 1, 1).isoformat(),
@@ -86,7 +89,7 @@ def test_create_event_as_seller(client: TestClient,
         'location': 'between here and there',
         'description': 'description',
     }
-    response = client.post('/api/v1/events', json=payload, headers=seller_headers)
+    response = client.post(events_url, json=payload, headers=seller_headers)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -106,6 +109,7 @@ def test_create_event_as_seller(client: TestClient,
 def test_create_event_as_admin(client: TestClient,
                                session: DatabaseSession,
                                admin_headers: dict[str, str],
+                               events_url: str,
                                date: datetime.date,
                                start_time: datetime.time,
                                end_time: datetime.time):
@@ -116,7 +120,7 @@ def test_create_event_as_admin(client: TestClient,
         'location': 'between here and there',
         'description': 'description',
     }
-    response = client.post('/api/v1/events', json=payload, headers=admin_headers)
+    response = client.post(events_url, json=payload, headers=admin_headers)
 
     assert response.status_code == status.HTTP_201_CREATED
 
@@ -137,14 +141,19 @@ def test_create_event_as_admin(client: TestClient,
 def test_edit_event_as_admin(client: TestClient,
                              session: DatabaseSession,
                              admin_headers: dict[str, str],
+                             fetch_events,
                              sales_event: models.SalesEvent):
+    events: list = fetch_events(admin_headers)
+    event = next(event for event in events if event['sales_event_id'] == sales_event.sales_event_id)
+    url = event['links']['edit']
+
     new_description = 'new description'
     new_location = 'new location'
     payload = {
         'description': new_description,
         'location': new_location
     }
-    response = client.put(f'/api/v1/events/{sales_event.sales_event_id}', json=payload, headers=admin_headers)
+    response = client.put(url, json=payload, headers=admin_headers)
 
     assert response.status_code == status.HTTP_200_OK
 

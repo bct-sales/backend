@@ -218,3 +218,12 @@ def register_url(api_root: ApiRootData):
 @pytest.fixture
 def events_url(api_root: ApiRootData):
     return api_root.links.events
+
+
+@pytest.fixture
+def fetch_events(client: TestClient,
+                 events_url: str):
+    def fetch(headers: dict[str, str]):
+        response = client.get(events_url, headers=headers)
+        return response.json()['events']
+    return fetch
