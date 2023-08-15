@@ -186,3 +186,35 @@ def seller_headers(seller_access_token: str) -> dict[str, str]:
 @pytest.fixture
 def admin_headers(admin_access_token: str) -> dict[str, str]:
     return create_authorization_headers(admin_access_token)
+
+
+
+class ApiRootLinks(pydantic.BaseModel):
+    registration: str
+    login: str
+    events: str
+
+class ApiRootData(pydantic.BaseModel):
+    links: ApiRootLinks
+
+
+@pytest.fixture
+def api_root(client: TestClient):
+    response = client.get('/api/v1')
+    assert response.status_code == status.HTTP_200_OK
+    return ApiRootData.model_validate(response.json())
+
+
+@pytest.fixture
+def login_url(api_root: ApiRootData):
+    return api_root.links.login
+
+
+@pytest.fixture
+def register_url(api_root: ApiRootData):
+    return api_root.links.registration
+
+
+@pytest.fixture
+def events_url(api_root: ApiRootData):
+    return api_root.links.events
