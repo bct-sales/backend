@@ -3,7 +3,7 @@ import os
 # Prevents original database_dependency from complaining
 os.environ['BCT_DATABASE_PATH'] = ':memory:'
 
-from typing import Iterator
+from typing import Callable, Iterator
 
 import pydantic
 import datetime
@@ -19,6 +19,9 @@ from backend.db.database import Database, DatabaseSession
 from backend.db import models, orm
 from backend.restapi.shared import database_dependency
 from backend.security import roles
+
+import backend.restapi.events
+import backend.restapi.events.items
 
 
 test_database = Database(name='Test Database', url='sqlite:///', poolclass=StaticPool)
@@ -220,52 +223,39 @@ def events_url(api_root: ApiRootData):
     return api_root.links.events
 
 
+
+FetchEvents = Callable[[dict[str, str]], backend.restapi.events.listevents.Response]
+
 @pytest.fixture
 def fetch_events(client: TestClient,
-                 events_url: str):
+                 events_url: str) -> FetchEvents:
     def fetch(headers: dict[str, str]):
         response = client.get(events_url, headers=headers)
-        return response.json()['events']
+        return backend.restapi.events.listevents.Response.model_validate(response.json())
     return fetch
 
+
+FetchEvent = Callable[[dict[str, str], int], backend.restapi.events.listevents.Event]
 
 @pytest.fixture
-def fetch_event(fetch_events):
+def fetch_event(fetch_events: FetchEvents) -> FetchEvent:
     def fetch(headers: dict[str, str], event_id: int):
-        events = fetch_events(headers)
-        return next(event for event in events if event['sales_event_id'] == event_id)
+        events = fetch_events(headers).events
+        return next(event
+                    for event in events
+                    if event.sales_event_id == event_id)
     return fetch
 
 
-@pytest.fixture
-def fetch_event_edit_url(fetch_event):
-    def fetch(headers: dict[str, str], event_id: int):
-        return fetch_event(headers, event_id)['links']['edit']
-    return fetch
-
-
-@pytest.fixture
-def fetch_event_items_url(fetch_event):
-    def fetch(headers: dict[str, str], event_id: int):
-        return fetch_event(headers, event_id)['links']['items']
-    return fetch
-
+FetchItem = Callable[[dict[str, str], int, int], backend.restapi.events.items.listitems.Item]
 
 @pytest.fixture
 def fetch_item(client: TestClient,
-               fetch_event_items_url):
+               fetch_event: FetchEvent) -> FetchItem:
     def fetch(headers: dict[str, str], event_id: int, item_id: int):
-        items_url = fetch_event_items_url(headers, event_id)
+        items_url = fetch_event(headers, event_id).links.items
         response = client.get(items_url, headers=headers)
         item = next(item for item in response.json()['items'] if item['item_id'] == item_id)
-        return item
-    return fetch
+        return backend.restapi.events.items.listitems.Item.model_validate(item)
 
-
-@pytest.fixture
-def fetch_item_edit_url(client: TestClient,
-                        fetch_item):
-    def fetch(headers: dict[str, str], event_id: int, item_id: int):
-        item = fetch_item(headers, event_id, item_id)
-        return item['links']['edit']
     return fetch

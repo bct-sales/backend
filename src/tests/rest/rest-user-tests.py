@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from backend.db import models
 from backend.db.database import DatabaseSession
+from tests.conftest import FetchEvent, FetchItem
 from tests.util import Exists
 
 
@@ -13,8 +14,8 @@ def test_list_items_not_logged_in(client: TestClient,
                                   sales_event: models.SalesEvent,
                                   seller_headers: dict[str, str],
                                   session: DatabaseSession,
-                                  fetch_event_items_url):
-    url = fetch_event_items_url(seller_headers, sales_event.sales_event_id)
+                                  fetch_event: FetchEvent):
+    url = fetch_event(seller_headers, sales_event.sales_event_id).links.items
     response = client.get(url=url)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -24,8 +25,8 @@ def test_list_items_as_seller(client: TestClient,
                               sales_event: models.SalesEvent,
                               item: models.Item,
                               seller_headers: dict[str, str],
-                              fetch_event_items_url):
-    url = fetch_event_items_url(seller_headers, sales_event.sales_event_id)
+                              fetch_event: FetchEvent):
+    url = fetch_event(seller_headers, sales_event.sales_event_id).links.items
     response = client.get(url=url, headers=seller_headers)
     json = response.json()
 
@@ -54,8 +55,8 @@ def test_list_items_as_admin(client: TestClient,
                              session: DatabaseSession,
                              sales_event: models.SalesEvent,
                              admin_headers: dict[str, str],
-                             fetch_event_items_url):
-    url = fetch_event_items_url(admin_headers, sales_event.sales_event_id)
+                             fetch_event: FetchEvent):
+    url = fetch_event(admin_headers, sales_event.sales_event_id).links.items
     response = client.get(url=url, headers=admin_headers)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -66,14 +67,14 @@ def test_add_item_as_admin(client: TestClient,
                            sales_event: models.SalesEvent,
                            admin: models.User,
                            admin_headers: dict[str, str],
-                           fetch_event_items_url):
+                           fetch_event: FetchEvent):
     payload = {
         'description': 'blue jeans',
         'price_in_cents': 2000,
         'recipient_id': admin.user_id,
         'sales_event_id': sales_event.sales_event_id,
     }
-    url = fetch_event_items_url(admin_headers, sales_event.sales_event_id)
+    url = fetch_event(admin_headers, sales_event.sales_event_id).links.items
     logging.info(f'url={url}')
     response = client.post(url=url, headers=admin_headers, json=payload)
 
@@ -96,7 +97,7 @@ def test_add_item_as_seller(client: TestClient,
                             seller: models.User,
                             seller_headers: dict[str, str],
                             sales_event: models.SalesEvent,
-                            fetch_event_items_url,
+                            fetch_event: FetchEvent,
                             description: str,
                             price_in_cents: int):
     recipient_id = seller.user_id
@@ -106,7 +107,7 @@ def test_add_item_as_seller(client: TestClient,
         'price_in_cents': price_in_cents,
         'recipient_id': recipient_id,
     }
-    url = fetch_event_items_url(seller_headers, sales_event.sales_event_id)
+    url = fetch_event(seller_headers, sales_event.sales_event_id).links.items
     response = client.post(url=url, headers=seller_headers, json=payload)
 
     assert response.status_code == status.HTTP_201_CREATED
@@ -132,13 +133,13 @@ def test_add_item_as_seller_missing_fields(client: TestClient,
                                            session: DatabaseSession,
                                            seller: models.User,
                                            seller_headers: dict[str, str],
-                                           fetch_event_items_url,
+                                           fetch_event: FetchEvent,
                                            sales_event: models.SalesEvent):
     payload = {
         'price_in_cents': 2000,
         'recipient_id': seller.user_id,
     }
-    url = fetch_event_items_url(seller_headers, sales_event.sales_event_id)
+    url = fetch_event(seller_headers, sales_event.sales_event_id).links.items
     response = client.post(url=url, headers=seller_headers, json=payload)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -149,14 +150,14 @@ def test_update_item(client: TestClient,
                      seller: models.User,
                      item: models.Item,
                      seller_headers: dict[str, str],
-                     fetch_item_edit_url):
+                     fetch_item: FetchItem):
     updated_description = 'updated description'
     updated_price = 1234
     payload = {
         'description': updated_description,
         'price_in_cents': updated_price,
     }
-    url = fetch_item_edit_url(seller_headers, item.sales_event_id, item.item_id)
+    url = fetch_item(seller_headers, item.sales_event_id, item.item_id).links.edit
     response = client.put(url=url, headers=seller_headers, json=payload)
 
     assert response.status_code == status.HTTP_200_OK

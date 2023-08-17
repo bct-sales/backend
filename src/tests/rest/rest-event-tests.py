@@ -6,6 +6,7 @@ from backend.db.database import DatabaseSession
 from backend.db import models
 
 import datetime
+from tests.conftest import FetchEvent
 
 from tests.util import Exists
 
@@ -141,9 +142,9 @@ def test_create_event_as_admin(client: TestClient,
 def test_edit_event_as_admin(client: TestClient,
                              session: DatabaseSession,
                              admin_headers: dict[str, str],
-                             fetch_event_edit_url,
+                             fetch_event: FetchEvent,
                              sales_event: models.SalesEvent):
-    url = fetch_event_edit_url(admin_headers, sales_event.sales_event_id)
+    url = fetch_event(admin_headers, sales_event.sales_event_id).links.edit
 
     new_description = 'new description'
     new_location = 'new location'
@@ -167,9 +168,9 @@ def test_edit_event_as_admin(client: TestClient,
 def test_edit_event_as_seller(client: TestClient,
                               session: DatabaseSession,
                               seller_headers: dict[str, str],
-                              fetch_event_edit_url,
+                              fetch_event: FetchEvent,
                               sales_event: models.SalesEvent):
-    url = fetch_event_edit_url(seller_headers, sales_event.sales_event_id)
+    url = fetch_event(seller_headers, sales_event.sales_event_id).links.edit
     new_description = 'new description'
     new_location = 'new location'
     payload = {
