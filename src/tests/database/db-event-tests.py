@@ -29,7 +29,12 @@ import datetime
     '',
     'some description'
 ])
-def test_create_sales_event(session: DatabaseSession, date: datetime.date, start_time: datetime.time, end_time: datetime.time, location: str, description: str):
+def test_create_sales_event(session: DatabaseSession,
+                            date: datetime.date,
+                            start_time: datetime.time,
+                            end_time: datetime.time,
+                            location: str,
+                            description: str):
     sales_event_create = models.SalesEventCreate(
         date=date,
         start_time=start_time,
