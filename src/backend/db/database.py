@@ -164,5 +164,8 @@ class DatabaseSession:
         self.__logger.debug(f'Finding item with id {id!r}')
         return self.__session.query(orm.Item).filter(orm.Item.item_id == id).first()
 
+    def delete_item_by_id(self, id: int) -> None:
+        self.__session.query(orm.Item).filter(orm.Item.item_id == id).delete()
+
     def commit(self) -> None:
         self.__session.commit()
