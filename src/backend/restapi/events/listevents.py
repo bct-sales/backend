@@ -26,6 +26,7 @@ class Event(pydantic.BaseModel):
     location: str
     description: str
     links: EventLinks
+    available: bool
 
 
 class SalesLinks(pydantic.BaseModel):
@@ -56,7 +57,8 @@ async def list_sales_events(request: Request,
             links=EventLinks(
                 items=str(request.url_for('list_items', event_id=event.sales_event_id)),
                 edit=str(request.url_for('update_sales_event', event_id=event.sales_event_id)),
-            )
+            ),
+            available=event.available,
         )
         for event in orm_sales_events
     ]
