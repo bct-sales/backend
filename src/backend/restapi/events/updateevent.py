@@ -23,9 +23,9 @@ class UpdateSalesData(pydantic.BaseModel):
 
 @router.put('/{event_id}', tags=['events'])
 async def update_sales_event(database: DatabaseDependency,
-                       payload: UpdateSalesData,
-                       event_id: int,
-                       user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.EDIT_SALES_EVENT))]):
+                             payload: UpdateSalesData,
+                             event_id: int,
+                             user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.EDIT_SALES_EVENT))]):
     orm_sales_event = database.find_sales_event_by_id(event_id)
     if orm_sales_event is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
