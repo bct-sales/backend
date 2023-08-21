@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint, Date, Time
+from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint, Date, Time, Boolean
 from datetime import date, time
 
 
@@ -23,6 +23,8 @@ class SalesEvent(Base):
     location: Mapped[str] = mapped_column(String)
 
     description: Mapped[str] = mapped_column(String)
+
+    available: Mapped[bool] = mapped_column(Boolean)
 
     def __repr__(self) -> str:
         return f'SalesEvent(sales_event_id={self.sales_event_id!r}, date={self.date!r}, description={self.description!r})'

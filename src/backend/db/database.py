@@ -11,7 +11,6 @@ import backend.db.models as models
 import backend.db.orm as orm
 import backend.security as security
 from backend.db.exceptions import *
-from backend.security import roles
 
 import logging
 

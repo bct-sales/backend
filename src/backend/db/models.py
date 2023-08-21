@@ -23,6 +23,7 @@ class SalesEventBase(pydantic.BaseModel):
     end_time: datetime.time
     location: str
     description: str
+    available: bool
 
 
 class SalesEventCreate(SalesEventBase):
