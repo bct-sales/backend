@@ -146,6 +146,7 @@ class DatabaseSession:
             end_time=sales_event.end_time,
             location=sales_event.location,
             description=sales_event.description,
+            available=sales_event.available,
         )
         self.__session.add(orm_sales_event)
         self.__session.commit()
