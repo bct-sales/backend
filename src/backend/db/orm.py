@@ -27,7 +27,7 @@ class SalesEvent(Base):
     available: Mapped[bool] = mapped_column(Boolean)
 
     def __repr__(self) -> str:
-        return f'SalesEvent(sales_event_id={self.sales_event_id!r}, date={self.date!r}, description={self.description!r})'
+        return f'SalesEvent(sales_event_id={self.sales_event_id!r}, date={self.date!r}, description={self.description!r}, available={self.available!r})'
 
 
 class User(Base):
