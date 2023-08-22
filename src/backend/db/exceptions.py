@@ -25,6 +25,12 @@ class UnknownUserException(AuthenticationException):
     def __init__(self):
         super().__init__('Unknown user')
 
+
+class UnknownSalesEventException(DatabaseException):
+    def __init__(self):
+        super().__init__('Unknown sales event')
+
+
 class WrongPasswordException(AuthenticationException):
     def __init__(self):
         super().__init__('Wrong password')
