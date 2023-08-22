@@ -167,5 +167,14 @@ class DatabaseSession:
     def delete_item_by_id(self, id: int) -> None:
         self.__session.query(orm.Item).filter(orm.Item.item_id == id).delete()
 
+    def update_event(self, id: int, **kwargs) -> None:
+        orm_sales_event = self.find_sales_event_by_id(id)
+        if orm_sales_event is None:
+            raise UnknownSalesEventException
+        for field, value in kwargs.items():
+            if value is not None:
+                setattr(orm_sales_event, field, value)
+        self.__session.commit()
+
     def commit(self) -> None:
         self.__session.commit()
