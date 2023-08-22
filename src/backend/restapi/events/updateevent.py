@@ -27,10 +27,16 @@ async def update_sales_event(database: DatabaseDependency,
                              payload: UpdateSalesData,
                              event_id: int,
                              user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.EDIT_SALES_EVENT))]):
-    orm_sales_event = database.find_sales_event_by_id(event_id)
-    if orm_sales_event is None:
+    try:
+        database.update_event(id=event_id, **dict(payload))
+    except UnknownSalesEventException:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
-    for field, value in payload:
-        if value:
-            setattr(orm_sales_event, field, value)
-    database.commit()
+
+
+    # orm_sales_event = database.find_sales_event_by_id(event_id)
+    # if orm_sales_event is None:
+    #     raise HTTPException(status.HTTP_404_NOT_FOUND)
+    # for field, value in payload:
+    #     if value:
+    #         setattr(orm_sales_event, field, value)
+    # database.commit()
