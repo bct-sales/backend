@@ -19,6 +19,7 @@ class UpdateSalesData(pydantic.BaseModel):
     end_time: Optional[datetime.time] = None
     location: Optional[str] = None
     description: Optional[str] = None
+    available: Optional[bool] = None
 
 
 @router.put('/{event_id}', tags=['events'])
