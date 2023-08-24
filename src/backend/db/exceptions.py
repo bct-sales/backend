@@ -31,6 +31,16 @@ class UnknownSalesEventException(DatabaseException):
         super().__init__('Unknown sales event')
 
 
+class UnknownItemException(DatabaseException):
+    def __init__(self):
+        super().__init__('Unknown item')
+
+
+class UnauthorizedItemChangeException(DatabaseException):
+    def __init__(self):
+        super().__init__('Unauthorized change')
+
+
 class WrongPasswordException(AuthenticationException):
     def __init__(self):
         super().__init__('Wrong password')

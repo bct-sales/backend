@@ -167,13 +167,24 @@ class DatabaseSession:
     def delete_item_by_id(self, id: int) -> None:
         self.__session.query(orm.Item).filter(orm.Item.item_id == id).delete()
 
-    def update_event(self, id: int, **kwargs) -> None:
+    def update_event(self, *, id: int, **kwargs) -> None:
         orm_sales_event = self.find_sales_event_by_id(id)
         if orm_sales_event is None:
             raise UnknownSalesEventException
         for field, value in kwargs.items():
             if value is not None:
                 setattr(orm_sales_event, field, value)
+        self.__session.commit()
+
+    def update_item(self, *, item_id: int, owner_id: int, **kwargs) -> None:
+        orm_item = self.find_item_by_id(id=item_id)
+        if orm_item is None:
+            raise UnknownItemException
+        if orm_item.owner_id != owner_id:
+            raise UnauthorizedItemChangeException
+        for field, value in kwargs.items():
+            if value is not None:
+                setattr(orm_item, field, value)
         self.__session.commit()
 
     def commit(self) -> None:

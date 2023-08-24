@@ -1,12 +1,10 @@
-from typing import Annotated, Any, Optional
+from typing import Annotated
 
 import pydantic
 from fastapi import APIRouter, Depends
+
 from backend.db import models
-
 from backend.restapi.shared import *
-from backend.security.scopes import Scopes
-
 
 router = APIRouter()
 
