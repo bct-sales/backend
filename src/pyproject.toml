@@ -41,3 +41,6 @@ python_files = [
     "*-tests.py"
 ]
 log_level = "INFO"
+
+[tool.poetry.scripts]
+bct = 'backend.cli.main:cli'
