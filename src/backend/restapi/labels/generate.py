@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Annotated
 from fastapi import APIRouter
 from backend.db import orm
@@ -39,5 +40,5 @@ async def generate(database: DatabaseDependency,
         for orm_item in orm_items
     ]
     sheet_specifications = SheetSpecifications(**payload.model_dump())
-    filename = generate_labels(sheet_specifications, items)
+    filename = generate_labels(Path("g:/temp/"), sheet_specifications, items)
     return GenerateResponse(filename=filename).model_dump()

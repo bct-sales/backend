@@ -1,3 +1,4 @@
+from pathlib import Path
 import subprocess
 import pydantic
 import uuid
@@ -43,20 +44,21 @@ def generate_qr_data_for_item(item: Item) -> str:
     return f'{item.price_in_cents}'
 
 
-def generate_labels(sheet_specifications: SheetSpecifications, items: list[Item]) -> str:
+def generate_labels(directory: Path, sheet_specifications: SheetSpecifications, items: list[Item]) -> str:
     label_generation_data = build_label_generation_data(sheet_specifications, items)
 
     unique_id = uuid.uuid4()
-    output_filename = f'{unique_id}.pdf'
-    input_path = f'g:/temp/{unique_id}.json'
-    output_path = f'g:/temp/{output_filename}'
+    json_filename = f'{unique_id}.json'
+    pdf_filename = f'{unique_id}.pdf'
+    json_path = directory / json_filename
+    pdf_path = directory / pdf_filename
 
-    with open(input_path, 'w') as f:
+    with open(json_path, 'w') as f:
         f.write(label_generation_data.model_dump_json())
 
-    call_qr_generation_subprocess(input_path, output_path)
+    call_qr_generation_subprocess(json_path, pdf_path)
 
-    return output_filename
+    return pdf_filename
 
 
 def build_label_generation_data(sheet_specifications: SheetSpecifications, items: list[Item]) -> LabelGenerationData:
@@ -67,18 +69,20 @@ def build_label_generation_data(sheet_specifications: SheetSpecifications, items
     return LabelGenerationData(labels=labels_data, sheet_specs=sheet_specifications)
 
 
-def call_qr_generation_subprocess(input_path: str, output_path: str):
+def call_qr_generation_subprocess(input_path: Path, output_path: Path):
     environment = os.environ.copy()
 
     # Needs to be removed otherwise subprocess-poetry will fail to set up correct environment
     if 'VIRTUAL_ENV' in environment:
         del environment['VIRTUAL_ENV']
 
-    subprocess.Popen([
+    command = [
         'poetry',
         'run',
         'bctqr',
         'generate',
-        input_path,
-        output_path
-    ], cwd=r'G:/repos/bct/bctqr', shell=False, env=environment)
+        str(input_path.absolute()),
+        str(output_path.absolute())
+    ]
+
+    subprocess.Popen(command, cwd=r'G:/repos/bct/bctqr', shell=False, env=environment)
