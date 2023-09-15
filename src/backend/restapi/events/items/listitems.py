@@ -23,6 +23,7 @@ class Item(models.Item):
 
 class Links(pydantic.BaseModel):
     add: str
+    generate_labels: str
 
 
 class Response(pydantic.BaseModel):
@@ -58,5 +59,6 @@ async def list_items(request: Request,
         items=items,
         links=Links(
             add=str(request.url_for('list_items', event_id=event_id)),
+            generate_labels=str(request.url_for('generate_labels_for_event', event_id=event_id))
         )
     )
