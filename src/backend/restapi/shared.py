@@ -6,14 +6,11 @@ from fastapi.security import OAuth2PasswordBearer
 from backend.db import orm
 from backend.db.database import Database, DatabaseSession
 from backend.security import scopes, tokens
-from backend.security.roles import Role
 from backend.settings import load_settings
 
-import pydantic
 import logging
 import sys
 import os
-import urllib.parse
 
 
 def database_dependency():

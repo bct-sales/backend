@@ -10,6 +10,8 @@ from backend.db.exceptions import *
 import pydantic
 import logging
 
+from backend.security.roles import Role
+
 
 router = APIRouter()
 

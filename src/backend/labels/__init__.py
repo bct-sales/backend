@@ -48,17 +48,30 @@ def generate_labels(directory: Path, sheet_specifications: SheetSpecifications, 
     label_generation_data = build_label_generation_data(sheet_specifications, items)
 
     unique_id = uuid.uuid4()
-    json_filename = f'{unique_id}.json'
-    pdf_filename = f'{unique_id}.pdf'
-    json_path = directory / json_filename
-    pdf_path = directory / pdf_filename
+    json_path = directory / f'{unique_id}.json'
+    pdf_path = directory / f'{unique_id}.pdf'
 
     with open(json_path, 'w') as f:
         f.write(label_generation_data.model_dump_json())
 
     call_qr_generation_subprocess(json_path, pdf_path)
 
-    return pdf_filename
+    return str(unique_id)
+
+
+def is_valid_labels_id(id: str) -> bool:
+    try:
+        uuid.UUID(id)
+        return True
+    except ValueError:
+        return False
+
+
+def is_labels_generation_ready(directory: Path, id: str) -> bool:
+    if not is_valid_labels_id(id):
+        return False
+    path = directory / f'{str(id)}.pdf'
+    return path.is_file()
 
 
 def build_label_generation_data(sheet_specifications: SheetSpecifications, items: list[Item]) -> LabelGenerationData:

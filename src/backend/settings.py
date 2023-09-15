@@ -14,6 +14,8 @@ class Settings(BaseSettings):
 
     jwt_expiration: int = 6 * 60 # 6 Hours
 
+    label_generation_directory: str = 'g:/temp'
+
     @pydantic.computed_field # type: ignore[misc]
     @property
     def database_url(self) -> str:

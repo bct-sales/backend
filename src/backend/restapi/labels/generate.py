@@ -1,11 +1,12 @@
-from pathlib import Path
 from typing import Annotated
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from backend.db import orm
 from backend.labels import generate_labels, SheetSpecifications,Item
+from backend.restapi.labels.util import determine_user_specific_directory
 from backend.restapi.shared import DatabaseDependency, RequireScopes
 from backend.security import scopes
 import pydantic
+
 
 
 router = APIRouter()
@@ -21,12 +22,13 @@ class GenerateData(pydantic.BaseModel):
 
 
 class GenerateResponse(pydantic.BaseModel):
-    filename: str
+    status_url: str
 
 
 @router.post('/generate',
              tags=['labels'])
-async def generate(database: DatabaseDependency,
+async def generate(request: Request,
+                   database: DatabaseDependency,
                    user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.LIST_OWN_ITEMS))],
                    event_id: int,
                    payload: GenerateData):
@@ -40,5 +42,9 @@ async def generate(database: DatabaseDependency,
         for orm_item in orm_items
     ]
     sheet_specifications = SheetSpecifications(**payload.model_dump())
-    filename = generate_labels(Path("g:/temp/"), sheet_specifications, items)
-    return GenerateResponse(filename=filename).model_dump()
+
+    directory = determine_user_specific_directory(user.user_id)
+    download_id = generate_labels(directory, sheet_specifications, items)
+
+    status_url = request.url_for('label_generation_status', labels_id=download_id)
+    return GenerateResponse(status_url=str(status_url)).model_dump()
