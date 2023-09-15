@@ -1,45 +1,43 @@
+from typing import Annotated
 from fastapi import APIRouter
-from fastapi.responses import FileResponse
-
-from backend.db.exceptions import *
-from backend.restapi.shared import *
-import backend.db.orm as orm
+from backend.db import orm
+from backend.labels import generate_labels, SheetSpecifications,Item
+from backend.restapi.shared import DatabaseDependency, RequireScopes
+from backend.security import scopes
+import pydantic
 
 
 router = APIRouter()
 
+class GenerateData(pydantic.BaseModel):
+    sheet_width: int
+    sheet_height: int
+    columns: int
+    rows: int
+    label_width: int
+    label_height: int
+    corner_radius: int
 
-class LabelData(pydantic.BaseModel):
-    qr_data: str
-    description: str
-    price_in_cents: int
 
-
-class LabelGenerationData(pydantic.BaseModel):
-    labels: list[LabelData]
+class GenerateResponse(pydantic.BaseModel):
+    filename: str
 
 
 @router.post('/generate',
              tags=['labels'])
 async def generate(database: DatabaseDependency,
                    user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.LIST_OWN_ITEMS))],
-                   event_id: int):
+                   event_id: int,
+                   payload: GenerateData):
     orm_items = database.list_items_owned_by(owner=user.user_id, sale_event=event_id)
-    labels_data = [
-        generate_label_data_for_item(item)
-        for item in orm_items
+    items = [
+        Item(
+            item_id=orm_item.item_id,
+            description=orm_item.description,
+            price_in_cents=orm_item.price_in_cents
+        )
+        for orm_item in orm_items
     ]
-    label_generation_data = LabelGenerationData(labels=labels_data)
-    return label_generation_data.model_dump() # TODO
-
-
-def generate_label_data_for_item(item: orm.Item) -> LabelData:
-    return LabelData(
-        qr_data=generate_qr_data_for_item(item),
-        description=item.description,
-        price_in_cents=item.price_in_cents
-    )
-
-
-def generate_qr_data_for_item(item: orm.Item) -> str:
-    return f'{item.price_in_cents}'
+    sheet_specifications = SheetSpecifications(**payload.model_dump())
+    filename = generate_labels(sheet_specifications, items)
+    return GenerateResponse(filename=filename).model_dump()
