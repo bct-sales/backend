@@ -1,14 +1,16 @@
+import logging
 from typing import Optional
 import pydantic
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import sys
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix='BCT_')
+    model_config = SettingsConfigDict(env_prefix='BCT_', env_file='.env', env_file_encoding='utf-8')
 
     database_path: Optional[str] = None
 
-    jwt_secret_key: str = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+    jwt_secret_key: str = ""
 
     jwt_algorithm: str = 'HS256'
 
@@ -33,4 +35,7 @@ def load_settings() -> Settings:
     if _settings is None:
         # Parameter necessary to keep linter from complaining
         _settings = Settings(**{})
+    if len(_settings.jwt_secret_key) == 0:
+        logging.critical("No JWT key found!")
+        raise RuntimeError("No JWT key found")
     return _settings
