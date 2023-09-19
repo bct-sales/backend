@@ -60,6 +60,7 @@ ADMIN = define_role('admin', scopes.Scopes(
     scopes.LIST_ACCOUNTS,
     scopes.LIST_ALL_ITEMS,
     scopes.LIST_SALES_EVENTS,
+    scopes.LIST_UNAVAILABLE_SALES_EVENTS,
     scopes.ADD_SALES_EVENTS,
     scopes.EDIT_SALES_EVENT,
 ))

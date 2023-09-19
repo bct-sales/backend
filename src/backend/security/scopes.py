@@ -76,6 +76,7 @@ def define_scope(name: str, description: str):
 
 # Events
 LIST_SALES_EVENTS = define_scope('events:list', 'List all sales events')
+LIST_UNAVAILABLE_SALES_EVENTS = define_scope('events:list:unavailable', 'List unavailable sales events')
 ADD_SALES_EVENTS = define_scope('events:add', 'Add sales events')
 EDIT_SALES_EVENT = define_scope('events:edit', 'Edit sales events')
 

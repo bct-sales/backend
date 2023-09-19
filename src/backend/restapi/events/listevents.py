@@ -7,6 +7,7 @@ import pydantic
 from backend.db.exceptions import *
 from backend.restapi.shared import *
 from backend.security import scopes
+from backend.security.roles import Role
 
 
 router = APIRouter()
@@ -43,8 +44,8 @@ class Response(pydantic.BaseModel):
             response_model=Response,
             tags=['events'])
 async def list_sales_events(request: Request,
-                           database: DatabaseDependency,
-                           user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.LIST_SALES_EVENTS))]):
+                            database: DatabaseDependency,
+                            user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.LIST_SALES_EVENTS))]):
     orm_sales_events = database.list_sales_events()
     events = [
         Event(
@@ -62,9 +63,22 @@ async def list_sales_events(request: Request,
         )
         for event in orm_sales_events
     ]
+
+    if not can_see_unavailable_events(user):
+        events = [
+            event
+            for event in events
+            if event.available
+        ]
+
     return Response(
         events=events,
         links=SalesLinks(
             add=str(request.url_for('list_sales_events')),
         )
     )
+
+
+def can_see_unavailable_events(user: orm.User):
+    role = Role.from_name(user.role)
+    return scopes.LIST_UNAVAILABLE_SALES_EVENTS in role.scopes
