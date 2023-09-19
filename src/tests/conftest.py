@@ -166,6 +166,20 @@ def sales_event(session: DatabaseSession) -> models.SalesEvent:
 
 
 @pytest.fixture
+def unavailable_sales_event(session: DatabaseSession) -> models.SalesEvent:
+    sales_event = models.SalesEventCreate(
+        date=datetime.date(2060, 1, 1),
+        start_time=datetime.time(9, 0),
+        end_time=datetime.time(12, 0),
+        location='mars',
+        description='only red clothes',
+        available=False,
+    )
+    orm_sales_event = session.create_sales_event(sales_event)
+    return models.SalesEvent.model_validate(orm_sales_event)
+
+
+@pytest.fixture
 def item(session: DatabaseSession, sales_event: models.SalesEvent, seller: models.User) -> models.Item:
     item = models.ItemCreate(
         description='Sneakers',

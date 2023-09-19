@@ -50,6 +50,38 @@ def test_list_events_as_seller(client: TestClient,
     }
 
 
+def test_sellers_dont_see_unavailable_events(client: TestClient,
+                                             session: DatabaseSession,
+                                             seller_headers: dict[str, str],
+                                             events_url: str,
+                                             sales_event: models.SalesEvent,
+                                             unavailable_sales_event: models.SalesEvent):
+    response = client.get(events_url, headers=seller_headers)
+    json = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert json == {
+        'events': [
+            {
+                'sales_event_id': sales_event.sales_event_id,
+                'date': sales_event.date.isoformat(),
+                'description': sales_event.description,
+                'start_time': sales_event.start_time.isoformat(),
+                'end_time': sales_event.end_time.isoformat(),
+                'location': sales_event.location,
+                'available': True,
+                'links': {
+                    'edit': Exists(),
+                    'items': Exists(),
+                }
+            },
+        ],
+        'links': {
+            'add': Exists()
+        },
+    }
+
+
 def test_list_events_as_admin(client: TestClient,
                               session: DatabaseSession,
                               admin_headers: dict[str, str],
@@ -79,6 +111,25 @@ def test_list_events_as_admin(client: TestClient,
             'add': Exists()
         },
     }
+
+
+def test_admins_see_unavailable_events(client: TestClient,
+                                       session: DatabaseSession,
+                                       admin_headers: dict[str, str],
+                                       events_url: str,
+                                       sales_event: models.SalesEvent,
+                                       unavailable_sales_event: models.SalesEvent):
+    response = client.get(events_url, headers=admin_headers)
+    json = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(json['events']) == 2
+
+    event1, event2 = json['events']
+
+    assert event1['sales_event_id'] in [sales_event.sales_event_id, unavailable_sales_event.sales_event_id]
+    assert event2['sales_event_id'] in [sales_event.sales_event_id, unavailable_sales_event.sales_event_id]
+    assert event1['sales_event_id'] != event2['sales_event_id']
 
 
 def test_create_event_as_seller(client: TestClient,
