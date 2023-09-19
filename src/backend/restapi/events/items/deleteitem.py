@@ -1,9 +1,7 @@
 from typing import Annotated
 
-import pydantic
-from fastapi import APIRouter, Depends, HttpException, status
+from fastapi import APIRouter, HTTPException, status
 
-from backend.db import models
 from backend.restapi.shared import *
 
 
@@ -11,7 +9,7 @@ router = APIRouter()
 
 @router.delete("/{item_id}",
                tags=['items'])
-async def remove_item(database: DatabaseDependency,
+async def delete_item(database: DatabaseDependency,
                       user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.REMOVE_OWN_ITEM))],
                       item_id: int):
     item_to_be_deleted = database.find_item_by_id(item_id)

@@ -13,6 +13,7 @@ router = APIRouter()
 
 class ItemLinks(pydantic.BaseModel):
     edit: str
+    delete: str
 
 
 class Item(models.Item):
@@ -48,6 +49,7 @@ async def list_items(request: Request,
             owner_id=item.owner_id,
             links=ItemLinks(
                 edit=str(request.url_for("update_item", event_id=event_id, item_id=item.item_id)),
+                delete=str(request.url_for("delete_item", event_id=event_id, item_id=item.item_id))
             ),
             recipient_id=item.recipient_id,
             price_in_cents=item.price_in_cents,

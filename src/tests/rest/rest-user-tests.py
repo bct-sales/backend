@@ -41,7 +41,8 @@ def test_list_items_as_seller(client: TestClient,
                 'sales_event_id': item.sales_event_id,
                 'recipient_id': item.recipient_id,
                 'links': {
-                    'edit': Exists()
+                    'edit': Exists(),
+                    'delete': Exists(),
                 },
             },
         ],
@@ -172,38 +173,26 @@ def test_update_item(client: TestClient,
     assert updated_item.sales_event_id == item.sales_event_id
 
 
-# def test_add_item_as_seller(client: TestClient,
-#                             session: DatabaseSession,
-#                             seller: models.User,
-#                             seller_headers: dict[str, str],
-#                             sales_event: models.SalesEvent,
-#                             fetch_event: FetchEvent,
-#                             description: str,
-#                             price_in_cents: int):
-#     recipient_id = seller.user_id
-#     sales_event_id = sales_event.sales_event_id
-#     payload = {
-#         'description': description,
-#         'price_in_cents': price_in_cents,
-#         'recipient_id': recipient_id,
-#     }
-#     url = fetch_event(seller_headers, sales_event.sales_event_id).links.items
-#     response = client.post(url=url, headers=seller_headers, json=payload)
+def test_remove_own_item_as_seller(client: TestClient,
+                                   session: DatabaseSession,
+                                   seller: models.User,
+                                   seller_headers: dict[str, str],
+                                   sales_event: models.SalesEvent,
+                                   fetch_item: FetchItem,
+                                   fetch_event: FetchEvent,
+                                   item: models.Item):
+    delete_item_url = fetch_item(seller_headers, item.sales_event_id, item.item_id).links.delete
+    event_url = fetch_event(seller_headers, sales_event.sales_event_id).links.items
 
-#     assert response.status_code == status.HTTP_201_CREATED
+    response = client.get(url=event_url, headers=seller_headers)
+    assert response.status_code == status.HTTP_200_OK
+    json = response.json()
+    assert len(json['items']) == 1
 
-#     response_item = models.Item.model_validate_json(response.read())
-#     assert response_item.description == description
-#     assert response_item.price_in_cents == price_in_cents
-#     assert response_item.owner_id == seller.user_id
-#     assert response_item.recipient_id == recipient_id
-#     assert response_item.sales_event_id == sales_event_id
+    response = client.delete(delete_item_url, headers=seller_headers)
+    assert response.status_code == status.HTTP_200_OK
 
-#     items_in_database = session.list_items()
-#     assert len(items_in_database) == 1
-#     item_in_database = items_in_database[0]
-#     assert item_in_database.description == description
-#     assert item_in_database.price_in_cents == price_in_cents
-#     assert item_in_database.owner_id == seller.user_id
-#     assert item_in_database.recipient_id == recipient_id
-#     assert item_in_database.sales_event_id == sales_event_id
+    response = client.get(url=event_url, headers=seller_headers)
+    assert response.status_code == status.HTTP_200_OK
+    json = response.json()
+    assert len(json['items']) == 0

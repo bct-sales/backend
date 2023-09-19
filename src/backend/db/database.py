@@ -165,7 +165,9 @@ class DatabaseSession:
         return self.__session.query(orm.Item).filter(orm.Item.item_id == id).first()
 
     def delete_item_by_id(self, id: int) -> None:
-        self.__session.query(orm.Item).filter(orm.Item.item_id == id).delete()
+        delete_count = self.__session.query(orm.Item).filter(orm.Item.item_id == id).delete()
+        self.__session.commit()
+        logging.info(f'Deleted {delete_count} item(s)')
 
     def update_event(self, *, id: int, **kwargs) -> None:
         orm_sales_event = self.find_sales_event_by_id(id)
