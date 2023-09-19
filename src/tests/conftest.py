@@ -159,6 +159,7 @@ def sales_event(session: DatabaseSession) -> models.SalesEvent:
         end_time=datetime.time(12, 0),
         location='earth',
         description='only green clothes',
+        available=True,
     )
     orm_sales_event = session.create_sales_event(sales_event)
     return models.SalesEvent.model_validate(orm_sales_event)
