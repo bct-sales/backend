@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, HTTPException, Request
 from backend.db import orm
 from backend.labels import is_labels_generation_ready, is_valid_labels_id
-from backend.restapi.labels.util import determine_user_specific_directory
+from backend.restapi.labels.util import get_labels_generation_directory
 from backend.restapi.shared import RequireScopes
 from backend.security import scopes
 from fastapi import status
@@ -34,7 +34,7 @@ async def label_generation_status(request: Request,
                                   labels_id: str):
     if not is_valid_labels_id(labels_id):
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
-    directory = determine_user_specific_directory(user.user_id)
+    directory = get_labels_generation_directory()
     if is_labels_generation_ready(directory, labels_id):
         url = request.url_for('download_labels', labels_id=labels_id)
         return ReadyStatusResponse(url=str(url))

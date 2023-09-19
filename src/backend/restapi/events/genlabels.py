@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Request
 from backend.db import orm
 from backend.labels import generate_labels, SheetSpecifications,Item
-from backend.restapi.labels.util import determine_user_specific_directory
+from backend.restapi.labels.util import get_labels_generation_directory
 from backend.restapi.shared import DatabaseDependency, RequireScopes
 from backend.security import scopes
 import pydantic
@@ -43,7 +43,7 @@ async def generate_labels_for_event(request: Request,
     ]
     sheet_specifications = SheetSpecifications(**payload.model_dump())
 
-    directory = determine_user_specific_directory(user.user_id)
+    directory = get_labels_generation_directory()
     download_id = generate_labels(directory, sheet_specifications, items)
 
     status_url = request.url_for('label_generation_status', labels_id=download_id)

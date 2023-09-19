@@ -1,6 +1,7 @@
 from pathlib import Path
 import subprocess
 import pydantic
+import logging
 import uuid
 import os
 
@@ -83,6 +84,7 @@ def build_label_generation_data(sheet_specifications: SheetSpecifications, items
 
 
 def call_qr_generation_subprocess(input_path: Path, output_path: Path):
+    logging.info('Creating QR generation subprocess')
     environment = os.environ.copy()
 
     # Needs to be removed otherwise subprocess-poetry will fail to set up correct environment
