@@ -37,6 +37,7 @@ def test_list_events_as_seller(client: TestClient,
                 'start_time': sales_event.start_time.isoformat(),
                 'end_time': sales_event.end_time.isoformat(),
                 'location': sales_event.location,
+                'available': True,
                 'links': {
                     'edit': Exists(),
                     'items': Exists(),
@@ -67,6 +68,7 @@ def test_list_events_as_admin(client: TestClient,
                 'start_time': sales_event.start_time.isoformat(),
                 'end_time': sales_event.end_time.isoformat(),
                 'location': sales_event.location,
+                'available': True,
                 'links': {
                     'edit': Exists(),
                     'items': Exists(),
@@ -120,6 +122,7 @@ def test_create_event_as_admin(client: TestClient,
         'end_time': end_time.isoformat(),
         'location': 'between here and there',
         'description': 'description',
+        'available': True,
     }
     response = client.post(events_url, json=payload, headers=admin_headers)
 

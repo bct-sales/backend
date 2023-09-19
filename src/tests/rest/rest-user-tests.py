@@ -169,3 +169,40 @@ def test_update_item(client: TestClient,
     assert updated_item.recipient_id == item.recipient_id
     assert updated_item.owner_id == item.owner_id
     assert updated_item.sales_event_id == item.sales_event_id
+
+
+# def test_add_item_as_seller(client: TestClient,
+#                             session: DatabaseSession,
+#                             seller: models.User,
+#                             seller_headers: dict[str, str],
+#                             sales_event: models.SalesEvent,
+#                             fetch_event: FetchEvent,
+#                             description: str,
+#                             price_in_cents: int):
+#     recipient_id = seller.user_id
+#     sales_event_id = sales_event.sales_event_id
+#     payload = {
+#         'description': description,
+#         'price_in_cents': price_in_cents,
+#         'recipient_id': recipient_id,
+#     }
+#     url = fetch_event(seller_headers, sales_event.sales_event_id).links.items
+#     response = client.post(url=url, headers=seller_headers, json=payload)
+
+#     assert response.status_code == status.HTTP_201_CREATED
+
+#     response_item = models.Item.model_validate_json(response.read())
+#     assert response_item.description == description
+#     assert response_item.price_in_cents == price_in_cents
+#     assert response_item.owner_id == seller.user_id
+#     assert response_item.recipient_id == recipient_id
+#     assert response_item.sales_event_id == sales_event_id
+
+#     items_in_database = session.list_items()
+#     assert len(items_in_database) == 1
+#     item_in_database = items_in_database[0]
+#     assert item_in_database.description == description
+#     assert item_in_database.price_in_cents == price_in_cents
+#     assert item_in_database.owner_id == seller.user_id
+#     assert item_in_database.recipient_id == recipient_id
+#     assert item_in_database.sales_event_id == sales_event_id
