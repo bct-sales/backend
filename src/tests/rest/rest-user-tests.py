@@ -46,7 +46,8 @@ def test_list_items_as_seller(client: TestClient,
             },
         ],
         'links': {
-            'add': Exists()
+            'add': Exists(),
+            'generate_labels': Exists(),
         }
     }
 
