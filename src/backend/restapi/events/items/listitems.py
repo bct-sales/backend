@@ -54,6 +54,7 @@ async def list_items(request: Request,
             recipient_id=item.recipient_id,
             price_in_cents=item.price_in_cents,
             sales_event_id=item.sales_event_id,
+            charity=item.charity,
         )
         for item in orm_items
     ]

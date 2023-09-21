@@ -40,6 +40,7 @@ def test_list_items_as_seller(client: TestClient,
                 'owner_id': item.owner_id,
                 'sales_event_id': item.sales_event_id,
                 'recipient_id': item.recipient_id,
+                'charity': item.charity,
                 'links': {
                     'edit': Exists(),
                     'delete': Exists(),
@@ -94,6 +95,10 @@ def test_add_item_as_admin(client: TestClient,
     1000,
     5000,
 ])
+@pytest.mark.parametrize('charity', [
+    True,
+    False
+])
 def test_add_item_as_seller(client: TestClient,
                             session: DatabaseSession,
                             seller: models.User,
@@ -101,13 +106,15 @@ def test_add_item_as_seller(client: TestClient,
                             sales_event: models.SalesEvent,
                             fetch_event: FetchEvent,
                             description: str,
-                            price_in_cents: int):
+                            price_in_cents: int,
+                            charity: bool):
     recipient_id = seller.user_id
     sales_event_id = sales_event.sales_event_id
     payload = {
         'description': description,
         'price_in_cents': price_in_cents,
         'recipient_id': recipient_id,
+        'charity': charity,
     }
     url = fetch_event(seller_headers, sales_event.sales_event_id).links.items
     response = client.post(url=url, headers=seller_headers, json=payload)
@@ -120,6 +127,7 @@ def test_add_item_as_seller(client: TestClient,
     assert response_item.owner_id == seller.user_id
     assert response_item.recipient_id == recipient_id
     assert response_item.sales_event_id == sales_event_id
+    assert response_item.charity == charity
 
     items_in_database = session.list_items()
     assert len(items_in_database) == 1
@@ -129,6 +137,7 @@ def test_add_item_as_seller(client: TestClient,
     assert item_in_database.owner_id == seller.user_id
     assert item_in_database.recipient_id == recipient_id
     assert item_in_database.sales_event_id == sales_event_id
+    assert item_in_database.charity == charity
 
 
 def test_add_item_as_seller_missing_fields(client: TestClient,

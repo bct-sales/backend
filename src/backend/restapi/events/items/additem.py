@@ -13,6 +13,7 @@ class AddItemData(pydantic.BaseModel):
     description: str
     price_in_cents: pydantic.NonNegativeInt
     recipient_id: int
+    charity: bool
 
 
 @router.post("/",

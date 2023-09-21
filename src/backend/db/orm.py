@@ -72,6 +72,8 @@ class Item(Base):
 
     sales_event: Mapped[SalesEvent] = relationship("SalesEvent", foreign_keys=[sales_event_id])
 
+    charity: Mapped[bool] = mapped_column(Boolean)
+
     def __repr__(self) -> str:
         return f'Item(item_id={self.item_id!r}, description={self.description!r}, price_in_cents={self.price_in_cents!r})'
 

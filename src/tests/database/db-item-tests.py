@@ -14,17 +14,23 @@ from backend.db.exceptions import *
     50,
     1200
 ])
+@pytest.mark.parametrize('charity', [
+    True,
+    False
+])
 def test_create_item(session: DatabaseSession,
                      seller: models.User,
                      sales_event: models.SalesEvent,
                      description: str,
-                     price_in_cents: int):
+                     price_in_cents: int,
+                     charity: bool):
     item_creation = models.ItemCreate(
         description=description,
         price_in_cents=price_in_cents,
         owner_id=seller.user_id,
         recipient_id=seller.user_id,
         sales_event_id=sales_event.sales_event_id,
+        charity=charity,
     )
 
     item = session.create_item(item=item_creation)
@@ -33,6 +39,7 @@ def test_create_item(session: DatabaseSession,
     assert item.owner_id == seller.user_id
     assert item.recipient_id == seller.user_id
     assert item.price_in_cents == price_in_cents
+    assert item.charity == charity
 
 
 @pytest.mark.parametrize('description', [
@@ -44,17 +51,23 @@ def test_create_item(session: DatabaseSession,
     50,
     1200
 ])
+@pytest.mark.parametrize('charity', [
+    True,
+    False
+])
 def test_find_item(session: DatabaseSession,
                    seller: models.User,
                    sales_event: models.SalesEvent,
                    description: str,
-                   price_in_cents: int):
+                   price_in_cents: int,
+                   charity: bool):
     item_creation = models.ItemCreate(
         description=description,
         price_in_cents=price_in_cents,
         owner_id=seller.user_id,
         recipient_id=seller.user_id,
         sales_event_id=sales_event.sales_event_id,
+        charity=charity,
     )
 
     orm_item = session.create_item(item=item_creation)
@@ -65,6 +78,7 @@ def test_find_item(session: DatabaseSession,
     assert item.owner_id == seller.user_id
     assert item.recipient_id == seller.user_id
     assert item.price_in_cents == price_in_cents
+    assert item.charity == charity
 
 
 @pytest.mark.parametrize('description', [
@@ -76,17 +90,23 @@ def test_find_item(session: DatabaseSession,
     50,
     1200
 ])
+@pytest.mark.parametrize('charity', [
+    True,
+    False
+])
 def test_list_items(session: DatabaseSession,
                     seller: models.User,
                     sales_event: models.SalesEvent,
                     description: str,
-                    price_in_cents: int):
+                    price_in_cents: int,
+                    charity: bool):
     item_creation = models.ItemCreate(
         description=description,
         price_in_cents=price_in_cents,
         owner_id=seller.user_id,
         recipient_id=seller.user_id,
         sales_event_id=sales_event.sales_event_id,
+        charity=charity,
     )
 
     orm_item = session.create_item(item=item_creation)
@@ -100,6 +120,7 @@ def test_list_items(session: DatabaseSession,
     assert item.owner_id == seller.user_id
     assert item.recipient_id == seller.user_id
     assert item.price_in_cents == price_in_cents
+    assert item.charity == charity
 
 
 @pytest.mark.parametrize('description', [
@@ -111,17 +132,23 @@ def test_list_items(session: DatabaseSession,
     50,
     1200
 ])
+@pytest.mark.parametrize('charity', [
+    True,
+    False
+])
 def test_delete_item(session: DatabaseSession,
                     seller: models.User,
                     sales_event: models.SalesEvent,
                     description: str,
-                    price_in_cents: int):
+                    price_in_cents: int,
+                    charity: bool):
     item_creation = models.ItemCreate(
         description=description,
         price_in_cents=price_in_cents,
         owner_id=seller.user_id,
         recipient_id=seller.user_id,
         sales_event_id=sales_event.sales_event_id,
+        charity=charity,
     )
 
     orm_item = session.create_item(item=item_creation)

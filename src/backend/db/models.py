@@ -41,6 +41,7 @@ class ItemBase(pydantic.BaseModel):
     recipient_id: pydantic.NonNegativeInt
     sales_event_id: pydantic.NonNegativeInt
     owner_id: pydantic.NonNegativeInt
+    charity: pydantic.StrictBool
 
 
 class ItemCreate(ItemBase):

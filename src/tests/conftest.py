@@ -187,6 +187,7 @@ def item(session: DatabaseSession, sales_event: models.SalesEvent, seller: model
         recipient_id=seller.user_id,
         sales_event_id=sales_event.sales_event_id,
         owner_id=seller.user_id,
+        charity=False,
     )
     orm_item = session.create_item(item=item)
     return models.Item.model_validate(orm_item)

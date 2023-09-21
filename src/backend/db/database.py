@@ -123,6 +123,7 @@ class DatabaseSession:
             owner_id=item.owner_id,
             recipient_id=item.recipient_id,
             sales_event_id=item.sales_event_id,
+            charity=item.charity,
         )
         self.__session.add(orm_item)
         self.__session.commit()
