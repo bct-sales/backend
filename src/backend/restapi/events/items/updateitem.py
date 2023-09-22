@@ -15,6 +15,7 @@ class EditItemData(pydantic.BaseModel):
     price_in_cents: Optional[int] = None
     recipient_id: Optional[int] = None
     sales_event_id: Optional[int] = None
+    charity: Optional[bool] = None
 
 
 @router.put('/{item_id}', tags=['items'])
