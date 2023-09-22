@@ -81,16 +81,23 @@ def repopulate():
             available=True,
         ))
         session.create_item(item=models.ItemCreate(
-            description='T-Shirt',
+            description='Blue shirt',
             charity=False,
             price_in_cents=200,
             recipient_id=seller.user_id,
             sales_event_id=event.sales_event_id,
             owner_id=seller.user_id))
         session.create_item(item=models.ItemCreate(
-            description='Jeans',
+            description='Black shirt',
             charity=True,
             price_in_cents=800,
+            recipient_id=seller.user_id,
+            sales_event_id=event.sales_event_id,
+            owner_id=seller.user_id))
+        session.create_item(item=models.ItemCreate(
+            description='Red pants',
+            charity=True,
+            price_in_cents=5000,
             recipient_id=seller.user_id,
             sales_event_id=event.sales_event_id,
             owner_id=seller.user_id))
