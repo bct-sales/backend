@@ -16,4 +16,4 @@ def verify_password(*, hash: str, plaintext: str):
 
 
 def is_valid_password(password: str) -> bool:
-     return len(password) >= 8
+     return len(password) >= 2

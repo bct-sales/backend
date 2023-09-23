@@ -8,6 +8,7 @@ from backend.db import models
 from backend.db.database import Database
 from backend.security import roles
 from backend.settings import load_settings
+import io
 
 
 def get_database() -> Database:
@@ -101,3 +102,29 @@ def testdata():
             recipient_id=seller.user_id,
             sales_event_id=event.sales_event_id,
             owner_id=seller.user_id))
+
+
+@db.group(name="import", help='Imports data from csv file')
+def _import():
+    pass
+
+
+@_import.command(name='users', help='Imports users from csv file')
+@click.argument('file', type=click.File(mode='r', encoding='utf-8'))
+def users(file: io.TextIOWrapper) -> None:
+    import csv
+    database = get_database()
+    reader = csv.reader(file)
+    for row in reader:
+        if len(row) != 2:
+            print("Each row should contain two values: id,password")
+            sys.exit(-1)
+        id, password = row
+        id = int(id)
+        with database.session as session:
+            data = models.UserCreate(
+                email_address=f'{id}@bct.be',
+                role='seller',
+                password=password,
+            )
+            session.create_user_with_id(id, data)
