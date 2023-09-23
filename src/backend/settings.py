@@ -37,7 +37,7 @@ class Settings(BaseSettings):
 _settings: Optional[Settings] = None
 
 
-def verify_settings(settings: Settings):
+def verify_settings(settings: Settings) -> None:
     if len(settings.jwt_secret_key) == 0:
         logging.critical("No JWT key found!")
         raise RuntimeError("No JWT key found")
@@ -55,18 +55,22 @@ def verify_settings(settings: Settings):
         raise RuntimeError(f"Label generation directory {settings.label_generation_directory} does not exist!")
 
 
+def expand_paths(settings: Settings) -> None:
+    if settings.database_path:
+        settings.database_path = os.path.expanduser(settings.database_path)
+    settings.html_path = os.path.expanduser(settings.html_path)
+    settings.label_generation_directory = os.path.expanduser(settings.label_generation_directory)
+
+
 def load_settings(verify=True) -> Settings:
     global _settings
     if _settings is None:
         # Parameter necessary to keep linter from complaining
         _settings = Settings(**{})
+
+    expand_paths(_settings)
+
     if verify:
         verify_settings(_settings)
-
-    # Expand ~
-    if _settings.database_path:
-        _settings.database_path = os.path.expanduser(_settings.database_path)
-    _settings.html_path = os.path.expanduser(_settings.html_path)
-    _settings.label_generation_directory = os.path.expanduser(_settings.label_generation_directory)
 
     return _settings
