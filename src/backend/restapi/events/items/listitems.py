@@ -6,6 +6,7 @@ from backend.db import models
 
 from backend.restapi.shared import *
 from backend.security.scopes import Scopes
+from backend.util import url_for
 
 
 router = APIRouter()
@@ -48,8 +49,8 @@ async def list_items(request: Request,
             item_id=item.item_id,
             owner_id=item.owner_id,
             links=ItemLinks(
-                edit=str(request.url_for("update_item", event_id=event_id, item_id=item.item_id)),
-                delete=str(request.url_for("delete_item", event_id=event_id, item_id=item.item_id))
+                edit=url_for(request, "update_item", event_id=event_id, item_id=item.item_id),
+                delete=url_for(request, "delete_item", event_id=event_id, item_id=item.item_id),
             ),
             recipient_id=item.recipient_id,
             price_in_cents=item.price_in_cents,
@@ -61,7 +62,7 @@ async def list_items(request: Request,
     return Response(
         items=items,
         links=Links(
-            add=str(request.url_for('list_items', event_id=event_id)),
-            generate_labels=str(request.url_for('generate_labels_for_event', event_id=event_id))
+            add=url_for(request, 'list_items', event_id=event_id),
+            generate_labels=url_for(request, 'generate_labels_for_event', event_id=event_id),
         )
     )

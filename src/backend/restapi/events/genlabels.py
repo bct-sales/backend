@@ -7,6 +7,8 @@ from backend.restapi.shared import DatabaseDependency, RequireScopes
 from backend.security import scopes
 import pydantic
 
+from backend.util import url_for
+
 
 
 router = APIRouter()
@@ -46,5 +48,5 @@ async def generate_labels_for_event(request: Request,
     directory = get_labels_generation_directory()
     download_id = generate_labels(directory, sheet_specifications, items)
 
-    status_url = request.url_for('label_generation_status', labels_id=download_id)
+    status_url = url_for(request, 'label_generation_status', labels_id=download_id)
     return GenerateResponse(status_url=str(status_url)).model_dump()

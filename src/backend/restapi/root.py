@@ -1,6 +1,8 @@
 import pydantic
 from fastapi import APIRouter, Request
 
+from backend.util import url_for
+
 
 router = APIRouter()
 
@@ -22,9 +24,9 @@ async def root(request: Request):
     """
     response = Response(
         links=Links(
-            registration=str(request.url_for('register_seller')),
-            login=str(request.url_for('login')),
-            events=str(request.url_for('list_sales_events')),
+            registration=url_for(request, 'register_seller'),
+            login=url_for(request, 'login'),
+            events=url_for(request, 'list_sales_events'),
         )
     )
     return response

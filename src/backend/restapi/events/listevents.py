@@ -8,6 +8,7 @@ from backend.db.exceptions import *
 from backend.restapi.shared import *
 from backend.security import scopes
 from backend.security.roles import Role
+from backend.util import url_for
 
 
 router = APIRouter()
@@ -56,8 +57,8 @@ async def list_sales_events(request: Request,
             description=event.description,
             location=event.location,
             links=EventLinks(
-                items=str(request.url_for('list_items', event_id=event.sales_event_id)),
-                edit=str(request.url_for('update_sales_event', event_id=event.sales_event_id)),
+                items=url_for(request, 'list_items', event_id=event.sales_event_id),
+                edit=url_for(request, 'update_sales_event', event_id=event.sales_event_id),
             ),
             available=event.available,
         )
@@ -74,7 +75,7 @@ async def list_sales_events(request: Request,
     return Response(
         events=events,
         links=SalesLinks(
-            add=str(request.url_for('list_sales_events')),
+            add=url_for(request, 'list_sales_events'),
         )
     )
 

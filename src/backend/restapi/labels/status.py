@@ -9,6 +9,8 @@ from backend.security import scopes
 from fastapi import status
 import pydantic
 
+from backend.util import url_for
+
 
 
 router = APIRouter()
@@ -36,7 +38,7 @@ async def label_generation_status(request: Request,
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
     directory = get_labels_generation_directory()
     if is_labels_generation_ready(directory, labels_id):
-        url = request.url_for('download_labels', labels_id=labels_id)
+        url = url_for(request, 'download_labels', labels_id=labels_id)
         return ReadyStatusResponse(url=str(url))
     else:
         return PendingStatusResponse()
