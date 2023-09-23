@@ -8,6 +8,7 @@ import os
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix='BCT_', env_file='.env', env_file_encoding='utf-8')
 
+    # Allowed to be None for tests (in memory DB)
     database_path: Optional[str] = None
 
     jwt_secret_key: str = ""
@@ -61,4 +62,11 @@ def load_settings(verify=True) -> Settings:
         _settings = Settings(**{})
     if verify:
         verify_settings(_settings)
+
+    # Expand ~
+    if _settings.database_path:
+        _settings.database_path = os.path.expanduser(_settings.database_path)
+    _settings.html_path = os.path.expanduser(_settings.html_path)
+    _settings.label_generation_directory = os.path.expanduser(_settings.label_generation_directory)
+
     return _settings
