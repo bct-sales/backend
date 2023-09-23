@@ -18,7 +18,11 @@ class Settings(BaseSettings):
 
     label_generation_directory: str = 'g:/temp'
 
+    # Path where index.html is stored locally
     html_path: str = ''
+
+    # URL where latest version of index.html can be found
+    html_url: str = 'https://github.com/bct-sales/frontend/releases/latest/download/index.html'
 
     @pydantic.computed_field # type: ignore[misc]
     @property
