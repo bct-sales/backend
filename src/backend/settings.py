@@ -44,10 +44,11 @@ def verify_settings(settings: Settings):
         raise RuntimeError(f"HTML file not found at {settings.html_path}")
 
 
-def load_settings() -> Settings:
+def load_settings(verify=True) -> Settings:
     global _settings
     if _settings is None:
         # Parameter necessary to keep linter from complaining
         _settings = Settings(**{})
-    verify_settings(_settings)
+    if verify:
+        verify_settings(_settings)
     return _settings
