@@ -25,4 +25,5 @@ app.include_router(restapi.router)
 
 @app.get('/')
 async def index():
-    return FileResponse()
+    html_path = settings.load_settings().html_path
+    return FileResponse(html_path)
