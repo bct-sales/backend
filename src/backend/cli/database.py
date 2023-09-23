@@ -33,7 +33,7 @@ def reset():
 
 
 @db.command(help="Removes ALL data and adds dummy seller and admin")
-def repopulate():
+def testdata():
     database = get_database()
     database.drop_tables()
     database.create_tables()
