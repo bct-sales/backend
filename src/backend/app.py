@@ -1,6 +1,8 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from backend import restapi
+import backend.settings as settings
 
 
 app = FastAPI()
@@ -20,3 +22,7 @@ app.add_middleware(
 )
 
 app.include_router(restapi.router)
+
+@app.get('/')
+async def index():
+    return FileResponse()

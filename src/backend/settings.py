@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 import pydantic
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import sys
+import os
 
 
 class Settings(BaseSettings):
@@ -18,6 +18,8 @@ class Settings(BaseSettings):
 
     label_generation_directory: str = 'g:/temp'
 
+    html_path: str = ''
+
     @pydantic.computed_field # type: ignore[misc]
     @property
     def database_url(self) -> str:
@@ -30,12 +32,22 @@ class Settings(BaseSettings):
 _settings: Optional[Settings] = None
 
 
+def verify_settings(settings: Settings):
+    if len(settings.jwt_secret_key) == 0:
+        logging.critical("No JWT key found!")
+        raise RuntimeError("No JWT key found")
+    if len(settings.html_path) == 0:
+        logging.critical("No HTML path set!")
+        raise RuntimeError("No HTML path set")
+    if not os.path.isfile(settings.html_path):
+        logging.critical(f"No HTML found at {settings.html_path}!")
+        raise RuntimeError(f"HTML file not found at {settings.html_path}")
+
+
 def load_settings() -> Settings:
     global _settings
     if _settings is None:
         # Parameter necessary to keep linter from complaining
         _settings = Settings(**{})
-    if len(_settings.jwt_secret_key) == 0:
-        logging.critical("No JWT key found!")
-        raise RuntimeError("No JWT key found")
+    verify_settings(_settings)
     return _settings
