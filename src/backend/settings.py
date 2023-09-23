@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
     jwt_expiration: int = 6 * 60 # 6 Hours
 
-    label_generation_directory: str = 'g:/temp'
+    label_generation_directory: str = ""
 
     # Path where index.html is stored locally
     html_path: str = ''
@@ -46,6 +46,12 @@ def verify_settings(settings: Settings):
     if not os.path.isfile(settings.html_path):
         logging.critical(f"No HTML found at {settings.html_path}!")
         raise RuntimeError(f"HTML file not found at {settings.html_path}")
+    if len(settings.label_generation_directory) == 0:
+        logging.critical("No label generation directory set!")
+        raise RuntimeError("No label generation directory set!")
+    if not os.path.isdir(settings.label_generation_directory):
+        logging.critical(f"Label generation directory {settings.label_generation_directory} does not exist!")
+        raise RuntimeError(f"Label generation directory {settings.label_generation_directory} does not exist!")
 
 
 def load_settings(verify=True) -> Settings:
