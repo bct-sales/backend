@@ -52,7 +52,7 @@ def valid_password() -> str:
 
 @pytest.fixture
 def invalid_password() -> str:
-    return 'abcd'
+    return 'a'
 
 
 @pytest.fixture
@@ -113,17 +113,18 @@ def admin(session: DatabaseSession, admin_password: str) -> models.User:
 def seller_access_token(session: DatabaseSession,
                         client: TestClient,
                         seller: models.User,
+                        login_url: str,
                         seller_password: str) -> models.UserCreate:
     payload = {
         'grant_type': 'password',
-        'username': seller.email_address,
+        'username': seller.user_id,
         'password': seller_password
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    response = client.post('/api/v1/login', data=payload, headers=headers)
+    response = client.post(login_url, data=payload, headers=headers)
     assert response.status_code == status.HTTP_200_OK
 
     access_token = response.json()['access_token']
@@ -134,17 +135,18 @@ def seller_access_token(session: DatabaseSession,
 def admin_access_token(session: DatabaseSession,
                        client: TestClient,
                        admin: orm.User,
+                       login_url: str,
                        admin_password: str) -> str:
     payload = {
         'grant_type': 'password',
-        'username': admin.email_address,
+        'username': admin.user_id,
         'password': admin_password
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    response = client.post('/api/v1/login', data=payload, headers=headers)
+    response = client.post(login_url, data=payload, headers=headers)
     assert response.status_code == status.HTTP_200_OK
 
     access_token = response.json()['access_token']
@@ -209,7 +211,6 @@ def admin_headers(admin_access_token: str) -> dict[str, str]:
 
 
 class ApiRootLinks(pydantic.BaseModel):
-    registration: str
     login: str
     events: str
 
@@ -227,11 +228,6 @@ def api_root(client: TestClient):
 @pytest.fixture
 def login_url(api_root: ApiRootData):
     return api_root.links.login
-
-
-@pytest.fixture
-def register_url(api_root: ApiRootData):
-    return api_root.links.registration
 
 
 @pytest.fixture

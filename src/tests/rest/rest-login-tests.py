@@ -14,7 +14,7 @@ def test_login(client: TestClient,
                seller_password: str):
     payload = {
         'grant_type': 'password',
-        'username': seller.email_address,
+        'username': str(seller.user_id),
         'password': seller_password
     }
     headers = {
@@ -26,14 +26,14 @@ def test_login(client: TestClient,
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_login_with_nonexisting_email_address(client: TestClient,
-                                              session: DatabaseSession,
-                                              login_url: str,
-                                              valid_email_address: str,
-                                              valid_password: str):
+def test_login_with_nonexisting_id(client: TestClient,
+                                   session: DatabaseSession,
+                                   login_url: str,
+                                   valid_email_address: str,
+                                   valid_password: str):
     payload = {
         'grant_type': 'password',
-        'username': valid_email_address,
+        'username': '1',
         'password': valid_password,
     }
     headers = {
@@ -52,7 +52,7 @@ def test_login_with_wrong_password(client: TestClient,
                                    valid_password: str):
     payload = {
         'grant_type': 'password',
-        'username': seller.email_address,
+        'username': str(seller.user_id),
         'password': valid_password,
     }
     headers = {

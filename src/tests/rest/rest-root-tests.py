@@ -10,7 +10,6 @@ def test_root(client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
         'links': {
-            'registration': Exists(),
             'login': Exists(),
             'events': Exists(),
         }

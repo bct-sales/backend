@@ -25,9 +25,9 @@ def test_list_events_as_seller(client: TestClient,
                                events_url: str,
                                sales_event: models.SalesEvent):
     response = client.get(events_url, headers=seller_headers)
-    json = response.json()
-
     assert response.status_code == status.HTTP_200_OK
+
+    json = response.json()
     assert json == {
         'events': [
             {
