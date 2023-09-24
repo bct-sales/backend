@@ -136,6 +136,15 @@ class DatabaseSession:
             raise WrongPasswordException
         return user
 
+    def login_with_id(self, *, user_id: int, password: str) -> orm.User:
+        self.__logger.debug(f'Checking password for user with id {user_id!r}')
+        user = self.find_user_with_id(user_id=user_id)
+        if user is None:
+            raise UnknownUserException
+        if not security.verify_password(hash=user.password_hash, plaintext=password):
+            raise WrongPasswordException
+        return user
+
     def list_users(self) -> list[orm.User]:
         return self.__session.query(orm.User).all()
 
