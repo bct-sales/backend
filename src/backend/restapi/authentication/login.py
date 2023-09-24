@@ -32,16 +32,21 @@ class Response(pydantic.BaseModel):
              response_model=Response)
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                 database: DatabaseDependency):
-    email_address = form_data.username
+    user_id_string = form_data.username
     password = form_data.password
 
     try:
-        user = database.login(
-            email_address=email_address,
+        user_id = int(user_id_string)
+    except ValueError:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Invalid user id")
+
+    try:
+        user = database.login_with_id(
+            user_id=user_id,
             password=password
         )
         role = Role.from_name(user.role)
-        logging.debug(f'User {email_address} logged in, role {role}')
+        logging.debug(f'User {user_id} logged in, role {role}')
         token_data = security.TokenData(user_id=user.user_id, scopes=role.scopes)
         token = security.create_access_token(token_data=token_data)
 
@@ -55,6 +60,6 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
             )
         )
     except UnknownUserException:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No user with this email address")
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No user with this id")
     except WrongPasswordException:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Wrong password")
