@@ -39,16 +39,20 @@ def testdata():
     database.drop_tables()
     database.create_tables()
     with database.session as session:
-        session.create_user(models.UserCreate(
-            email_address='admin@bct.be',
-            role=roles.ADMIN.name,
-            password='123456789'
-        ))
-        seller = session.create_user(models.UserCreate(
-            email_address='seller@bct.be',
-            role=roles.SELLER.name,
-            password='123456789'
-        ))
+        session.create_user_with_id(
+            1,
+            models.UserCreate(
+                role=roles.ADMIN.name,
+                password='123456789'
+            )
+        )
+        seller = session.create_user_with_id(
+            2,
+            models.UserCreate(
+                role=roles.SELLER.name,
+                password='123456789'
+            )
+        )
         event = session.create_sales_event(models.SalesEventCreate(
             date=datetime.date(2023, 12, 18),
             start_time=datetime.time(9, 0),
@@ -123,7 +127,6 @@ def users(file: io.TextIOWrapper) -> None:
         id = int(id)
         with database.session as session:
             data = models.UserCreate(
-                email_address=f'{id}@bct.be',
                 role='seller',
                 password=password,
             )

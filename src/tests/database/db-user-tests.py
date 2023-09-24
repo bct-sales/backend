@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 import pytest
 
 from backend.db import models
@@ -6,26 +7,30 @@ from backend.db.exceptions import *
 from backend.security import roles
 
 
-def test_create_user(session: DatabaseSession, valid_password: str):
-    email_address = 'test@gmail.com'
-    user = models.UserCreate(email_address=email_address, password=valid_password, role=roles.SELLER.name)
-    session.create_user(user)
+@pytest.mark.parametrize("user_id", [
+    1,
+    5,
+    100,
+    491,
+])
+def test_create_user(session: DatabaseSession, valid_password: str, user_id: int):
+    user = models.UserCreate(password=valid_password, role=roles.SELLER.name)
+    session.create_user_with_id(user_id, user)
 
-    actual = session.login(email_address=email_address, password=valid_password)
+    actual = session.login_with_id(user_id=user_id, password=valid_password)
 
     assert actual is not None
-    assert actual.email_address == email_address
+    assert actual.user_id == user_id
 
 
-def test_create_user_with_existing_email_address(session: DatabaseSession, valid_email_address: str, valid_password: str):
-    user = models.UserCreate(email_address=valid_email_address, password=valid_password, role=roles.SELLER.name)
-    session.create_user(user)
-    with pytest.raises(EmailAddressAlreadyInUseException):
-        session.create_user(user)
-
-
-def test_create_user_with_invalid_email_address(session: DatabaseSession, invalid_email_address: str, valid_password: str):
-    user = models.UserCreate(email_address=invalid_email_address, password=valid_password, role=roles.SELLER.name)
-
-    with pytest.raises(InvalidEmailAddressException):
-        session.create_user(user)
+@pytest.mark.parametrize("user_id", [
+    1,
+    5,
+    100,
+    491,
+])
+def test_create_user_with_existing_id(session: DatabaseSession, valid_password: str, user_id: int):
+    user = models.UserCreate(password=valid_password, role=roles.SELLER.name)
+    session.create_user_with_id(user_id, user)
+    with pytest.raises(sqlalchemy.exc.IntegrityError):
+        session.create_user_with_id(user_id, user)

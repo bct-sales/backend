@@ -29,7 +29,6 @@ def test_login(client: TestClient,
 def test_login_with_nonexisting_id(client: TestClient,
                                    session: DatabaseSession,
                                    login_url: str,
-                                   valid_email_address: str,
                                    valid_password: str):
     payload = {
         'grant_type': 'password',

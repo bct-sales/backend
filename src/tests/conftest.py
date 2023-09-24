@@ -36,16 +36,6 @@ app.dependency_overrides[database_dependency] = database_dependency_override
 
 
 @pytest.fixture
-def valid_email_address():
-    return 'test@fake.com'
-
-
-@pytest.fixture
-def invalid_email_address():
-    return 'invalid'
-
-
-@pytest.fixture
 def valid_password() -> str:
     return 'ABCDabcd1234!@'
 
@@ -93,19 +83,17 @@ def admin_password() -> str:
 
 @pytest.fixture
 def seller(session: DatabaseSession, seller_password: str) -> models.User:
-    email_address = 'seller@example.com'
     role = roles.SELLER
-    user_creation = models.UserCreate(email_address=email_address, role=role.name, password=seller_password)
-    orm_user = session.create_user(user_creation)
+    user_creation = models.UserCreate(role=role.name, password=seller_password)
+    orm_user = session.create_user_with_id(2, user_creation)
     return models.User.model_validate(orm_user)
 
 
 @pytest.fixture
 def admin(session: DatabaseSession, admin_password: str) -> models.User:
-    email_address = 'admin@example.com'
     role = roles.ADMIN
-    user_creation = models.UserCreate(email_address=email_address, role=role.name, password=admin_password)
-    orm_user = session.create_user(user_creation)
+    user_creation = models.UserCreate(role=role.name, password=admin_password)
+    orm_user = session.create_user_with_id(1, user_creation)
     return models.User.model_validate(orm_user)
 
 

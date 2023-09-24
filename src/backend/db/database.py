@@ -68,42 +68,14 @@ class DatabaseSession:
     def close(self):
         self.__session.close()
 
-    def create_user(self, user: models.UserCreate) -> orm.User:
-        self.__logger.debug(f'Creating user with email address {user.email_address!r}')
-        if not security.is_valid_email_address(user.email_address):
-            raise InvalidEmailAddressException
-        if not security.is_valid_password(user.password):
-            raise InvalidPasswordException
-        if self.user_with_email_address_exists(email_address=user.email_address):
-            raise EmailAddressAlreadyInUseException
-
-        password_hash = security.hash_password(user.password)
-        orm_user = orm.User(
-            email_address=user.email_address,
-            password_hash=password_hash,
-            role=user.role,
-        )
-        try:
-            self.__session.add(orm_user)
-            self.__session.commit()
-            return orm_user
-        except IntegrityError as e:
-            logging.error(e)
-            raise
-
     def create_user_with_id(self, user_id: int, user: models.UserCreate) -> orm.User:
         self.__logger.debug(f'Creating user with id {user_id}')
-        if not security.is_valid_email_address(user.email_address):
-            raise InvalidEmailAddressException
         if not security.is_valid_password(user.password):
             raise InvalidPasswordException
-        if self.user_with_email_address_exists(email_address=user.email_address):
-            raise EmailAddressAlreadyInUseException
 
         password_hash = security.hash_password(user.password)
         orm_user = orm.User(
             user_id=user_id,
-            email_address=user.email_address,
             password_hash=password_hash,
             role=user.role,
         )
@@ -115,26 +87,9 @@ class DatabaseSession:
             logging.error(e)
             raise
 
-    def user_with_email_address_exists(self, *, email_address: str) -> bool:
-        self.__logger.debug(f'Checking if user with email address {email_address!r} exists')
-        return self.find_user_with_email_address(email_address=email_address) is not None
-
-    def find_user_with_email_address(self, *, email_address: str) -> Optional[orm.User]:
-        self.__logger.debug(f'Looking for user with email address {email_address!r}')
-        return self.__session.query(orm.User).filter(orm.User.email_address == email_address).first()
-
     def find_user_with_id(self, *, user_id: int) -> Optional[orm.User]:
         self.__logger.debug(f'Looking for user with id {user_id!r}')
         return self.__session.query(orm.User).filter(orm.User.user_id == user_id).first()
-
-    def login(self, *, email_address: str, password: str) -> orm.User:
-        self.__logger.debug(f'Checking password for user with email address {email_address!r}')
-        user = self.find_user_with_email_address(email_address=email_address)
-        if user is None:
-            raise UnknownUserException
-        if not security.verify_password(hash=user.password_hash, plaintext=password):
-            raise WrongPasswordException
-        return user
 
     def login_with_id(self, *, user_id: int, password: str) -> orm.User:
         self.__logger.debug(f'Checking password for user with id {user_id!r}')

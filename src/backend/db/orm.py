@@ -37,18 +37,12 @@ class User(Base):
 
     role: Mapped[str] = mapped_column(String)
 
-    email_address: Mapped[str] = mapped_column(String)
-
     password_hash: Mapped[str] = mapped_column(String)
 
     items: Mapped[list[Item]] = relationship("Item", back_populates='owner', foreign_keys='Item.owner_id')
 
     def __repr__(self) -> str:
-        return f'User(user_id={self.user_id!r}, role={self.role}, email_address={self.email_address!r}, password_hash={self.password_hash!r})'
-
-    __table_args__ = (
-        UniqueConstraint('email_address'),
-    )
+        return f'User(user_id={self.user_id!r}, role={self.role}, password_hash={self.password_hash!r})'
 
 
 class Item(Base):

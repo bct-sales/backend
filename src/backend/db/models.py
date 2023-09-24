@@ -3,7 +3,6 @@ import datetime
 
 
 class UserBase(pydantic.BaseModel):
-    email_address: str
     role: str
 
 

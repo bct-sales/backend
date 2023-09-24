@@ -12,14 +12,14 @@ def dev():
 
 
 @dev.command
-@click.argument('email')
-def genauth(email):
+@click.argument('id', type=int)
+def genauth(id: int):
     database = get_database()
     with database.session as session:
-        user = session.find_user_with_email_address(email_address=email)
+        user = session.find_user_with_id(user_id=id)
 
     if user is None:
-        print(f'Error: no user found with email address {user}')
+        print(f'Error: no user found with id {id}')
         sys.exit(-1)
 
     role = roles.Role.from_name(user.role)
@@ -27,7 +27,6 @@ def genauth(email):
     access_token = create_access_token(token_data=token_data, duration=datetime.timedelta(days=365))
     print(f'''
 const accessToken = `{access_token}`;
-const emailAddress = `{email}`;
 const role = '{role.name}';
 const userId = {user.user_id};
           '''.strip())
