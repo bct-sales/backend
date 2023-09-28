@@ -21,6 +21,10 @@ class GenerateData(pydantic.BaseModel):
     label_width: int
     label_height: int
     corner_radius: int
+    margin: int
+    spacing: int
+    font_size: int
+    border: bool
 
 
 class GenerateResponse(pydantic.BaseModel):
@@ -39,11 +43,26 @@ async def generate_labels_for_event(request: Request,
         Item(
             item_id=orm_item.item_id,
             description=orm_item.description,
-            price_in_cents=orm_item.price_in_cents
+            price_in_cents=orm_item.price_in_cents,
+            charity=orm_item.charity,
+            owner_id=orm_item.owner_id,
+            recipient_id=orm_item.recipient_id,
         )
         for orm_item in orm_items
     ]
-    sheet_specifications = SheetSpecifications(**payload.model_dump())
+    sheet_specifications = SheetSpecifications(
+        sheet_width=payload.sheet_width,
+        sheet_height=payload.sheet_height,
+        columns=payload.columns,
+        rows=payload.rows,
+        label_width=payload.label_width,
+        label_height=payload.label_height,
+        corner_radius=payload.corner_radius,
+        margin=payload.margin,
+        spacing=payload.spacing,
+        font_size=payload.font_size,
+        border=payload.border,
+    )
 
     directory = get_labels_generation_directory()
     download_id = generate_labels(directory, sheet_specifications, items)

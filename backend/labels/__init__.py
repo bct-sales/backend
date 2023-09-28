@@ -10,12 +10,19 @@ class Item(pydantic.BaseModel):
     item_id: int
     description: str
     price_in_cents: int
+    charity: bool
+    owner_id: int
+    recipient_id: int
 
 
 class LabelData(pydantic.BaseModel):
     qr_data: str
     description: str
     price_in_cents: int
+    charity: bool
+    item_id: int
+    owner_id: int
+    recipient_id: int
 
 
 class SheetSpecifications(pydantic.BaseModel):
@@ -26,6 +33,10 @@ class SheetSpecifications(pydantic.BaseModel):
     label_width: int
     label_height: int
     corner_radius: int
+    margin: int
+    spacing: int
+    font_size: int
+    border: bool
 
 
 class LabelGenerationData(pydantic.BaseModel):
@@ -37,12 +48,19 @@ def generate_label_data_for_item(item: Item) -> LabelData:
     return LabelData(
         qr_data=generate_qr_data_for_item(item),
         description=item.description,
-        price_in_cents=item.price_in_cents
+        price_in_cents=item.price_in_cents,
+        charity=item.charity,
+        item_id=item.item_id,
+        owner_id=item.owner_id,
+        recipient_id=item.recipient_id,
     )
 
 
 def generate_qr_data_for_item(item: Item) -> str:
-    return f'{item.price_in_cents}'
+    string = f'P{item.price_in_cents}R{item.recipient_id}I{item.item_id}'
+    if item.charity:
+        string += 'C'
+    return string
 
 
 def generate_labels(directory: Path, sheet_specifications: SheetSpecifications, items: list[Item]) -> str:
