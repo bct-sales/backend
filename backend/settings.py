@@ -39,20 +39,25 @@ _settings: Optional[Settings] = None
 
 def verify_settings(settings: Settings) -> None:
     if len(settings.jwt_secret_key) == 0:
-        logging.critical("No JWT key found!")
-        raise RuntimeError("No JWT key found")
+        message = "No JWT key found! Set BCT_JWT_SECRET_KEY"
+        logging.critical(message)
+        raise RuntimeError(message)
     if len(settings.html_path) == 0:
-        logging.critical("No HTML path set!")
-        raise RuntimeError("No HTML path set")
+        message = "No HTML path set! Set BCT_HTML_PATH"
+        logging.critical(message)
+        raise RuntimeError(message)
     if not os.path.isfile(settings.html_path):
-        logging.critical(f"No HTML found at {settings.html_path}!")
-        raise RuntimeError(f"HTML file not found at {settings.html_path}")
+        message = f"No HTML found at {settings.html_path}!"
+        logging.critical(message)
+        raise RuntimeError(message)
     if len(settings.label_generation_directory) == 0:
-        logging.critical("No label generation directory set!")
-        raise RuntimeError("No label generation directory set!")
+        message = "No label generation directory set!"
+        logging.critical(message)
+        raise RuntimeError(message)
     if not os.path.isdir(settings.label_generation_directory):
-        logging.critical(f"Label generation directory {settings.label_generation_directory} does not exist!")
-        raise RuntimeError(f"Label generation directory {settings.label_generation_directory} does not exist!")
+        message = f"Label generation directory {settings.label_generation_directory} does not exist!"
+        logging.critical(message)
+        raise RuntimeError(message)
 
 
 def expand_paths(settings: Settings) -> None:
