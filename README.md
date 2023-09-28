@@ -9,7 +9,7 @@
 * Also under `/backend``, create `.env` file (see below for contents).
 * Download html using `./admin.sh html download`.
 * Configure `nginx` by `sudo cp ./ngingx-config /etc/nginx/sites-enabled/fastapi_nginx`.
-* Restart `nginx` using `service nginx restart`.
+* Restart `nginx` using `sudo service nginx restart`.
 * Back in home directory, clone bctqr.
 * Inside repo, `poetry install`.
 * Make directory `~/labels`
