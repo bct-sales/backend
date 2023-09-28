@@ -7,7 +7,8 @@
 * Clone this repository
 * Inside repo, `poetry install`.
 * Also under `/backend``, create `.env` file (see below for contents).
-* Download html using `./admin.sh html download`.
+* Download html using `./download-html.sh`.
+* Might have to change owner of `/var/www/html` to user `www-data`: in `/`, `sudo chown -R www-data var/www/html`
 * Configure `nginx` by `sudo cp ./ngingx-config /etc/nginx/sites-enabled/fastapi_nginx`.
 * Restart `nginx` using `sudo service nginx restart`.
 * Back in home directory, clone bctqr.
