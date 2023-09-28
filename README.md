@@ -1,23 +1,31 @@
 # Readme
 
-## Seller
+## Installation Instructions
 
-* View Sales
-* View Items in Sale
-* Add Item to Sale
-* Update Item
+* `apt update`
+* `apt install python3 python3-pip emacs nginx pkg-config libcairo2-dev`
+* Clone this repository
+* Inside repo, `poetry install`.
+* Also under `/backend``, create `.env` file (see below for contents).
+* Download html using `./admin.sh html download`.
+* Configure `nginx` by `sudo cp ./ngingx-config /etc/nginx/sites-enabled/fastapi_nginx`.
+* Restart `nginx` using `service nginx restart`.
+* Back in home directory, clone bctqr.
+* Inside repo, `poetry install`.
+* Make directory `~/labels`
+* Run server process: in `backend`, run `./start-prod.sh`.
 
-## Admin
+## .venv
 
-* Create Sale Event
-* Make Sale Event Available/Unavailable
+Use `generate-jwt-key.sh` script to generate `BCT_JWT_SECRET_KEY`.
 
-## Cashier
-
-* Create New Sale
-* Add Item to Sale
-* Close Sale
-* Abort Sale
+```bash
+BCT_JWT_SECRET_KEY=???
+BCT_DATABASE_PATH=~/bct.db
+BCT_HTML_PATH=~/index.html
+BCT_LABEL_GENERATION_DIRECTORY=~/labels
+BCT_QR_DIRECTORY=~/bctqr
+```
 
 ## Technologies
 
