@@ -44,8 +44,3 @@ app.add_middleware(
 )
 
 app.include_router(restapi.router)
-
-@app.get('/')
-async def index():
-    html_path = settings.load_settings().html_path
-    return FileResponse(html_path)

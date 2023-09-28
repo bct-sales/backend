@@ -19,12 +19,6 @@ class Settings(BaseSettings):
 
     label_generation_directory: str = ""
 
-    # Path where index.html is stored locally
-    html_path: str = ''
-
-    # URL where latest version of index.html can be found
-    html_url: str = 'https://github.com/bct-sales/frontend/releases/latest/download/index.html'
-
     qr_directory: str = ''
 
     @pydantic.computed_field # type: ignore[misc]
@@ -46,10 +40,6 @@ def verify_settings(settings: Settings) -> None:
 
     if len(settings.jwt_secret_key) == 0:
         abort("No JWT key found! Set BCT_JWT_SECRET_KEY")
-    if len(settings.html_path) == 0:
-        abort("No HTML path set! Set BCT_HTML_PATH")
-    if not os.path.isfile(settings.html_path):
-        abort(f"No HTML found at {settings.html_path}!")
     if len(settings.label_generation_directory) == 0:
         abort("No label generation directory set! Set BCT_BCT_LABEL_GENERATION_DIRECTORY")
     if not os.path.isdir(settings.label_generation_directory):
@@ -63,7 +53,6 @@ def verify_settings(settings: Settings) -> None:
 def expand_paths(settings: Settings) -> None:
     if settings.database_path:
         settings.database_path = os.path.expanduser(settings.database_path)
-    settings.html_path = os.path.expanduser(settings.html_path)
     settings.label_generation_directory = os.path.expanduser(settings.label_generation_directory)
     settings.qr_directory = os.path.expanduser(settings.qr_directory)
 
