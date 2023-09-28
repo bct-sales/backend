@@ -2,8 +2,8 @@
 
 ## Installation Instructions
 
-* `apt update`
-* `apt install python3 python3-pip emacs nginx pkg-config libcairo2-dev`
+* `sudo apt update`
+* `sudo apt install python3 python3-pip emacs nginx pkg-config libcairo2-dev`
 * Clone this repository
 * Inside repo, `poetry install`.
 * Also under `/backend``, create `.env` file (see below for contents).
@@ -23,7 +23,6 @@ Use `generate-jwt-key.sh` script to generate `BCT_JWT_SECRET_KEY`.
 ```bash
 BCT_JWT_SECRET_KEY=???
 BCT_DATABASE_PATH=~/bct.db
-BCT_HTML_PATH=~/index.html
 BCT_LABEL_GENERATION_DIRECTORY=~/labels
 BCT_QR_DIRECTORY=~/bctqr
 ```
