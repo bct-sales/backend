@@ -5,6 +5,8 @@ import logging
 import uuid
 import os
 
+from backend import settings
+
 
 class Item(pydantic.BaseModel):
     item_id: int
@@ -109,6 +111,9 @@ def call_qr_generation_subprocess(input_path: Path, output_path: Path):
     if 'VIRTUAL_ENV' in environment:
         del environment['VIRTUAL_ENV']
 
+    cfg = settings.load_settings()
+    qr_directory = cfg.qr_directory
+
     command = [
         'poetry',
         'run',
@@ -118,4 +123,4 @@ def call_qr_generation_subprocess(input_path: Path, output_path: Path):
         str(output_path.absolute())
     ]
 
-    subprocess.Popen(command, cwd=r'G:/repos/bct/bctqr', shell=False, env=environment)
+    subprocess.Popen(command, cwd=qr_directory, shell=False, env=environment)

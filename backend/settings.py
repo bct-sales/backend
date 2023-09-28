@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     # URL where latest version of index.html can be found
     html_url: str = 'https://github.com/bct-sales/frontend/releases/latest/download/index.html'
 
+    qr_directory: str = ''
+
     @pydantic.computed_field # type: ignore[misc]
     @property
     def database_url(self) -> str:
@@ -38,26 +40,24 @@ _settings: Optional[Settings] = None
 
 
 def verify_settings(settings: Settings) -> None:
+    def abort(message):
+        logging.critical(message)
+        raise RuntimeError(message)
+
     if len(settings.jwt_secret_key) == 0:
-        message = "No JWT key found! Set BCT_JWT_SECRET_KEY"
-        logging.critical(message)
-        raise RuntimeError(message)
+        abort("No JWT key found! Set BCT_JWT_SECRET_KEY")
     if len(settings.html_path) == 0:
-        message = "No HTML path set! Set BCT_HTML_PATH"
-        logging.critical(message)
-        raise RuntimeError(message)
+        abort("No HTML path set! Set BCT_HTML_PATH")
     if not os.path.isfile(settings.html_path):
-        message = f"No HTML found at {settings.html_path}!"
-        logging.critical(message)
-        raise RuntimeError(message)
+        abort(f"No HTML found at {settings.html_path}!")
     if len(settings.label_generation_directory) == 0:
-        message = "No label generation directory set!"
-        logging.critical(message)
-        raise RuntimeError(message)
+        abort("No label generation directory set! Set BCT_BCT_LABEL_GENERATION_DIRECTORY")
     if not os.path.isdir(settings.label_generation_directory):
-        message = f"Label generation directory {settings.label_generation_directory} does not exist!"
-        logging.critical(message)
-        raise RuntimeError(message)
+        abort(f"Label generation directory {settings.label_generation_directory} does not exist!")
+    if len(settings.qr_directory) == 0:
+        abort("No qr_directory set! Set BCT_QR_DIRECTORY")
+    if not os.path.isdir(settings.qr_directory):
+        abort(f"qr_path {settings.qr_directory} does not exist!")
 
 
 def expand_paths(settings: Settings) -> None:
