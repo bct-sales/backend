@@ -65,6 +65,7 @@ def expand_paths(settings: Settings) -> None:
         settings.database_path = os.path.expanduser(settings.database_path)
     settings.html_path = os.path.expanduser(settings.html_path)
     settings.label_generation_directory = os.path.expanduser(settings.label_generation_directory)
+    settings.qr_directory = os.path.expanduser(settings.qr_directory)
 
 
 def load_settings(verify=True) -> Settings:
