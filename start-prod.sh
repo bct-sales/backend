@@ -1,3 +1,3 @@
 #! /usr/bin/env bash
 
-poetry run uvicorn backend.app:app --root-path /
+poetry run uvicorn backend.app:app
