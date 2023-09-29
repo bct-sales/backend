@@ -24,10 +24,16 @@ Use `generate-jwt-key.sh` script to generate `BCT_JWT_SECRET_KEY`.
 ```bash
 BCT_JWT_SECRET_KEY=???
 BCT_DATABASE_PATH=~/bct.db
+BCT_DB_BACKUP_DIRECTORY=~/backups
 BCT_LABEL_GENERATION_DIRECTORY=~/labels
 BCT_QR_DIRECTORY=~/bctqr
-BCT_QR_DIRECTORY=~/backups
 ```
+
+## DB Backup
+
+Use `./admin.sh db backup`.
+It will copy the database to `BCT_DB_BACKUP_DIRECTORY`.
+It can run while the server is running.
 
 ## Technologies
 
