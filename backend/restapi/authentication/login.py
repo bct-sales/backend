@@ -22,7 +22,7 @@ class Links(pydantic.BaseModel):
 class Response(pydantic.BaseModel):
     user_id: pydantic.NonNegativeInt
     access_token: str
-    role: Literal['seller', 'admin']
+    role: Literal['seller', 'admin', 'cashier']
     token_type: Literal["bearer"]
     links: Links
 

@@ -44,14 +44,21 @@ def testdata():
             1,
             models.UserCreate(
                 role=roles.ADMIN.name,
-                password='123456789'
+                password='111'
             )
         )
         seller = session.create_user_with_id(
             2,
             models.UserCreate(
                 role=roles.SELLER.name,
-                password='123456789'
+                password='222'
+            )
+        )
+        session.create_user_with_id(
+            3,
+            models.UserCreate(
+                role=roles.CASHIER.name,
+                password='333'
             )
         )
         event = session.create_sales_event(models.SalesEventCreate(
@@ -104,6 +111,13 @@ def testdata():
             description='Red pants',
             charity=True,
             price_in_cents=5000,
+            recipient_id=seller.user_id,
+            sales_event_id=event.sales_event_id,
+            owner_id=seller.user_id))
+        session.create_item(item=models.ItemCreate(
+            description='Blue Jeans',
+            charity=True,
+            price_in_cents=2000,
             recipient_id=seller.user_id,
             sales_event_id=event.sales_event_id,
             owner_id=seller.user_id))

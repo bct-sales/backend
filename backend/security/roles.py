@@ -3,7 +3,7 @@ from typing import Literal, cast
 from backend.security import scopes
 
 
-RoleName = Literal['seller', 'admin']
+RoleName = Literal['seller', 'admin', 'cashier']
 
 class Role:
     __name: RoleName
@@ -63,4 +63,8 @@ ADMIN = define_role('admin', scopes.Scopes(
     scopes.LIST_UNAVAILABLE_SALES_EVENTS,
     scopes.ADD_SALES_EVENTS,
     scopes.EDIT_SALES_EVENT,
+))
+
+CASHIER = define_role('cashier', scopes.Scopes(
+    scopes.GET_ITEM_DATA
 ))
