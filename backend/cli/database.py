@@ -1,6 +1,8 @@
 import datetime
+import io
 import logging
 import sys
+from pathlib import Path
 
 import click
 
@@ -8,7 +10,6 @@ from backend.db import models
 from backend.db.database import Database
 from backend.security import roles
 from backend.settings import load_settings
-import io
 
 
 def get_database() -> Database:
@@ -131,3 +132,23 @@ def users(file: io.TextIOWrapper) -> None:
                 password=password,
             )
             session.create_user_with_id(id, data)
+
+
+@db.command(help='Imports users from csv file')
+def backup() -> None:
+    def progress(status: int, remaining: int, total: int):
+        print(f'{remaining} remaining')
+
+    import sqlite3
+    cfg = load_settings()
+    database_path = load_settings().database_path
+    backup_filename = datetime.datetime.today().strftime("backup-%Y%m%d-%H%M%S.db")
+    backup_directory = Path(cfg.db_backup_directory)
+    backup_path = backup_directory / backup_filename
+
+    src = sqlite3.connect(str(database_path))
+    dst = sqlite3.connect(backup_path)
+    with dst:
+        src.backup(dst, progress=progress)
+    dst.close()
+    src.close()

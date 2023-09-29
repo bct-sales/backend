@@ -21,6 +21,8 @@ class Settings(BaseSettings):
 
     qr_directory: str = ''
 
+    db_backup_directory: str = ''
+
     @pydantic.computed_field # type: ignore[misc]
     @property
     def database_url(self) -> str:
@@ -48,6 +50,10 @@ def verify_settings(settings: Settings) -> None:
         abort("No qr_directory set! Set BCT_QR_DIRECTORY")
     if not os.path.isdir(settings.qr_directory):
         abort(f"qr_path {settings.qr_directory} does not exist!")
+    if len(settings.db_backup_directory) == 0:
+        abort("No db backup directory set! Set BCT_DB_BACKUP_DIRECTORY")
+    if not os.path.isdir(settings.db_backup_directory):
+        abort(f"Db backup directory {settings.db_backup_directory} is not a valid directory")
 
 
 def expand_paths(settings: Settings) -> None:
@@ -55,6 +61,7 @@ def expand_paths(settings: Settings) -> None:
         settings.database_path = os.path.expanduser(settings.database_path)
     settings.label_generation_directory = os.path.expanduser(settings.label_generation_directory)
     settings.qr_directory = os.path.expanduser(settings.qr_directory)
+    settings.db_backup_directory = os.path.expanduser(settings.db_backup_directory)
 
 
 def load_settings(verify=True) -> Settings:

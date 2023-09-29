@@ -13,7 +13,8 @@
 * Restart `nginx` using `sudo service nginx restart`.
 * Back in home directory, clone bctqr.
 * Inside repo, `poetry install`.
-* Make directory `~/labels`
+* Make directory `~/labels`.
+* Make directory `~/backups`.
 * Run server process: in `backend`, run `./start-prod.sh`.
 
 ## .venv
@@ -25,6 +26,7 @@ BCT_JWT_SECRET_KEY=???
 BCT_DATABASE_PATH=~/bct.db
 BCT_LABEL_GENERATION_DIRECTORY=~/labels
 BCT_QR_DIRECTORY=~/bctqr
+BCT_QR_DIRECTORY=~/backups
 ```
 
 ## Technologies
