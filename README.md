@@ -35,6 +35,13 @@ Use `./admin.sh db backup`.
 It will copy the database to `BCT_DB_BACKUP_DIRECTORY`.
 It can run while the server is running.
 
+## Shell Screens
+
+Start with `screen`.
+
+* `ctrl+a c` creates new screen (shell).
+* `ctrl+a "` gives list of screens.
+
 ## Technologies
 
 * Python
