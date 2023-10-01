@@ -50,8 +50,8 @@ def define_role(name: RoleName, scopes: scopes.Scopes) -> Role:
 
 SELLER = define_role('seller', scopes.Scopes(
     scopes.ADD_OWN_ITEM,
-    scopes.EDIT_OWN_ITEM,
-    scopes.REMOVE_OWN_ITEM,
+    # scopes.EDIT_OWN_ITEM,
+    # scopes.REMOVE_OWN_ITEM,
     scopes.LIST_OWN_ITEMS,
     scopes.LIST_SALES_EVENTS,
 ))
