@@ -1,11 +1,11 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from backend import restapi
 import backend.settings as settings
 from contextlib import asynccontextmanager
 import logging
-
+from fastapi import status
 
 
 @asynccontextmanager
@@ -44,3 +44,12 @@ app.add_middleware(
 )
 
 app.include_router(restapi.router)
+
+
+@app.get('/')
+async def index():
+    html_path = settings.load_settings().html_path
+    if html_path is not None:
+        return FileResponse(html_path)
+    else:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="This page does not exist.")

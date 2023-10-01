@@ -23,6 +23,12 @@ class Settings(BaseSettings):
 
     db_backup_directory: str = ''
 
+    # Path where index.html is stored locally
+    html_path: Optional[str] = None
+
+    # URL where latest version of index.html can be found
+    html_url: str = 'https://github.com/bct-sales/frontend/releases/latest/download/index.html'
+
     @pydantic.computed_field # type: ignore[misc]
     @property
     def database_url(self) -> str:
@@ -54,6 +60,8 @@ def verify_settings(settings: Settings) -> None:
         abort("No db backup directory set! Set BCT_DB_BACKUP_DIRECTORY")
     if not os.path.isdir(settings.db_backup_directory):
         abort(f"Db backup directory {settings.db_backup_directory} is not a valid directory")
+    if settings.html_path is not None and not os.path.isfile(settings.html_path):
+        abort(f'HTML path set but does not point to existing file')
 
 
 def expand_paths(settings: Settings) -> None:
@@ -62,6 +70,8 @@ def expand_paths(settings: Settings) -> None:
     settings.label_generation_directory = os.path.expanduser(settings.label_generation_directory)
     settings.qr_directory = os.path.expanduser(settings.qr_directory)
     settings.db_backup_directory = os.path.expanduser(settings.db_backup_directory)
+    if settings.html_path:
+        settings.html_path = os.path.expanduser(settings.html_path)
 
 
 def load_settings(verify=True) -> Settings:

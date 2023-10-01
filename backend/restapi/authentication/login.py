@@ -38,7 +38,10 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     try:
         user_id = int(user_id_string)
     except ValueError:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Invalid user id")
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail=f"{user_id_string!r} is not a valid user id"
+        )
 
     try:
         user = database.login_with_id(
@@ -60,6 +63,12 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
             )
         )
     except UnknownUserException:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No user with this id")
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail=f"No user with id {user_id}"
+        )
     except WrongPasswordException:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Wrong password")
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail="Wrong password"
+        )

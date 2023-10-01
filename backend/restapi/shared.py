@@ -58,7 +58,7 @@ def get_current_user(required_scopes: scopes.Scopes, access_token: str, session:
         logging.error('User not logged in')
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Invalid access token',
+            detail='Invalid access token. Log out and log back in.',
             headers={"WWW-Authenticate": "Bearer"}
         )
 
@@ -67,7 +67,7 @@ def get_current_user(required_scopes: scopes.Scopes, access_token: str, session:
         logging.error(f'User has not required permissions {required_scopes}, only has {available_scopes}')
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='No permission',
+            detail='You have no permission to view this page.',
             headers={"WWW-Authenticate": "Bearer"}
         )
 
@@ -76,7 +76,7 @@ def get_current_user(required_scopes: scopes.Scopes, access_token: str, session:
         logging.error(f'Could not find user with id {access_token_data.user_id}')
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Unknown user',
+            detail=f'There is no user with id {access_token_data.user_id} in our database',
             headers={"WWW-Authenticate": "Bearer"}
         )
 

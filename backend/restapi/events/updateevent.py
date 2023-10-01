@@ -30,4 +30,6 @@ async def update_sales_event(database: DatabaseDependency,
     try:
         database.update_event(id=event_id, **dict(payload))
     except UnknownSalesEventException:
-        raise HTTPException(status.HTTP_404_NOT_FOUND)
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND
+            )

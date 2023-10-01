@@ -5,6 +5,7 @@ from backend.security.tokens import create_access_token, TokenData
 from backend.cli.dev import dev
 from backend.cli.database import db
 from backend.cli.settings import settings
+from backend.cli.html import html
 import datetime
 import click
 
@@ -17,3 +18,4 @@ def cli():
 cli.add_command(db)
 cli.add_command(dev)
 cli.add_command(settings)
+cli.add_command(html)
