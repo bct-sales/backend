@@ -23,13 +23,12 @@ class Response(pydantic.BaseModel):
     charity: pydantic.StrictBool
 
 
-# TODO Require cashier role
-
 @router.get('/{item_id}',
             tags=['items'],
             response_model=Response)
 async def download_labels(item_id: int,
-                          database: DatabaseDependency):
+                          database: DatabaseDependency,
+                          user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.GET_ITEM_DATA))]):
     orm_item = database.find_item_by_id(item_id)
     if orm_item is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
