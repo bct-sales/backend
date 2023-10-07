@@ -36,6 +36,7 @@ class SalesEvent(SalesEventBase):
 
 class ItemBase(pydantic.BaseModel):
     description: str
+    category: str
     price_in_cents: pydantic.NonNegativeInt
     recipient_id: pydantic.NonNegativeInt
     sales_event_id: pydantic.NonNegativeInt

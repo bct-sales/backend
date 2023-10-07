@@ -52,6 +52,8 @@ class Item(Base):
 
     description: Mapped[str] = mapped_column(String)
 
+    category: Mapped[str] = mapped_column(String)
+
     price_in_cents: Mapped[int] = mapped_column(Integer)
 
     owner_id: Mapped[int] = mapped_column(ForeignKey('users.user_id'))

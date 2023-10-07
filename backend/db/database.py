@@ -107,6 +107,7 @@ class DatabaseSession:
         self.__logger.debug(f'Creating item with data {item!r}')
         orm_item = orm.Item(
             description=item.description,
+            category=item.category,
             price_in_cents=item.price_in_cents,
             owner_id=item.owner_id,
             recipient_id=item.recipient_id,

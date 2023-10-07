@@ -173,6 +173,7 @@ def unavailable_sales_event(session: DatabaseSession) -> models.SalesEvent:
 def item(session: DatabaseSession, sales_event: models.SalesEvent, seller: models.User) -> models.Item:
     item = models.ItemCreate(
         description='Sneakers',
+        category='Footwear',
         price_in_cents=1000,
         recipient_id=seller.user_id,
         sales_event_id=sales_event.sales_event_id,

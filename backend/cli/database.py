@@ -125,10 +125,11 @@ def testdata():
 
 @db.group(name="import", help='Imports data from csv file')
 def _import():
+    # this is a group, so no implementation necessary
     pass
 
 
-@_import.command(name='users', help='Imports users from csv file')
+@_import.command(name='sellers', help='Imports sellers from csv file')
 @click.argument('file', type=click.File(mode='r', encoding='utf-8'))
 def users(file: io.TextIOWrapper) -> None:
     import csv

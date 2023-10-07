@@ -11,6 +11,7 @@ router = APIRouter()
 
 class AddItemData(pydantic.BaseModel):
     description: str
+    category: str
     price_in_cents: pydantic.NonNegativeInt
     recipient_id: int
     charity: bool
@@ -25,7 +26,11 @@ async def add_item(database: DatabaseDependency,
                    event_id: int,
                    payload: AddItemData):
     item = models.ItemCreate(
-        **dict(payload),
+        description=payload.description,
+        category=payload.category,
+        price_in_cents=payload.price_in_cents,
+        recipient_id=payload.recipient_id,
+        charity=payload.charity,
         sales_event_id=event_id,
         owner_id=user.user_id
     )

@@ -46,6 +46,7 @@ async def list_items(request: Request,
     items = [
         Item(
             description=item.description,
+            category=item.category,
             item_id=item.item_id,
             owner_id=item.owner_id,
             links=ItemLinks(
