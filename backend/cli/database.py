@@ -36,6 +36,18 @@ def reset():
 
 @db.command(help="Removes ALL data and adds dummy seller and admin")
 def testdata():
+    item_categories = [
+        'Clothing 0-3 mos (50-56)',
+        'Clothing 3-6 mos (56-62)',
+        'Clothing 6-12 mos (68-80)',
+        'Clothing 12-24 mos (86-92)',
+        'Clothing 2-3 yrs (92-98)',
+        'Clothing 4-6 yrs (104-116)',
+        'Clothing 7-8 yrs (122-134)',
+        'Toys',
+        'Baby/Child Equipment',
+        'Large Items',
+    ]
     database = get_database()
     database.drop_tables()
     database.create_tables()
@@ -93,8 +105,10 @@ def testdata():
             description='Ghent Sales',
             available=True,
         ))
+
         session.create_item(item=models.ItemCreate(
             description='Blue shirt',
+            category=item_categories[0],
             charity=False,
             price_in_cents=200,
             recipient_id=seller.user_id,
@@ -102,6 +116,7 @@ def testdata():
             owner_id=seller.user_id))
         session.create_item(item=models.ItemCreate(
             description='Black shirt',
+            category=item_categories[0],
             charity=True,
             price_in_cents=800,
             recipient_id=seller.user_id,
@@ -109,6 +124,7 @@ def testdata():
             owner_id=seller.user_id))
         session.create_item(item=models.ItemCreate(
             description='Red pants',
+            category=item_categories[3],
             charity=True,
             price_in_cents=5000,
             recipient_id=seller.user_id,
@@ -116,6 +132,7 @@ def testdata():
             owner_id=seller.user_id))
         session.create_item(item=models.ItemCreate(
             description='Blue Jeans',
+            category=item_categories[4],
             charity=True,
             price_in_cents=2000,
             recipient_id=seller.user_id,
