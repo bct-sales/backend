@@ -15,6 +15,7 @@ router = APIRouter()
 class Response(pydantic.BaseModel):
     item_id: int
     description: str
+    category: str
     price_in_cents: pydantic.NonNegativeInt
     recipient_id: pydantic.NonNegativeInt
     sales_event_id: pydantic.NonNegativeInt
@@ -35,6 +36,7 @@ async def download_labels(item_id: int,
     response = Response(
         item_id=orm_item.item_id,
         description=orm_item.description,
+        category=orm_item.category,
         price_in_cents=orm_item.price_in_cents,
         recipient_id=orm_item.recipient_id,
         sales_event_id=orm_item.sales_event_id,
