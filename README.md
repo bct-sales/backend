@@ -15,7 +15,13 @@
 * Inside repo, `poetry install`.
 * Make directory `~/labels`.
 * Make directory `~/backups`.
-* Run server process: in `backend`, run `./start-prod.sh`.
+* Run server process: in `backend`, run `nohup ./start-prod.sh &`.
+
+## Shutting Down Server
+
+* Enter `ps -A`.
+* Look of `uvicorn` and get process ID.
+* Send SIGINT message using `kill -2 ID`.
 
 ## .venv
 
