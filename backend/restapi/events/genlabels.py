@@ -18,8 +18,8 @@ class GenerateData(pydantic.BaseModel):
     sheet_height: int
     columns: int
     rows: int
-    label_width: int
-    label_height: int
+    label_width: float
+    label_height: float
     corner_radius: int
     margin: int
     spacing: int
@@ -43,6 +43,7 @@ async def generate_labels_for_event(request: Request,
         Item(
             item_id=orm_item.item_id,
             description=orm_item.description,
+            category=orm_item.category,
             price_in_cents=orm_item.price_in_cents,
             charity=orm_item.charity,
             owner_id=orm_item.owner_id,

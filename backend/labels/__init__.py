@@ -11,6 +11,7 @@ from backend import settings
 class Item(pydantic.BaseModel):
     item_id: int
     description: str
+    category: str
     price_in_cents: int
     charity: bool
     owner_id: int
@@ -20,6 +21,7 @@ class Item(pydantic.BaseModel):
 class LabelData(pydantic.BaseModel):
     qr_data: str
     description: str
+    category: str
     price_in_cents: int
     charity: bool
     item_id: int
@@ -32,8 +34,8 @@ class SheetSpecifications(pydantic.BaseModel):
     sheet_height: int
     columns: int
     rows: int
-    label_width: int
-    label_height: int
+    label_width: float
+    label_height: float
     corner_radius: int
     margin: int
     spacing: int
@@ -50,6 +52,7 @@ def generate_label_data_for_item(item: Item) -> LabelData:
     return LabelData(
         qr_data=generate_qr_data_for_item(item),
         description=item.description,
+        category=item.category,
         price_in_cents=item.price_in_cents,
         charity=item.charity,
         item_id=item.item_id,
@@ -59,9 +62,10 @@ def generate_label_data_for_item(item: Item) -> LabelData:
 
 
 def generate_qr_data_for_item(item: Item) -> str:
-    string = f'P{item.price_in_cents}R{item.recipient_id}I{item.item_id}'
-    if item.charity:
-        string += 'C'
+    return f'{item.item_id}X'
+    # string = f'P{item.price_in_cents}R{item.recipient_id}I{item.item_id}'
+    # if item.charity:
+    #     string += 'C'
     return string
 
 
