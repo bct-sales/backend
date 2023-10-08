@@ -211,7 +211,7 @@ def add_user(role: roles.RoleName, id: int, password: str) -> int:
 @db.command(name='list-users')
 def list_users() -> None:
     """
-    Lists all users
+    Lists all users as csv
     """
     import csv
     database = get_database()
@@ -226,4 +226,31 @@ def list_users() -> None:
             csv_writer.writerow({
                 'user_id': user.user_id,
                 'role': user.role,
+            })
+
+
+@db.command(name="list-items")
+def list_items() -> None:
+    """
+    Lists all items as csv
+    """
+    import csv
+    database = get_database()
+    with database.session as session:
+        items: list[orm.Item] = session.list_items()
+        csv_writer = csv.DictWriter(
+            sys.stdout,
+            fieldnames=['item_id', 'description', 'category', 'price_in_cents', 'owner_id', 'recipient_id', 'sales_event_id', 'charity']
+        )
+        csv_writer.writeheader()
+        for item in items:
+            csv_writer.writerow({
+                'item_id': item.item_id,
+                'description': item.description,
+                'category': item.category,
+                'price_in_cents': item.price_in_cents,
+                'owner_id': item.owner_id,
+                'recipient_id': item.recipient_id,
+                'sales_event_id': item.sales_event_id,
+                'charity': int(item.charity)
             })
