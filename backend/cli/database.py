@@ -152,13 +152,14 @@ def users(file: io.TextIOWrapper) -> None:
     import csv
     database = get_database()
     reader = csv.reader(file)
-    for row in reader:
-        if len(row) != 2:
-            print("Each row should contain two values: id,password")
-            sys.exit(-1)
-        id_string, password = row
-        id = int(id_string)
-        with database.session as session:
+    with database.session as session:
+        for row in reader:
+            if len(row) != 2:
+                print("Each row should contain two values: id,password")
+                sys.exit(-1)
+            id_string, password = row
+            id = int(id_string)
+
             data = models.UserCreate(
                 role='seller',
                 password=password,
