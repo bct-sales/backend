@@ -148,7 +148,7 @@ def _import():
 
 @_import.command(name='sellers', help='Imports sellers from csv file')
 @click.argument('file', type=click.File(mode='r', encoding='utf-8'))
-def users(file: io.TextIOWrapper) -> None:
+def import_sellers(file: io.TextIOWrapper) -> None:
     import csv
     database = get_database()
     reader = csv.reader(file)
