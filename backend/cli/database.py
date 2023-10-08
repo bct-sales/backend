@@ -6,7 +6,7 @@ from pathlib import Path
 
 import click
 
-from backend.db import models
+from backend.db import models, orm
 from backend.db.database import Database
 from backend.security import roles
 from backend.settings import load_settings
@@ -213,9 +213,17 @@ def list_users() -> None:
     """
     Lists all users
     """
+    import csv
     database = get_database()
     with database.session as session:
-        users = session.list_users()
-        print("user_id,role")
+        users: list[orm.User] = session.list_users()
+        csv_writer = csv.DictWriter(
+            sys.stdout,
+            fieldnames=['user_id', 'role']
+        )
+        csv_writer.writeheader()
         for user in users:
-            print(f"{user.user_id},{user.role}")
+            csv_writer.writerow({
+                'user_id': user.user_id,
+                'role': user.role,
+            })
