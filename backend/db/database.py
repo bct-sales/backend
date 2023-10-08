@@ -14,6 +14,8 @@ from backend.db.exceptions import *
 
 import logging
 
+from backend.security import roles
+
 
 class Database:
     __name: str
@@ -72,6 +74,8 @@ class DatabaseSession:
         self.__logger.debug(f'Creating user with id {user_id}')
         if not security.is_valid_password(user.password):
             raise InvalidPasswordException
+        if not roles.is_valid_role(user.role):
+            raise InvalidRoleException
 
         password_hash = security.hash_password(user.password)
         orm_user = orm.User(

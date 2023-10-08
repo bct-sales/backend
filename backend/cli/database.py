@@ -156,8 +156,8 @@ def users(file: io.TextIOWrapper) -> None:
         if len(row) != 2:
             print("Each row should contain two values: id,password")
             sys.exit(-1)
-        id, password = row
-        id = int(id)
+        id_string, password = row
+        id = int(id_string)
         with database.session as session:
             data = models.UserCreate(
                 role='seller',
@@ -184,3 +184,38 @@ def backup() -> None:
         src.backup(dst, progress=progress)
     dst.close()
     src.close()
+
+
+@db.command(name='add-user')
+@click.option('--role', type=click.Choice(['admin', 'seller', 'cashier']))
+@click.option('--id', type=int)
+@click.option('--password', type=str)
+def add_user(role: roles.RoleName, id: int, password: str) -> int:
+    """
+    Creates new user
+    """
+    database = get_database()
+    with database.session as session:
+        if session.find_user_with_id(user_id = id) is not None:
+            print(f"Already a user with id {id}")
+            return -1
+        user_data = models.UserCreate(
+            role=role,
+            password=password
+        )
+        session.create_user_with_id(user_id=id, user=user_data)
+        print("User successfully created")
+        return 0
+
+
+@db.command(name='list-users')
+def list_users() -> None:
+    """
+    Lists all users
+    """
+    database = get_database()
+    with database.session as session:
+        users = session.list_users()
+        print("user_id,role")
+        for user in users:
+            print(f"{user.user_id},{user.role}")

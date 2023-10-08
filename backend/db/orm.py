@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint, Date, Time, Boolean
+from sqlalchemy import ForeignKey, Integer, String, Date, Time, Boolean
 from datetime import date, time
 
 

@@ -68,3 +68,11 @@ ADMIN = define_role('admin', scopes.Scopes(
 CASHIER = define_role('cashier', scopes.Scopes(
     scopes.GET_ITEM_DATA
 ))
+
+
+def is_valid_role(string: str) -> bool:
+    try:
+        Role.from_name(string)
+        return True
+    except RoleException:
+        return False
