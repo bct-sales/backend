@@ -164,6 +164,7 @@ def users(file: io.TextIOWrapper) -> None:
                 password=password,
             )
             session.create_user_with_id(id, data)
+            print(f"Created seller {id}")
 
 
 @db.command(help='Imports users from csv file')
