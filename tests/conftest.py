@@ -184,6 +184,25 @@ def item(session: DatabaseSession, sales_event: models.SalesEvent, seller: model
     return models.Item.model_validate(orm_item)
 
 
+@pytest.fixture
+def items(session: DatabaseSession, sales_event: models.SalesEvent, seller: models.User) -> list[models.Item]:
+    item_data = [
+        models.ItemCreate(
+            description=f'Item #{i}',
+            category='Dummy Category',
+            price_in_cents=1000,
+            recipient_id=seller.user_id,
+            sales_event_id=sales_event.sales_event_id,
+            owner_id=seller.user_id,
+            charity=False,
+        )
+        for i in range(1, 100)
+    ]
+    orm_items = [session.create_item(item=data) for data in item_data]
+    session.commit()
+    return [models.Item.model_validate(orm_item) for orm_item in orm_items]
+
+
 def create_authorization_headers(token: str):
     return {'Authorization': f'Bearer {token}'}
 
@@ -196,7 +215,6 @@ def seller_headers(seller_access_token: str) -> dict[str, str]:
 @pytest.fixture
 def admin_headers(admin_access_token: str) -> dict[str, str]:
     return create_authorization_headers(admin_access_token)
-
 
 
 class ApiRootLinks(pydantic.BaseModel):
