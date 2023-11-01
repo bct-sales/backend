@@ -183,5 +183,28 @@ class DatabaseSession:
                 setattr(orm_item, field, value)
         self.__session.commit()
 
+    def has_item_been_sold(self, item_id) -> bool:
+        return bool(self.__session.query(orm.SaleItem).filter(orm.SaleItem.item_id == item_id).first())
+
+    def collect_sold_items(self) -> list[int]:
+        return [row[0] for row in self.__session.query(orm.SaleItem.item_id).all()]
+
+    def create_sale(self, item_ids: list[int]) -> orm.Sale:
+        if len(item_ids) == 0:
+            raise EmptySaleIsInvalid()
+        sale = orm.Sale()
+        self.__session.add(sale)
+        self.__session.commit()
+        sale_items = [
+            orm.SaleItem(
+                sale_id=sale.sale_id,
+                item_id=item_id
+            )
+            for item_id in item_ids
+        ]
+        self.__session.add_all(sale_items)
+        self.__session.commit()
+        return sale
+
     def commit(self) -> None:
         self.__session.commit()

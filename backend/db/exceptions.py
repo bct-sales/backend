@@ -44,3 +44,8 @@ class WrongPasswordException(AuthenticationException):
 class InvalidEventTimeInterval(DatabaseException):
     def __init__(self):
         super().__init__('Start time and end time do not form valid interval')
+
+
+class EmptySaleIsInvalid(DatabaseException):
+    def __init__(self):
+        super().__init__('Sale should at least have one item')
