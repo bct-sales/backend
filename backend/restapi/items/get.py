@@ -21,15 +21,17 @@ class Response(pydantic.BaseModel):
     sales_event_id: pydantic.NonNegativeInt
     owner_id: pydantic.NonNegativeInt
     charity: pydantic.StrictBool
+    has_been_sold: pydantic.StrictBool
 
 
 @router.get('/{item_id}',
             tags=['items'],
             response_model=Response)
-async def download_labels(item_id: int,
+async def get_item_data(item_id: int,
                           database: DatabaseDependency,
                           user: Annotated[orm.User, RequireScopes(scopes.Scopes(scopes.GET_ITEM_DATA))]):
     orm_item = database.find_item_by_id(item_id)
+    has_been_sold = database.has_item_been_sold(item_id)
     if orm_item is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     response = Response(
@@ -41,5 +43,6 @@ async def download_labels(item_id: int,
         sales_event_id=orm_item.sales_event_id,
         owner_id=orm_item.owner_id,
         charity=orm_item.charity,
+        has_been_sold=has_been_sold
     )
     return response

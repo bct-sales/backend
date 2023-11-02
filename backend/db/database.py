@@ -183,7 +183,7 @@ class DatabaseSession:
                 setattr(orm_item, field, value)
         self.__session.commit()
 
-    def has_item_been_sold(self, item_id) -> bool:
+    def has_item_been_sold(self, item_id: int) -> bool:
         return bool(self.__session.query(orm.SaleItem).filter(orm.SaleItem.item_id == item_id).first())
 
     def collect_sold_items(self) -> list[int]:
