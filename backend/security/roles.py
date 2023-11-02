@@ -68,6 +68,7 @@ ADMIN = define_role('admin', scopes.Scopes(
 CASHIER = define_role('cashier', scopes.Scopes(
     scopes.LIST_ALL_ITEMS,
     scopes.GET_ITEM_DATA,
+    scopes.REGISTER_SALE,
 ))
 
 

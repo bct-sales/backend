@@ -49,3 +49,8 @@ class InvalidEventTimeInterval(DatabaseException):
 class EmptySaleIsInvalid(DatabaseException):
     def __init__(self):
         super().__init__('Sale should at least have one item')
+
+
+class DuplicateItemsInSale(DatabaseException):
+    def __init__(self):
+        super().__init__('Item occurs multiple times in sale')

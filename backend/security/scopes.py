@@ -91,6 +91,9 @@ ADD_OWN_ITEM = define_scope('items:add-own', 'Add own item')
 EDIT_OWN_ITEM = define_scope('items:edit-own', 'Edit own item')
 REMOVE_OWN_ITEM = define_scope('items:remove-own', 'Remove own item')
 
+# Sales
+REGISTER_SALE = define_scope('sales:add', 'Register sale')
+
 
 def all_scopes() -> set[Scope]:
     return set(_scopes.values())

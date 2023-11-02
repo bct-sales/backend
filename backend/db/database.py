@@ -158,6 +158,9 @@ class DatabaseSession:
         self.__logger.debug(f'Finding item with id {id!r}')
         return self.__session.query(orm.Item).filter(orm.Item.item_id == id).first()
 
+    def item_with_id_exists(self, id: int) -> bool:
+        return self.find_item_by_id(id) is not None
+
     def delete_item_by_id(self, id: int) -> None:
         delete_count = self.__session.query(orm.Item).filter(orm.Item.item_id == id).delete()
         self.__session.commit()
@@ -192,19 +195,24 @@ class DatabaseSession:
     def create_sale(self, item_ids: list[int]) -> orm.Sale:
         if len(item_ids) == 0:
             raise EmptySaleIsInvalid()
+        if not all(self.item_with_id_exists(id) for id in item_ids):
+            raise UnknownItemException()
         sale = orm.Sale()
         self.__session.add(sale)
         self.__session.commit()
-        sale_items = [
-            orm.SaleItem(
-                sale_id=sale.sale_id,
-                item_id=item_id
-            )
-            for item_id in item_ids
-        ]
-        self.__session.add_all(sale_items)
-        self.__session.commit()
-        return sale
+        try:
+            sale_items = [
+                orm.SaleItem(
+                    sale_id=sale.sale_id,
+                    item_id=item_id
+                )
+                for item_id in item_ids
+            ]
+            self.__session.add_all(sale_items)
+            self.__session.commit()
+            return sale
+        except IntegrityError:
+            raise DuplicateItemsInSale()
 
     def commit(self) -> None:
         self.__session.commit()

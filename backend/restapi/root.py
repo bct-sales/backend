@@ -11,6 +11,7 @@ class Links(pydantic.BaseModel):
     login: str
     events: str
     items: str
+    sales: str
 
 
 class Response(pydantic.BaseModel):
@@ -27,6 +28,7 @@ async def root(request: Request):
             login=url_for(request, 'login'),
             events=url_for(request, 'list_sales_events'),
             items=url_for(request, 'list_items'),
+            sales=url_for(request, 'register_sale'),
         )
     )
     return response
