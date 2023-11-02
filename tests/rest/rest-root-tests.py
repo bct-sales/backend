@@ -12,5 +12,6 @@ def test_root(client: TestClient):
         'links': {
             'login': Exists(),
             'events': Exists(),
+            'items': Exists(),
         }
     }

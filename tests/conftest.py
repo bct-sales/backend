@@ -72,6 +72,21 @@ def session(database: Database) -> Iterator[DatabaseSession]:
 
 
 @pytest.fixture
+def admin_id() -> int:
+    return 1
+
+
+@pytest.fixture
+def seller_id() -> int:
+    return 2
+
+
+@pytest.fixture
+def cashier_id() -> int:
+    return 3
+
+
+@pytest.fixture
 def seller_password() -> str:
     return 'A B C d 1 23 4 5 +'
 
@@ -82,18 +97,37 @@ def admin_password() -> str:
 
 
 @pytest.fixture
-def seller(session: DatabaseSession, seller_password: str) -> models.User:
-    role = roles.SELLER
-    user_creation = models.UserCreate(role=role.name, password=seller_password)
-    orm_user = session.create_user_with_id(2, user_creation)
+def cashier_password() -> str:
+    return 'cashier password'
+
+
+@pytest.fixture
+def admin(session: DatabaseSession,
+          admin_password: str,
+          admin_id: int) -> models.User:
+    role = roles.ADMIN
+    user_creation = models.UserCreate(role=role.name, password=admin_password)
+    orm_user = session.create_user_with_id(admin_id, user_creation)
     return models.User.model_validate(orm_user)
 
 
 @pytest.fixture
-def admin(session: DatabaseSession, admin_password: str) -> models.User:
-    role = roles.ADMIN
-    user_creation = models.UserCreate(role=role.name, password=admin_password)
-    orm_user = session.create_user_with_id(1, user_creation)
+def seller(session: DatabaseSession,
+           seller_password: str,
+           seller_id: int) -> models.User:
+    role = roles.SELLER
+    user_creation = models.UserCreate(role=role.name, password=seller_password)
+    orm_user = session.create_user_with_id(seller_id, user_creation)
+    return models.User.model_validate(orm_user)
+
+
+@pytest.fixture
+def cashier(session: DatabaseSession,
+            cashier_password: str,
+            cashier_id: int) -> models.User:
+    role = roles.CASHIER
+    user_creation = models.UserCreate(role=role.name, password=cashier_password)
+    orm_user = session.create_user_with_id(cashier_id, user_creation)
     return models.User.model_validate(orm_user)
 
 
@@ -129,6 +163,28 @@ def admin_access_token(session: DatabaseSession,
         'grant_type': 'password',
         'username': admin.user_id,
         'password': admin_password
+    }
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    response = client.post(login_url, data=payload, headers=headers)
+    assert response.status_code == status.HTTP_200_OK
+
+    access_token = response.json()['access_token']
+    return access_token
+
+
+@pytest.fixture
+def cashier_access_token(session: DatabaseSession,
+                         client: TestClient,
+                         cashier: orm.User,
+                         login_url: str,
+                         cashier_password: str) -> str:
+    payload = {
+        'grant_type': 'password',
+        'username': cashier.user_id,
+        'password': cashier_password
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -217,9 +273,16 @@ def admin_headers(admin_access_token: str) -> dict[str, str]:
     return create_authorization_headers(admin_access_token)
 
 
+@pytest.fixture
+def cashier_headers(cashier_access_token: str) -> dict[str, str]:
+    return create_authorization_headers(cashier_access_token)
+
+
 class ApiRootLinks(pydantic.BaseModel):
     login: str
     events: str
+    items: str
+
 
 class ApiRootData(pydantic.BaseModel):
     links: ApiRootLinks
@@ -241,6 +304,10 @@ def login_url(api_root: ApiRootData):
 def events_url(api_root: ApiRootData):
     return api_root.links.events
 
+
+@pytest.fixture
+def items_url(api_root: ApiRootData):
+    return api_root.links.items
 
 
 FetchEvents = Callable[[dict[str, str]], backend.restapi.events.listevents.Response]
