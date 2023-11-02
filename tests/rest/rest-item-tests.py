@@ -15,3 +15,7 @@ def test_list_events_as_cashier(client: TestClient,
                                 items_url: str):
     response = client.get(items_url, headers=cashier_headers)
     assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+    assert 'item_ids' in data
+    assert len(data['item_ids']) == len(items)
