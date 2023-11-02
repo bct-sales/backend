@@ -19,9 +19,22 @@ def test_create_sale(session: DatabaseSession,
     assert set(item.item_id for item in sale_orm.items_sold) == set(item_selection)
 
 
-def test_create_invalid_sale(session: DatabaseSession):
+def test_create_empty_sale(session: DatabaseSession):
     with pytest.raises(EmptySaleIsInvalid):
         session.create_sale([])
+
+
+def test_create_sale_with_duplicate_items(session: DatabaseSession,
+                                          items: list[models.Item],):
+    with pytest.raises(DuplicateItemsInSale):
+        session.create_sale([items[0].item_id, items[0].item_id])
+
+
+def test_create_sale_with_nonexisting_item(session: DatabaseSession,
+                                           items: list[models.Item],):
+    nonexisting_item_id = max(item.item_id for item in items) + 1
+    with pytest.raises(UnknownItemException):
+        session.create_sale([nonexisting_item_id])
 
 
 @pytest.mark.parametrize("item_selections", [

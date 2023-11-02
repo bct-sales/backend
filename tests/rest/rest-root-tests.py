@@ -13,5 +13,6 @@ def test_root(client: TestClient):
             'login': Exists(),
             'events': Exists(),
             'items': Exists(),
+            'sales': Exists(),
         }
     }

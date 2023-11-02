@@ -282,6 +282,7 @@ class ApiRootLinks(pydantic.BaseModel):
     login: str
     events: str
     items: str
+    sales: str
 
 
 class ApiRootData(pydantic.BaseModel):
@@ -308,6 +309,11 @@ def events_url(api_root: ApiRootData):
 @pytest.fixture
 def items_url(api_root: ApiRootData):
     return api_root.links.items
+
+
+@pytest.fixture
+def sales_url(api_root: ApiRootData):
+    return api_root.links.sales
 
 
 FetchEvents = Callable[[dict[str, str]], backend.restapi.events.listevents.Response]

@@ -5,8 +5,6 @@ from fastapi.testclient import TestClient
 from backend.db.database import DatabaseSession
 from backend.db import models
 
-from tests.util import Exists
-
 
 def test_list_events_as_cashier(client: TestClient,
                                 session: DatabaseSession,
@@ -21,11 +19,11 @@ def test_list_events_as_cashier(client: TestClient,
     assert len(data['item_ids']) == len(items)
 
 
-def test_get_item(client: TestClient,
-                  session: DatabaseSession,
-                  cashier_headers: dict[str, str],
-                  items: list[models.Item],
-                  items_url: str):
+def test_get_item_as_cashier(client: TestClient,
+                             session: DatabaseSession,
+                             cashier_headers: dict[str, str],
+                             items: list[models.Item],
+                             items_url: str):
     for item in items:
         item_url = f"{items_url}{item.item_id}"
         response = client.get(item_url, headers=cashier_headers)
