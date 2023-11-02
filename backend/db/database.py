@@ -194,8 +194,10 @@ class DatabaseSession:
 
     def create_sale(self, item_ids: list[int]) -> orm.Sale:
         if len(item_ids) == 0:
+            logging.error('Empty sale rejected')
             raise EmptySaleIsInvalid()
         if not all(self.item_with_id_exists(id) for id in item_ids):
+            logging.error('Unknown item in sale')
             raise UnknownItemException()
         sale = orm.Sale()
         self.__session.add(sale)
@@ -212,6 +214,7 @@ class DatabaseSession:
             self.__session.commit()
             return sale
         except IntegrityError:
+            logging.error('Integrity error; assuming this is due to duplicate items')
             raise DuplicateItemsInSale()
 
     def commit(self) -> None:
