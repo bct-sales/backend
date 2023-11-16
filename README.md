@@ -6,7 +6,7 @@
 * `sudo apt install python3 python3-pip emacs nginx pkg-config libcairo2-dev`
 * Clone this repository
 * Inside repo, `poetry install`.
-* Also under `/backend``, create `.env` file (see below for contents).
+* Also under `/backend`, create `.env` file (see below for contents).
 * Download html using `./download-html.sh`.
 * Might have to change owner of `/var/www/html` to user `www-data`: in `/`, `sudo chown -R www-data var/www/html`
 * Configure `nginx` by `sudo cp ./ngingx-config /etc/nginx/sites-enabled/fastapi_nginx`.
@@ -25,7 +25,7 @@
 
 ## .venv
 
-Use `generate-jwt-key.sh` script to generate `BCT_JWT_SECRET_KEY`.
+In a `.venv` file, add
 
 ```bash
 BCT_JWT_SECRET_KEY=???
@@ -34,6 +34,8 @@ BCT_DB_BACKUP_DIRECTORY=~/backups
 BCT_LABEL_GENERATION_DIRECTORY=~/labels
 BCT_QR_DIRECTORY=~/bctqr
 ```
+
+Use `generate-jwt-key.sh` script to generate `BCT_JWT_SECRET_KEY`.
 
 ## DB Backup
 
