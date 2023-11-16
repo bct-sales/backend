@@ -23,9 +23,9 @@
 * Look of `uvicorn` and get process ID.
 * Send SIGINT message using `kill -2 ID`.
 
-## .venv
+## .env
 
-In a `.venv` file, add
+In a `.env` file, add
 
 ```bash
 BCT_JWT_SECRET_KEY=???
