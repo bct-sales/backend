@@ -41,6 +41,10 @@ class SheetSpecifications(pydantic.BaseModel):
     spacing: int
     font_size: int
     border: bool
+    left_margin: float
+    right_margin: float
+    top_margin: float
+    bottom_margin: float
 
 
 class LabelGenerationData(pydantic.BaseModel):

@@ -25,6 +25,10 @@ class GenerateData(pydantic.BaseModel):
     spacing: int
     font_size: int
     border: bool
+    left_margin: float
+    right_margin: float
+    top_margin: float
+    bottom_margin: float
 
 
 class GenerateResponse(pydantic.BaseModel):
@@ -63,6 +67,10 @@ async def generate_labels_for_event(request: Request,
         spacing=payload.spacing,
         font_size=payload.font_size,
         border=payload.border,
+        left_margin=payload.left_margin,
+        right_margin=payload.right_margin,
+        top_margin=payload.top_margin,
+        bottom_margin=payload.bottom_margin,
     )
 
     directory = get_labels_generation_directory()
