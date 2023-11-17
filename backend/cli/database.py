@@ -264,7 +264,7 @@ def list_sales() -> None:
     """
     import csv
     database = get_database()
-    csv_writer = csv.DictWriter(sys.stdout, fieldnames=['sale_id', 'item_id', 'owner_id', 'recipient_id', 'price'])
+    csv_writer = csv.DictWriter(sys.stdout, fieldnames=['sale_id', 'item_id', 'owner_id', 'recipient_id', 'price'], lineterminator='\n')
     csv_writer.writeheader()
     with database.session as session:
         sales: list[orm.Sale] = session.list_sales()
