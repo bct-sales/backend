@@ -256,3 +256,29 @@ def list_items() -> None:
                 'sales_event_id': item.sales_event_id,
                 'charity': int(item.charity)
             })
+
+@db.command(name="list-sales")
+def list_sales() -> None:
+    """
+    Lists sales as csv
+    """
+    import csv
+    database = get_database()
+    csv_writer = csv.DictWriter(sys.stdout, fieldnames=['sale_id', 'item_id', 'owner_id', 'recipient_id', 'price'], lineterminator='\n')
+    csv_writer.writeheader()
+    with database.session as session:
+        sales: list[orm.Sale] = session.list_sales()
+        for sale in sales:
+            for sold_item in sale.items_sold:
+                sold_item_id = sold_item.item_id
+                item = session.find_item_by_id(sold_item_id)
+                if item:
+                    csv_writer.writerow({
+                        'sale_id': sale.sale_id,
+                        'item_id': sold_item_id,
+                        'owner_id': item.owner_id,
+                        'recipient_id': item.recipient_id,
+                        'price': item.price_in_cents,
+                    })
+                else:
+                    logging.error(f"Unknown item {sold_item_id}!")

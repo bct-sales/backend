@@ -1,0 +1,12 @@
+CREATE TABLE sales (
+        sale_id INTEGER NOT NULL,
+        PRIMARY KEY (sale_id)
+);
+
+CREATE TABLE sale_items (
+        sale_id INTEGER NOT NULL,
+        item_id INTEGER NOT NULL,
+        PRIMARY KEY (sale_id, item_id),
+        FOREIGN KEY(sale_id) REFERENCES sales (sale_id),
+        FOREIGN KEY(item_id) REFERENCES items (item_id)
+);
