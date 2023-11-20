@@ -24,11 +24,14 @@
 * Generate labels
   * Pick which labels to generate
   * Define sheets specs in detail
+* Maximum items per seller?
+* Fluent user interface
 
 ### Cashier Functionality
 
 * Take into account barcode scanner details
   * Does it send an enter or not?
+* Allow same item to be sold multiple times (we don't want earlier mistakes preventing a sale)
 
 ### Admin Functionality
 
@@ -53,4 +56,6 @@ $ bct find-item [--id ID] [--description DESCRIPTION] [--price PRICE] [--categor
 $ bct count-items --by-owner
 
 $ bct count-items --by-category
+
+$ bct list-sold-items
 ```
