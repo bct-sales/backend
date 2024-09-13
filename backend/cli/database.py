@@ -168,7 +168,7 @@ def import_sellers(file: io.TextIOWrapper) -> None:
             print(f"Created seller {id}")
 
 
-@db.command(help='Imports users from csv file')
+@db.command(help='Makes a backup of the database')
 def backup() -> None:
     def progress(status: int, remaining: int, total: int):
         print(f'{remaining} remaining')
