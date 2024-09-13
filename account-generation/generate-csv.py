@@ -2,13 +2,16 @@ import random
 import sys
 
 
+# Within a group a user must be identifiable with just 2 digits, otherwise the ID format must be redesigned
+MAX_GROUP_SIZE = 99
+
 random.seed(48119)
 group_sizes = [50] * 12
 
 
 
-if any(group_size >= 100 for group_size in group_sizes):
-    print("Groups must all be smaller than 100")
+if any(group_size > MAX_GROUP_SIZE for group_size in group_sizes):
+    print(f"Groups must all be smaller than {MAX_GROUP_SIZE}")
     sys.exit(-1)
 
 
