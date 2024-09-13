@@ -4,9 +4,10 @@ import sys
 
 # Within a group a user must be identifiable with just 2 digits, otherwise the ID format must be redesigned
 MAX_GROUP_SIZE = 99
+N_GROUPS = 12
 
 random.seed(48119)
-group_sizes = [50] * 12
+group_sizes = [50] * N_GROUPS
 
 
 
