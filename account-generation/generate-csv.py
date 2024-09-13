@@ -2,11 +2,16 @@ import random
 import sys
 
 
-# Within a group a user must be identifiable with just 2 digits, otherwise the ID format must be redesigned
-MAX_GROUP_SIZE = 99
+MAX_GROUP_SIZE = 99    # Within a group a user must be identifiable with just 2 digits, otherwise the ID format must be redesigned
 N_GROUPS = 12
+SEED = 48119
 
-random.seed(48119)
+
+def rotate_left(xs, n):
+    return [*xs[n:], *xs[:n]]
+
+
+random.seed(SEED)
 group_sizes = [50] * N_GROUPS
 
 
