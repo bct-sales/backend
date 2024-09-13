@@ -168,8 +168,14 @@ def import_sellers(file: io.TextIOWrapper) -> None:
             print(f"Created seller {id}")
 
 
-@db.command(help='Makes a backup of the database')
+@db.command()
 def backup() -> None:
+    """
+    Makes a backup of the database.
+
+    The backup will be written in the BCT_DB_BACKUP_DIRECTORY directory
+    under the filename backup-%Y%m%d-%H%M%S.db.
+    """
     def progress(status: int, remaining: int, total: int):
         print(f'{remaining} remaining')
 
