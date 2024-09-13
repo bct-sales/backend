@@ -15,6 +15,10 @@
 * Inside repo, `poetry install`.
 * Make directory `~/labels`.
 * Make directory `~/backups`.
+* If necessary, create new database.
+  * In home directory, run `sqlite3 bct.db ""`.
+  * In `backend`, run `./admin.sh db reset` to populate it with tables.
+  * Create the necessary users.
 * Run server process: in `backend`, run `nohup ./start-prod.sh &`.
 
 ## Shutting Down Server
