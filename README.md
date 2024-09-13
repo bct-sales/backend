@@ -39,7 +39,7 @@ Use `generate-jwt-key.sh` script to generate `BCT_JWT_SECRET_KEY`.
 
 ## DB Backup
 
-Use `./admin.sh db backup`.
+Inside `backend`, use `./admin.sh db backup`.
 It will copy the database to `BCT_DB_BACKUP_DIRECTORY`.
 It can run while the server is running.
 
