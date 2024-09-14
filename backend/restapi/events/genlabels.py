@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request, status
 from backend.db import orm
 from backend.labels import generate_labels, SheetSpecifications,Item
 from backend.restapi.labels.util import get_labels_generation_directory
@@ -29,6 +29,7 @@ class GenerateData(pydantic.BaseModel):
     right_margin: float
     top_margin: float
     bottom_margin: float
+    item_selection: list[int]
 
 
 class GenerateResponse(pydantic.BaseModel):
@@ -43,8 +44,8 @@ async def generate_labels_for_event(request: Request,
                                     event_id: int,
                                     payload: GenerateData):
     orm_items = database.list_items_owned_by(owner=user.user_id, sale_event=event_id)
-    items = [
-        Item(
+    all_owned_items = {
+        orm_item.item_id: Item(
             item_id=orm_item.item_id,
             description=orm_item.description,
             category=orm_item.category,
@@ -54,6 +55,15 @@ async def generate_labels_for_event(request: Request,
             recipient_id=orm_item.recipient_id,
         )
         for orm_item in orm_items
+    }
+
+    # Check if all selected items are indeed owner by user
+    if any(selected_item_id not in all_owned_items for selected_item_id in payload.item_selection):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+    item_selection_for_label_generation = [
+        all_owned_items[selected_item_id]
+        for selected_item_id in payload.item_selection
     ]
     sheet_specifications = SheetSpecifications(
         sheet_width=payload.sheet_width,
@@ -74,7 +84,7 @@ async def generate_labels_for_event(request: Request,
     )
 
     directory = get_labels_generation_directory()
-    download_id = generate_labels(directory, sheet_specifications, items)
+    download_id = generate_labels(directory, sheet_specifications, item_selection_for_label_generation)
 
     status_url = url_for(request, 'label_generation_status', labels_id=download_id)
     return GenerateResponse(status_url=str(status_url)).model_dump()
