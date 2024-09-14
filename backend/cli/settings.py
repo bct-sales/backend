@@ -14,4 +14,3 @@ def gendotenv():
         print("BCT_DB_BACKUP_DIRECTORY=", file=file)
         print("BCT_LABEL_GENERATION_DIRECTORY=", file=file)
         print("BCT_QR_DIRECTORY=", file=file)
-        

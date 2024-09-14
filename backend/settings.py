@@ -55,7 +55,7 @@ def verify_settings(settings: Settings) -> None:
     if len(settings.qr_directory) == 0:
         abort("No qr_directory set! Set BCT_QR_DIRECTORY")
     if not os.path.isdir(settings.qr_directory):
-        abort(f"qr_path {settings.qr_directory} does not exist!")
+        abort(f"qr_path {settings.qr_directory!r} does not exist!")
     if len(settings.db_backup_directory) == 0:
         abort("No db backup directory set! Set BCT_DB_BACKUP_DIRECTORY")
     if not os.path.isdir(settings.db_backup_directory):
