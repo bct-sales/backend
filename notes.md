@@ -59,3 +59,5 @@ $ bct count-items --by-category
 
 $ bct list-sold-items
 ```
+
+## Automatic Backups
