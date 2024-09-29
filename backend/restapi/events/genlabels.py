@@ -21,9 +21,9 @@ class GenerateData(pydantic.BaseModel):
     label_width: float
     label_height: float
     corner_radius: int
-    margin: int
+    margin: float
     spacing: int
-    font_size: int
+    font_size: float
     border: bool
     left_margin: float
     right_margin: float
